@@ -1,0 +1,44 @@
+/* Twitch */
+.twitch {
+  @apply text-twitch opacity-70 transition hover:opacity-100;
+}
+
+.dark .twitch {
+  @apply text-twitch opacity-100 transition hover:opacity-80;
+}
+
+/* Twitter */
+.twitter {
+  @apply fill-twitter text-twitter opacity-70 transition hover:opacity-100;
+}
+
+.dark .twitter {
+  @apply fill-twitter text-twitter opacity-100 transition hover:opacity-80;
+}
+
+/* Youtube */
+.youtube {
+  @apply fill-youtube text-youtube opacity-70 transition hover:opacity-100;
+}
+
+.dark .youtube {
+  @apply fill-youtube text-youtube opacity-100 transition hover:opacity-80;
+}
+
+/* Linktree */
+.linktree {
+  @apply fill-linktree text-linktree opacity-70 transition hover:opacity-100;
+}
+
+.dark .linktree {
+  @apply fill-linktree text-linktree opacity-100 transition hover:opacity-80;
+}
+
+/* Github */
+.github {
+  @apply fill-github text-github opacity-70 transition hover:opacity-100;
+}
+
+.dark .github {
+  @apply fill-white text-white opacity-100 transition hover:opacity-80;
+}

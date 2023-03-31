@@ -18,6 +18,11 @@ module.exports = {
         primary: '#2DD4BF',
         secondary: '#0891B2',
         tertiary: '#A855F7',
+        twitch: '#6441a5',
+        twitter: '#1da1f2',
+        youtube: '#ff0000',
+        github: '#333333',
+        linktree: '#40e09e',
       },
       maxWidth: {
         screen: '100vw',
