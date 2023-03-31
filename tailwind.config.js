@@ -33,10 +33,8 @@ module.exports = {
       },
       fontFamily: {
         prose: ['Inter', ...defaultTheme.fontFamily.sans],
-        headings: ['Inter', ...defaultTheme.fontFamily.sans],
-        code: ['JetBrains Mono', ...defaultTheme.fontFamily.mono],
-        mono: ['Fira Code', ...defaultTheme.fontFamily.mono],
-        flow: 'Flow',
+        lexend: ['Lexend', ...defaultTheme.fontFamily.sans],
+        code: ['Fira Code', ...defaultTheme.fontFamily.mono],
       },
     },
   },

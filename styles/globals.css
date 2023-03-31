@@ -2,14 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-/* generics */
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-  @apply font-headings;
+  @apply font-lexend;
 }
 
 html {
@@ -18,9 +17,4 @@ html {
 
 code {
   @apply rounded-md bg-dark px-1 py-0.5 font-code text-pink-600;
-}
-
-/* global extracted classes */
-.min-h-adjusted {
-  min-height: calc(100vh - 7rem);
 }

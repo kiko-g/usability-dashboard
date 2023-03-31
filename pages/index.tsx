@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import React from 'react'
 import Layout from '../components/layout/Layout'
 
-export default function Home() {
+export default function Hub() {
   return (
-    <Layout location="Home">
+    <Layout location="Hub">
       <main className="">
         <div></div>
       </main>
