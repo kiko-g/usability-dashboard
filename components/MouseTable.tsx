@@ -1,6 +1,7 @@
 import React from 'react'
 import { MouseClicksAPI } from '../@types'
 import { Loading, NotFound } from './utils'
+import classNames from 'classnames'
 
 type Props = {}
 
@@ -27,14 +28,17 @@ export default function MouseTable({}: Props) {
   if (error) return <NotFound />
 
   return (
-    <table className="border bg-lightest">
-      <tr className="bg-slate-800 text-left text-white">
+    <table className="border border-black bg-lightest dark:border-white">
+      <tr className="w-min border-b border-inherit bg-slate-800 text-left text-white shadow">
         <th className="px-4 py-3">X</th>
         <th className="px-4 py-3">Y</th>
         <th className="px-4 py-3">Date</th>
       </tr>
       {mouseData.map((mouseClick, mouseClickIdx) => (
-        <tr key={`mouse-click-${mouseClickIdx}`}>
+        <tr
+          key={`mouse-click-${mouseClickIdx}`}
+          className={classNames(mouseClickIdx % 2 === 0 ? 'bg-white' : 'bg-gray-100', 'w-auto text-sm')}
+        >
           <td className="px-3 py-3">{mouseClick.x}</td>
           <td className="px-3 py-3">{mouseClick.y}</td>
           <td className="px-3 py-3">{mouseClick.date.toString()}</td>

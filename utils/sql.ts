@@ -2,11 +2,9 @@ import mysql from 'mysql2'
 
 export const estabilishMySQLConnection = () => {
   return mysql.createConnection({
-    host: 'localhost',
-    port: 3306,
-    user: 'root',
-    password: 'root',
-    database: 'cmf-analytics',
+    user: process.env.NEXT_PUBLIC_MYSQL_USER!,
+    password: process.env.NEXT_PUBLIC_MYSQL_PASSWORD!,
+    database: process.env.NEXT_PUBLIC_MYSQL_DATABASE!,
   })
 }
 
