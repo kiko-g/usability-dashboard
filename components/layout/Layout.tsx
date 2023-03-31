@@ -13,7 +13,7 @@ export default function Layout({ children, location }: Props) {
       <div className="flex min-h-screen w-full bg-ice font-prose font-normal text-gray-800 dark:bg-navy dark:text-white">
         <Sidebar location={location} />
         <main className="flex min-h-screen w-full flex-col">
-          <div className="bg-lime-300">{children}</div>
+          <div>{children}</div>
         </main>
       </div>
     </>

@@ -17,7 +17,7 @@ export default function Sidebar({ location }: Props) {
     },
     {
       name: 'Mouse',
-      href: '/',
+      href: '/mouse',
       icon: CursorArrowRippleIcon,
     },
   ]
@@ -25,7 +25,8 @@ export default function Sidebar({ location }: Props) {
   return (
     <aside className="flex min-w-[20rem] flex-col space-y-4 border-r bg-white p-4">
       <div className="flex items-center justify-start gap-2 px-2">
-        <Image src="/favicon.ico" alt="CMF MES" width={256} height={256} className="h-8 w-8" />
+        {/* <Image src="/logo.svg" alt="CMF MES" width={256} height={256} className="h-8 w-8" /> */}
+        <span className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-700" />
         <h1 className="text-3xl font-medium tracking-tighter">CMF MES UX</h1>
       </div>
       <hr />
@@ -38,7 +39,7 @@ export default function Sidebar({ location }: Props) {
                 href={item.href}
                 className={classNames(
                   isActive ? 'bg-sky-950 text-white hover:opacity-80' : 'hover:bg-sky-100',
-                  `flex cursor-pointer items-center gap-2 rounded px-4 py-2 text-sm transition`
+                  `flex cursor-pointer items-center gap-2 rounded px-3 py-3 text-sm transition`
                 )}
               >
                 <item.icon className="h-5 w-5" />

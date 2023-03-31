@@ -4,9 +4,7 @@ import Layout from '../components/layout/Layout'
 export default function Hub() {
   return (
     <Layout location="Hub">
-      <main className="">
-        <div></div>
-      </main>
+      <main></main>
     </Layout>
   )
 }
