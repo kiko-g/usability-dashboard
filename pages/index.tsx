@@ -4,7 +4,7 @@ import Layout from '../components/layout/Layout'
 export default function Hub() {
   return (
     <Layout location="Hub">
-      <main className="px-8 py-8">
+      <main>
         <div className="flex flex-col justify-center gap-2">
           <h2 className="text-4xl font-bold tracking-tight sm:text-5xl">Dashboard Main Hub</h2>
           <p className="max-w-4xl grow text-lg font-normal">

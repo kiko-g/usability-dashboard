@@ -15,7 +15,7 @@ export default function Layout({ children, location }: Props) {
         <Sidebar location={location} />
         <main className="flex min-h-screen w-full flex-col overflow-x-hidden overflow-y-scroll">
           <MobileNav title={title} location={location} />
-          <div className="px-6 py-4">{children}</div>
+          <div className="px-6 py-4 md:px-8 md:py-8">{children}</div>
         </main>
       </div>
     </>
