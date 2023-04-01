@@ -1,6 +1,7 @@
 import DarkModeSwitch from './DarkModeSwitch'
-import Sidebar from './Sidebar'
 import Layout from './Layout'
+import MobileNav from './MobileNav'
 import Seo from './Seo'
+import Sidebar from './Sidebar'
 
-export { DarkModeSwitch, Sidebar, Layout, Seo }
+export { DarkModeSwitch, Layout, MobileNav, Seo, Sidebar }

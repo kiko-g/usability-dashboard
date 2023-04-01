@@ -28,8 +28,8 @@ export default function MouseTable({}: Props) {
   if (error) return <NotFound />
 
   return (
-    <table className="mt-2 border border-black bg-lightest dark:border-transparent">
-      <tr className="w-min border-b border-black bg-blue-600 text-left text-white shadow dark:border-white dark:bg-orange-500">
+    <table className="mt-2 border border-black bg-lightest dark:border-white dark:bg-navy">
+      <tr className="w-min border-b border-black bg-blue-600 text-left text-white shadow dark:border-white dark:bg-sky-500/50">
         <th className="px-4 py-3">X</th>
         <th className="px-4 py-3">Y</th>
         <th className="px-4 py-3">Date</th>
