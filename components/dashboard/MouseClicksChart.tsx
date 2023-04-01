@@ -46,5 +46,5 @@ export default function MouseClicksChart({ mouseData }: Props) {
     },
   }
 
-  return <Plot data={plotData} layout={layout} className="h-full w-full bg-red-400" />
+  return <Plot data={plotData} layout={layout} className="h-full w-full" />
 }

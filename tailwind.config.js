@@ -15,7 +15,7 @@ module.exports = {
         light: '#f2f4f7',
         lighter: '#f7f7f7',
         lightest: '#ffffff',
-        primary: '#10547f',
+        primary: '#1a84b8',
         secondary: '#c084fc',
         twitch: '#6441a5',
         twitter: '#1da1f2',

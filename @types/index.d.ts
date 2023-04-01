@@ -9,3 +9,9 @@ export type MouseClicksAPI = {
   y: number
   date: Date
 }
+
+export type VizType = 'table' | 'chart' | 'heatmap'
+export type VizTypeFilter = {
+  name: string
+  value: VizType
+}

@@ -1,5 +1,5 @@
 import React from 'react'
-import { MouseClicksAPI } from '../@types'
+import type { MouseClicksAPI, VizTypeFilter } from '../@types'
 import { Loading, NotFound } from './utils'
 import {
   MouseClicksChart,
@@ -9,19 +9,13 @@ import {
   SelectMouseClicksType,
 } from './dashboard'
 
-type VizType = 'table' | 'chart' | 'heatmap'
-type VizTypeFilter = {
-  name: string
-  value: VizType
-}
-
 type Props = {}
 
 export default function MouseClicksViz({}: Props) {
   const [error, setError] = React.useState<boolean>(false)
   const [loading, setLoading] = React.useState<boolean>(true)
   const [mouseData, setMouseData] = React.useState<MouseClicksAPI[]>([])
-  const [vizType, setVizType] = React.useState<VizTypeFilter>({ name: 'Table', value: 'table' })
+  const [vizType, setVizType] = React.useState<VizTypeFilter>({ name: 'Heatmap', value: 'heatmap' })
 
   const stats = React.useMemo(() => {
     const avgX = mouseData.reduce((acc, curr) => acc + curr.x, 0) / mouseData.length

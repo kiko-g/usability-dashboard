@@ -1,13 +1,8 @@
 import React, { Dispatch, Fragment, SetStateAction } from 'react'
+import type { VizTypeFilter } from '../../@types'
 import { Listbox, Transition } from '@headlessui/react'
 import { ChevronUpDownIcon } from '@heroicons/react/24/outline'
 import { CheckCircleIcon } from '@heroicons/react/24/solid'
-
-type VizType = 'table' | 'chart' | 'heatmap'
-type VizTypeFilter = {
-  name: string
-  value: VizType
-}
 
 type Props = {
   pickedHook: [VizTypeFilter, Dispatch<SetStateAction<VizTypeFilter>>]
@@ -27,7 +22,7 @@ export default function SelectMouseClicksType({ pickedHook }: Props) {
       <div className="relative z-50 w-full min-w-full md:w-auto md:min-w-[10rem]">
         <Listbox.Button
           as="button"
-          className="inline-flex w-full items-center justify-center gap-x-1 rounded border border-primary bg-primary/50 py-2 pl-3 pr-2 text-center text-sm font-medium tracking-tight text-white transition hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50 dark:border-secondary dark:bg-secondary/50 lg:px-2 lg:py-1.5"
+          className="inline-flex w-full items-center justify-center gap-x-1 rounded border border-primary bg-primary/80 py-2 pl-3 pr-2 text-center text-sm font-medium tracking-tight text-white transition hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50 dark:border-secondary dark:bg-secondary/50 lg:px-2 lg:py-1.5"
         >
           <span className="block truncate text-sm font-normal">{picked.name}</span>
           <ChevronUpDownIcon className="h-5 w-5" aria-hidden="true" />
