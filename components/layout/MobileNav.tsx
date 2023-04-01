@@ -1,9 +1,9 @@
-import { Disclosure } from '@headlessui/react'
-import { HomeIcon, CursorArrowRippleIcon, XMarkIcon, Bars3Icon } from '@heroicons/react/24/outline'
-import Link from 'next/link'
 import React from 'react'
-import DarkModeSwitch from './DarkModeSwitch'
+import Link from 'next/link'
 import Image from 'next/image'
+import { Disclosure } from '@headlessui/react'
+import { DarkModeSwitch } from '.'
+import { HomeIcon, CursorArrowRippleIcon, XMarkIcon, Bars3Icon } from '@heroicons/react/24/outline'
 
 type Props = {
   title: string
@@ -53,7 +53,7 @@ export default function MobileNav({ title, location }: Props) {
               >
                 {open ? null : (
                   <Link href="/" className="flex items-center gap-x-2">
-                    <div className="h-7 w-7 rounded-full bg-gradient-to-br from-teal-500 to-teal-600 shadow dark:bg-gradient-to-br dark:from-blue-500 dark:to-blue-600"></div>
+                    <div className="h-6 w-6 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 shadow dark:bg-gradient-to-br dark:from-violet-400 dark:to-purple-400"></div>
                     <span className="whitespace-nowrap font-bold tracking-tight">{title}</span>
                   </Link>
                 )}
@@ -63,12 +63,12 @@ export default function MobileNav({ title, location }: Props) {
                     <span className="sr-only">Open nav menu</span>
                     {open ? (
                       <XMarkIcon
-                        className="ease block h-7 w-7 transition duration-200 group-hover:text-rose-600 dark:group-hover:text-rose-500"
+                        className="ease block h-6 w-6 transition duration-200 group-hover:text-rose-600 dark:group-hover:text-rose-500"
                         aria-hidden="true"
                       />
                     ) : (
                       <Bars3Icon
-                        className="ease block h-7 w-7 transition duration-200 group-hover:text-blue-600 dark:group-hover:text-sky-500"
+                        className="ease block h-6 w-6 transition duration-200 group-hover:text-primary dark:group-hover:text-secondary"
                         aria-hidden="true"
                       />
                     )}
@@ -83,7 +83,7 @@ export default function MobileNav({ title, location }: Props) {
                     type="button"
                     className={`flex h-auto items-center justify-center lowercase transition ${
                       location === link.name
-                        ? 'font-bold text-blue-600 dark:text-white'
+                        ? 'font-bold text-primary dark:text-white'
                         : 'font-normal text-gray-800/50 hover:text-gray-800 dark:text-white/40 dark:hover:text-white'
                     }`}
                   >

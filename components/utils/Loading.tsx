@@ -4,12 +4,12 @@ type Props = {}
 
 export default function Loading({}: Props) {
   return (
-    <div className="flex h-72 items-center justify-center rounded border border-teal-600/50 bg-teal-600/10 dark:border-blue-600/50 dark:bg-blue-600/10">
+    <div className="flex h-72 items-center justify-center rounded border border-primary/50 bg-primary/10 dark:border-secondary/50 dark:bg-secondary/10">
       <svg
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
-        className="-ml-1 mr-3 h-12 w-12 animate-spin text-teal-600 dark:text-blue-600"
+        className="-ml-1 mr-3 h-12 w-12 animate-spin text-primary dark:text-secondary"
       >
         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
         <path
