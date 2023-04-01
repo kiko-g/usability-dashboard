@@ -1,7 +1,7 @@
 import React from 'react'
 import { MouseClicksAPI } from '../@types'
 import { Loading, NotFound } from './utils'
-import { MouseClicksTable, SelectMouseClicksType } from './dashboard'
+import { MouseClicksChart, MouseClicksHeatmap, MouseClicksTable, SelectMouseClicksType } from './dashboard'
 
 type VizType = 'table' | 'chart' | 'heatmap'
 type VizTypeFilter = {
@@ -40,6 +40,8 @@ export default function MouseClicksViz({}: Props) {
         <SelectMouseClicksType pickedHook={[vizType, setVizType]} />
       </div>
       {vizType.value === 'table' ? <MouseClicksTable mouseData={mouseData} /> : null}
+      {vizType.value === 'chart' ? <MouseClicksChart mouseData={mouseData} /> : null}
+      {vizType.value === 'heatmap' ? <MouseClicksHeatmap mouseData={mouseData} /> : null}
     </div>
   )
 }

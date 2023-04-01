@@ -1,8 +1,11 @@
 import React from 'react'
+import { MouseClicksAPI } from '../../@types'
 
-type Props = {}
+interface Props {
+  mouseData: MouseClicksAPI[]
+}
 
-export default function MouseClicksHeatmap({}: Props) {
+export default function MouseClicksHeatmap({ mouseData }: Props) {
   return (
     <div>
       <div></div>

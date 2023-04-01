@@ -4,7 +4,7 @@ type Props = {}
 
 export default function Loading({}: Props) {
   return (
-    <div className="flex h-72 items-center justify-center rounded border border-primary/50 bg-primary/10 dark:border-secondary/50 dark:bg-secondary/10">
+    <div className="flex h-full min-h-[20rem] items-center justify-center rounded border border-primary/50 bg-primary/10 dark:border-secondary/50 dark:bg-secondary/10">
       <svg
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
