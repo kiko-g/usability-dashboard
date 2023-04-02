@@ -7,32 +7,32 @@ import {
   MouseClicksHeatmap,
   MouseClicksTable,
   SelectMouseClicksType,
-} from '../dashboard'
+} from '../dashboard/mouse'
 
 type Props = {}
 
 export default function MouseClicksViz({}: Props) {
   const [error, setError] = React.useState<boolean>(false)
-  const [mouseData, setMouseData] = React.useState<MouseClicksAPI[]>([])
+  const [data, setData] = React.useState<MouseClicksAPI[]>([])
   const [vizType, setVizType] = React.useState<MouseClickVizTypeFilter>({ name: 'Heatmap', value: 'heatmap' })
 
-  const loading = React.useMemo<boolean>(() => mouseData.length === 0, [mouseData])
+  const loading = React.useMemo<boolean>(() => data.length === 0, [data])
   const stats = React.useMemo(() => {
-    const avgX = mouseData.reduce((acc, curr) => acc + curr.x, 0) / mouseData.length
-    const avgY = mouseData.reduce((acc, curr) => acc + curr.y, 0) / mouseData.length
+    const avgX = data.reduce((acc, curr) => acc + curr.x, 0) / data.length
+    const avgY = data.reduce((acc, curr) => acc + curr.y, 0) / data.length
 
     return {
       'Average X': avgX.toFixed(2),
       'Average Y': avgY.toFixed(2),
-      'Total Clicks': mouseData.length,
+      'Total Clicks': data.length,
     }
-  }, [mouseData])
+  }, [data])
 
   React.useEffect(() => {
     fetch('/api/matomo/mouse')
       .then((res) => res.json())
       .then((data: MouseClicksAPI[]) => {
-        setMouseData(data)
+        setData(data)
       })
       .catch((err) => {
         setError(true)
@@ -50,9 +50,9 @@ export default function MouseClicksViz({}: Props) {
         <SelectMouseClicksType pickedHook={[vizType, setVizType]} />
       </div>
 
-      {vizType.value === 'table' ? <MouseClicksTable mouseData={mouseData} /> : null}
-      {vizType.value === 'chart' ? <MouseClicksChart mouseData={mouseData} /> : null}
-      {vizType.value === 'heatmap' ? <MouseClicksHeatmap mouseData={mouseData} /> : null}
+      {vizType.value === 'table' ? <MouseClicksTable mouseData={data} /> : null}
+      {vizType.value === 'chart' ? <MouseClicksChart mouseData={data} /> : null}
+      {vizType.value === 'heatmap' ? <MouseClicksHeatmap mouseData={data} /> : null}
     </section>
   )
 }

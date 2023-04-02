@@ -1,6 +1,6 @@
 import React from 'react'
 import classNames from 'classnames'
-import { MouseClicksAPI } from '../../@types'
+import { MouseClicksAPI } from '../../../@types'
 import { ArrowDownCircleIcon, PlusCircleIcon } from '@heroicons/react/24/outline'
 
 type Props = {
