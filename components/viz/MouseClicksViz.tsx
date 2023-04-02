@@ -13,10 +13,10 @@ type Props = {}
 
 export default function MouseClicksViz({}: Props) {
   const [error, setError] = React.useState<boolean>(false)
-  const [loading, setLoading] = React.useState<boolean>(true)
   const [mouseData, setMouseData] = React.useState<MouseClicksAPI[]>([])
   const [vizType, setVizType] = React.useState<MouseClickVizTypeFilter>({ name: 'Heatmap', value: 'heatmap' })
 
+  const loading = React.useMemo<boolean>(() => mouseData.length === 0, [mouseData])
   const stats = React.useMemo(() => {
     const avgX = mouseData.reduce((acc, curr) => acc + curr.x, 0) / mouseData.length
     const avgY = mouseData.reduce((acc, curr) => acc + curr.y, 0) / mouseData.length
@@ -32,12 +32,10 @@ export default function MouseClicksViz({}: Props) {
     fetch('/api/matomo/mouse')
       .then((res) => res.json())
       .then((data: MouseClicksAPI[]) => {
-        setLoading(false)
         setMouseData(data)
       })
       .catch((err) => {
         setError(true)
-        setLoading(false)
         console.error(err)
       })
   }, [])

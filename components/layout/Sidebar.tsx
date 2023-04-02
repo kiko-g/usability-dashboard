@@ -1,6 +1,5 @@
 import React from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import classNames from 'classnames'
 import { DarkModeSwitch } from './'
 import { navigations, socials } from '../../utils'
@@ -13,7 +12,6 @@ export default function Sidebar({ location }: Props) {
   return (
     <aside className="hidden h-screen min-w-full flex-col space-y-4 bg-white p-5 dark:bg-darkest md:flex md:min-w-[20rem]">
       <div className="flex items-center justify-start gap-2 px-2">
-        {/* <Image src="/logo.svg" alt="CMF MES" width={256} height={256} className="h-8 w-8" /> */}
         <span className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 dark:from-violet-400 dark:to-purple-400" />
         <h1 className="text-3xl font-medium tracking-tighter">CMF MES UX</h1>
       </div>
@@ -29,7 +27,7 @@ export default function Sidebar({ location }: Props) {
                   isActive
                     ? 'bg-primary text-white hover:opacity-80 dark:bg-secondary/80'
                     : 'hover:bg-primary/10 dark:hover:bg-secondary/30',
-                  `flex cursor-pointer items-center gap-2 rounded px-3 py-3 text-sm transition-all`
+                  `flex cursor-pointer items-center gap-2 rounded px-3 py-3 text-sm transition ease-in-out`
                 )}
               >
                 <item.icon className="h-5 w-5" />

@@ -23,7 +23,7 @@ export default function MouseClicksChart({ mouseData }: Props) {
       mode: 'markers' as const,
       type: 'scatter' as const,
       marker: {
-        color: '#10547f',
+        color: '#2563eb',
         size: 10,
       },
     },
