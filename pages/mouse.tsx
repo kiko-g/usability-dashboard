@@ -1,6 +1,6 @@
 import React from 'react'
-import Layout from '../components/layout/Layout'
-import MouseClicksViz from '../components/MouseClicksViz'
+import { Layout } from '../components/layout'
+import { MouseClicksViz } from '../components/viz'
 
 export default function Mouse() {
   return (
@@ -9,7 +9,7 @@ export default function Mouse() {
         <article className="flex flex-col justify-center gap-1">
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Mouse clicks</h1>
           <p className="grow text-lg font-normal">
-            Here&apos;s a table of all the mouse clicks I&apos;ve made on my website.
+            Delve into how your users are behaving and inspect the data collected from the user mouse clicks.
           </p>
           <MouseClicksViz />
         </article>

@@ -16,7 +16,7 @@ export default function DarkModeSwitch() {
         >
           {enabled ? (
             <MoonIcon
-              className="ease block h-6 w-6 text-blue-400 transition duration-150 hover:text-blue-300 md:h-6 md:w-6"
+              className="ease block h-6 w-6 text-blue-400 transition duration-150 hover:text-blue-500 md:h-6 md:w-6"
               aria-hidden="true"
             />
           ) : (

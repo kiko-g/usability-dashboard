@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import type { MouseClicksAPI, MouseClicksSQL } from '../../../@types'
 import { estabilishMySQLConnection, clicksQuery } from '../../../utils/sql'
 
-const getMouseClicks = (req: NextApiRequest, res: NextApiResponse) => {
+export default function getMouseClicks(req: NextApiRequest, res: NextApiResponse) {
   const connection = estabilishMySQLConnection()
   const query = clicksQuery
 
@@ -25,5 +25,3 @@ const getMouseClicks = (req: NextApiRequest, res: NextApiResponse) => {
     res.status(405).end(`Method ${req.method} Not Allowed`)
   }
 }
-
-export default getMouseClicks

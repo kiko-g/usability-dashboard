@@ -22,9 +22,9 @@ export default function MouseClicksHeatmap({ mouseData }: Props) {
       y: y,
       type: 'histogram2d' as const,
       colorscale: [
-        [0, '#ffffff'] as [number, string],
-        [0.5, 'rgba(128, 204, 224, 1)'] as [number, string],
-        [1, '#1a84b8'] as [number, string],
+        [0 / 2, '#eff6ff'] as [number, string],
+        [1 / 2, '#60a5fa'] as [number, string],
+        [2 / 2, '#1d4ed8'] as [number, string],
       ],
     },
   ]
