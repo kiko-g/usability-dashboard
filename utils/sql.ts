@@ -34,6 +34,7 @@ ORDER BY
 export const pageVisitsQuery = `
 SELECT
   matomo_log_visit.idvisit AS id,
+  GROUP_CONCAT(DISTINCT matomo_log_action.name SEPARATOR ', ') AS visitedPages,
   matomo_log_visit.visit_total_time AS duration,
   matomo_log_visit.visit_first_action_time AS startTime,
   matomo_log_visit.visit_total_events AS totalEvents,
@@ -59,8 +60,12 @@ SELECT
   END AS deviceType
 FROM
   matomo_log_visit
+JOIN matomo_log_link_visit_action ON matomo_log_visit.idvisit = matomo_log_link_visit_action.idvisit
+JOIN matomo_log_action ON matomo_log_link_visit_action.idaction_name = matomo_log_action.idaction
 WHERE
-  matomo_log_visit.visit_total_time > 0
+  matomo_log_action.type = 4
+GROUP BY
+  matomo_log_visit.idvisit
 ORDER BY
   matomo_log_visit.visit_first_action_time ASC;
 `

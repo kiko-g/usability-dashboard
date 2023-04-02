@@ -50,7 +50,7 @@ export default function Sidebar({ location }: Props) {
               className={`transition ${social.name}`}
             >
               <svg
-                className="h-5 w-5 md:h-6 md:w-6"
+                className="h-5 w-5 md:h-5 md:w-5"
                 fill="currentColor"
                 viewBox={social.viewBox ? social.viewBox : '0 0 24 24'}
                 aria-hidden="true"

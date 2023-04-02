@@ -20,6 +20,7 @@ export default function PageVisitsTable({ visitsData }: Props) {
             <th title="Total Events">Evt</th>
             <th title="Total Actions">Act</th>
             <th title="Total Interactions">Itx</th>
+            <th title="Visited Pages">Pages</th>
             <th title="Start Datetime">Start</th>
             <th title="Duration (in seconds)">Duration</th>
             <th title="Operating System">OS</th>
@@ -30,6 +31,7 @@ export default function PageVisitsTable({ visitsData }: Props) {
           {shownData.map((item, itemIdx) => {
             const dateString = new Date(item.startTime).toLocaleDateString('pt-PT')
             const timeString = new Date(item.startTime).toLocaleTimeString('pt-PT')
+
             return (
               <tr
                 key={`mouse-click-${itemIdx}`}
@@ -41,6 +43,15 @@ export default function PageVisitsTable({ visitsData }: Props) {
                 <td>{item.totalEvents}</td>
                 <td>{item.totalActions}</td>
                 <td>{item.totalInteractions}</td>
+                <td>
+                  <div className="flex flex-col space-y-1">
+                    {item.pages.map((page, pageIdx) => (
+                      <span key={`page-${pageIdx}`} className="text-xs leading-tight">
+                        {pageIdx + 1}. {page}
+                      </span>
+                    ))}
+                  </div>
+                </td>
                 <td>
                   <div className="flex flex-col">
                     <span>{dateString}</span>

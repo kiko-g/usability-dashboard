@@ -1,13 +1,14 @@
 import React from 'react'
-import type { PageViewsAPI } from '../../@types'
+import type { PageViewsAPI, PageVisitsVizTypeFilter } from '../../@types'
 import { Loading, NotFound } from '../utils'
-import { PageVisitsTable } from '../dashboard/visits'
+import { PageVisitsTable, SelectPageVisitsType } from '../dashboard/visits'
 
 type Props = {}
 
 export default function PageVisitsViz({}: Props) {
   const [error, setError] = React.useState<boolean>(false)
   const [data, setData] = React.useState<PageViewsAPI[]>([])
+  const [vizType, setVizType] = React.useState<PageVisitsVizTypeFilter>({ name: 'Table', value: 'table' })
 
   const loading = React.useMemo<boolean>(() => data.length === 0, [data])
 
@@ -28,7 +29,11 @@ export default function PageVisitsViz({}: Props) {
 
   return (
     <section className="mt-2 flex flex-col space-y-4">
-      <PageVisitsTable visitsData={data} />
+      <div className="flex flex-col items-end justify-end gap-2 md:flex-row">
+        <SelectPageVisitsType pickedHook={[vizType, setVizType]} />
+      </div>
+
+      {vizType.value === 'table' && <PageVisitsTable visitsData={data} />}
     </section>
   )
 }

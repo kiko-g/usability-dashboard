@@ -15,6 +15,7 @@ export type MouseClicksAPI = {
 export type PageViewsSQL = {
   id: number
   duration: number
+  visitedPages: string
   startTime: string
   totalEvents: number
   totalActions: number
@@ -29,6 +30,7 @@ export type PageViewsSQL = {
 export type PageViewsAPI = {
   id: number
   duration: number
+  pages: string[]
   startTime: Date
   totalEvents: number
   totalActions: number
@@ -48,4 +50,11 @@ export type MouseClickVizType = 'table' | 'chart' | 'heatmap'
 export type MouseClickVizTypeFilter = {
   name: string
   value: MouseClickVizType
+}
+
+// Page Visits Viz Types
+export type PageVisitsVizType = 'table' | 'pages' | 'browsers'
+export type PageVisitsVizTypeFilter = {
+  name: string
+  value: PageVisitsVizType
 }
