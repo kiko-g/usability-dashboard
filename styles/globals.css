@@ -26,3 +26,11 @@ h6 {
 code {
   @apply rounded-md bg-dark px-1 py-0.5 font-code text-pink-600;
 }
+
+th {
+  @apply border-b border-r border-black px-1 py-2 text-center font-normal dark:border-white md:px-3 md:py-2;
+}
+
+td {
+  @apply border-b border-r border-black px-1 py-1 text-center dark:border-white md:px-3 md:py-1;
+}

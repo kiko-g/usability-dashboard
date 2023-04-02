@@ -16,10 +16,10 @@ export default function MouseClicksTable({ mouseData }: Props) {
     <>
       <table className="mt-2 w-full table-auto border border-black bg-lightest dark:border-white dark:bg-navy md:table-fixed">
         <tbody>
-          <tr className="border-b border-black bg-primary text-left text-sm text-white shadow dark:border-white dark:bg-secondary/80 md:text-base">
-            <th className="border-b border-r border-black px-3 py-2 text-center font-normal dark:border-white">X</th>
-            <th className="border-b border-r border-black px-3 py-2 text-center font-normal dark:border-white">Y</th>
-            <th className="border-b border-r border-black px-3 py-2 text-center font-normal dark:border-white">Date</th>
+          <tr className="border-b border-black bg-primary text-left text-xs text-white shadow dark:border-white dark:bg-secondary/80 md:text-sm">
+            <th title="Mouse Click X Coordinate">X</th>
+            <th title="Mouse Click X Coordinate">Y</th>
+            <th title="Mouse Click Datetime">Date</th>
           </tr>
           {shownData.map((item, itemIdx) => {
             const dateString = new Date(item.date).toLocaleDateString('pt-PT')
@@ -28,7 +28,7 @@ export default function MouseClicksTable({ mouseData }: Props) {
               <tr
                 key={`mouse-click-${itemIdx}`}
                 className={classNames(
-                  'text-xs md:text-sm',
+                  'text-xs tracking-tighter md:text-sm md:tracking-tight',
                   itemIdx % 2 === 0 ? 'bg-lightest dark:bg-darkest' : 'bg-light dark:bg-dark'
                 )}
               >

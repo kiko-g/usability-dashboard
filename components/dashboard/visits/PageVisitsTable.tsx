@@ -16,61 +16,16 @@ export default function PageVisitsTable({ visitsData }: Props) {
     <>
       <table className="mt-2 w-full table-auto border border-black bg-lightest dark:border-white dark:bg-navy md:table-fixed">
         <tbody>
-          <tr className="border-b border-black bg-primary text-left text-sm text-white shadow dark:border-white dark:bg-secondary/80 md:text-base">
-            <th
-              title="Total Events"
-              className="border-b border-r border-black px-3 py-2 text-center font-normal dark:border-white"
-            >
-              Evt
-            </th>
-            <th
-              title="Total Actions"
-              className="border-b border-r border-black px-3 py-2 text-center font-normal dark:border-white"
-            >
-              Act
-            </th>
-            <th
-              title="Total Interactions"
-              className="border-b border-r border-black px-3 py-2 text-center font-normal dark:border-white"
-            >
-              Itx
-            </th>
-            <th
-              title="Start Datetime"
-              className="border-b border-r border-black px-3 py-2 text-center font-normal dark:border-white"
-            >
-              Start
-            </th>
-            <th
-              title="Duration (in seconds)"
-              className="border-b border-r border-black px-3 py-2 text-center font-normal dark:border-white"
-            >
-              Duration
-            </th>
-            <th
-              title="Operating System"
-              className="border-b border-r border-black px-3 py-2 text-center font-normal dark:border-white"
-            >
-              OS
-            </th>
-            <th
-              title="Browser Name"
-              className="border-b border-r border-black px-3 py-2 text-center font-normal dark:border-white"
-            >
-              Browser
-            </th>
-            <th
-              title="Screen Size"
-              className="border-b border-r border-black px-3 py-2 text-center font-normal dark:border-white"
-            >
-              Screen
-            </th>
-            <th
-              title="Device Type"
-              className="border-b border-r border-black px-3 py-2 text-center font-normal dark:border-white"
-            >
-              Device
-            </th>
+          <tr className="border-b border-black bg-primary text-left text-xs text-white shadow dark:border-white dark:bg-secondary/80 md:text-sm">
+            <th title="Total Events">Evt</th>
+            <th title="Total Actions">Act</th>
+            <th title="Total Interactions">Itx</th>
+            <th title="Start Datetime">Start</th>
+            <th title="Duration (in seconds)">Duration</th>
+            <th title="Operating System">OS</th>
+            <th title="Browser Name">Browser</th>
+            <th title="Screen Size">Screen</th>
+            <th title="Device Type">Device</th>
           </tr>
           {shownData.map((item, itemIdx) => {
             const dateString = new Date(item.startTime).toLocaleDateString('pt-PT')
@@ -83,36 +38,22 @@ export default function PageVisitsTable({ visitsData }: Props) {
                   itemIdx % 2 === 0 ? 'bg-lightest dark:bg-darkest' : 'bg-light dark:bg-dark'
                 )}
               >
-                <td className="border-b border-r border-black px-3 py-1 text-center dark:border-white">
-                  {item.totalEvents}
-                </td>
-                <td className="border-b border-r border-black px-3 py-1 text-center dark:border-white">
-                  {item.totalActions}
-                </td>
-                <td className="border-b border-r border-black px-3 py-1 text-center dark:border-white">
-                  {item.totalInteractions}
-                </td>
-                <td className="border-b border-r border-black px-3 py-1 text-center dark:border-white">
+                <td>{item.totalEvents}</td>
+                <td>{item.totalActions}</td>
+                <td>{item.totalInteractions}</td>
+                <td>
                   <div className="flex flex-col">
                     <span>{dateString}</span>
                     <span>{timeString}</span>
                   </div>
                 </td>
-                <td className="border-b border-r border-black px-3 py-1 text-center dark:border-white">
-                  {item.duration}
-                </td>
-                <td className="border-b border-r border-black px-3 py-1 text-center dark:border-white">
-                  {item.operatingSystem}
-                </td>
-                <td className="border-b border-r border-black px-3 py-1 text-center dark:border-white">
-                  {item.browserName}
-                </td>
-                <td className="border-b border-r border-black px-3 py-1 text-center dark:border-white">
+                <td>{item.duration}s</td>
+                <td>{item.operatingSystem}</td>
+                <td>{item.browserName}</td>
+                <td>
                   {item.deviceScreenSize.width}x{item.deviceScreenSize.height}
                 </td>
-                <td className="border-b border-r border-black px-3 py-1 text-center dark:border-white">
-                  {item.deviceType}
-                </td>
+                <td>{item.deviceType}</td>
               </tr>
             )
           })}
