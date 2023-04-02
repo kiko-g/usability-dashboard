@@ -1,15 +1,16 @@
 import React from 'react'
 import classNames from 'classnames'
 import { MouseClicksAPI } from '../../../@types'
-import { ArrowDownCircleIcon, PlusCircleIcon } from '@heroicons/react/24/outline'
+import { TableInteractButtons } from '../../utils'
 
 type Props = {
   mouseData: MouseClicksAPI[]
 }
 
 export default function MouseClicksTable({ mouseData }: Props) {
-  const [rowCount, setRowCount] = React.useState(10)
-  const shownData = React.useMemo(() => mouseData.slice(0, rowCount), [mouseData, rowCount])
+  const initialRows = Math.min(10, mouseData.length)
+  const [rows, setRows] = React.useState(initialRows)
+  const shownData = React.useMemo(() => mouseData.slice(0, rows), [mouseData, rows])
 
   return (
     <>
@@ -37,27 +38,7 @@ export default function MouseClicksTable({ mouseData }: Props) {
           ))}
         </tbody>
       </table>
-      {rowCount < mouseData.length && (
-        <div className="mt-2 flex flex-row justify-center gap-3">
-          <button
-            className="flex w-full items-center justify-center gap-1.5 rounded border border-primary bg-primary/50 px-4 py-2 text-sm font-normal text-white shadow-md transition hover:bg-primary hover:bg-primary/80 dark:border-secondary dark:bg-secondary/50 dark:hover:bg-secondary"
-            onClick={() => setRowCount(rowCount + Math.floor(0.1 * mouseData.length))}
-          >
-            <span>
-              Show more ({rowCount}/{mouseData.length})
-            </span>
-            <PlusCircleIcon className="h-5 w-5" />
-          </button>
-
-          <button
-            className="flex w-full items-center justify-center gap-1.5 rounded border border-primary bg-primary/50 px-4 py-2 text-sm font-normal text-white shadow-md transition hover:bg-primary hover:bg-primary/80 dark:border-secondary dark:bg-secondary/50 dark:hover:bg-secondary"
-            onClick={() => setRowCount(mouseData.length)}
-          >
-            <span>Show all {mouseData.length} rows</span>
-            <ArrowDownCircleIcon className="h-5 w-5" />
-          </button>
-        </div>
-      )}
+      <TableInteractButtons data={mouseData} rowsHook={[rows, setRows]} initialRows={initialRows} />
     </>
   )
 }
