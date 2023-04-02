@@ -21,21 +21,28 @@ export default function MouseClicksTable({ mouseData }: Props) {
             <th className="border-b border-r border-black px-3 py-2 text-center font-normal dark:border-white">Y</th>
             <th className="border-b border-r border-black px-3 py-2 text-center font-normal dark:border-white">Date</th>
           </tr>
-          {shownData.map((mouseClick, mouseClickIdx) => (
-            <tr
-              key={`mouse-click-${mouseClickIdx}`}
-              className={classNames(
-                'text-xs md:text-sm',
-                mouseClickIdx % 2 === 0 ? 'bg-lightest dark:bg-darkest' : 'bg-light dark:bg-dark'
-              )}
-            >
-              <td className="border-b border-r border-black px-3 py-1 text-center dark:border-white">{mouseClick.x}</td>
-              <td className="border-b border-r border-black px-3 py-1 text-center dark:border-white">{mouseClick.y}</td>
-              <td className="border-b border-r border-black px-3 py-1 text-center dark:border-white">
-                {mouseClick.date.toLocaleString()}
-              </td>
-            </tr>
-          ))}
+          {shownData.map((item, itemIdx) => {
+            const dateString = new Date(item.date).toLocaleDateString('pt-PT')
+            const timeString = new Date(item.date).toLocaleTimeString('pt-PT')
+            return (
+              <tr
+                key={`mouse-click-${itemIdx}`}
+                className={classNames(
+                  'text-xs md:text-sm',
+                  itemIdx % 2 === 0 ? 'bg-lightest dark:bg-darkest' : 'bg-light dark:bg-dark'
+                )}
+              >
+                <td className="border-b border-r border-black px-3 py-1 text-center dark:border-white">{item.x}</td>
+                <td className="border-b border-r border-black px-3 py-1 text-center dark:border-white">{item.y}</td>
+                <td className="border-b border-r border-black px-3 py-1 text-center dark:border-white">
+                  <div className="flex flex-col">
+                    <span>{dateString}</span>
+                    <span>{timeString}</span>
+                  </div>
+                </td>
+              </tr>
+            )
+          })}
         </tbody>
       </table>
       <TableInteractButtons data={mouseData} rowsHook={[rows, setRows]} initialRows={initialRows} />
