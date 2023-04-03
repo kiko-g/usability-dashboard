@@ -49,11 +49,11 @@ export default function PageVisitsTable({ visitsData }: Props) {
                     </div>
                   </td>
                   <td>{item.duration}s</td>
-                  <td>
-                    <div className="flex flex-col space-y-1">
-                      {item.pages.map((page, pageIdx) => (
-                        <span key={`page-${pageIdx}`} className="text-xs leading-tight">
-                          {pageIdx + 1}. {page}
+                  <td className="w-">
+                    <div className="flex flex-col divide-y">
+                      {item.visitedUrls.map((page, pageIdx) => (
+                        <span key={`page-${pageIdx}`} className="break-all py-1 text-xs leading-tight">
+                          {page}
                         </span>
                       ))}
                     </div>

@@ -14,8 +14,10 @@ export default function getPageViews(req: NextApiRequest, res: NextApiResponse) 
         const sqlResults = results as PageViewsSQL[]
         const apiResults: PageViewsAPI[] = sqlResults.map((result) => ({
           id: result.id,
+          visitor: result.visitor,
           duration: result.duration,
-          pages: result.visitedPages.split(',') as string[],
+          pageTitles: result.pageTitles.split(',') as string[],
+          visitedUrls: result.pageUrls.split(', ') as string[],
           startTime: new Date(result.startTime),
           totalEvents: result.totalEvents,
           totalActions: result.totalActions,

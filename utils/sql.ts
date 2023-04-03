@@ -34,7 +34,9 @@ ORDER BY
 export const pageVisitsQuery = `
 SELECT
   matomo_log_visit.idvisit AS id,
-  GROUP_CONCAT(DISTINCT matomo_log_action.name SEPARATOR ', ') AS visitedPages,
+  matomo_log_visit.idvisitor AS visitorId,
+  GROUP_CONCAT(DISTINCT matomo_log_action.name SEPARATOR ', ') AS pageTitles,
+  GROUP_CONCAT(DISTINCT matomo_log_action_url.name SEPARATOR ', ') AS pageUrls,
   matomo_log_visit.visit_total_time AS duration,
   matomo_log_visit.visit_first_action_time AS startTime,
   matomo_log_visit.visit_total_events AS totalEvents,
@@ -48,10 +50,11 @@ SELECT
     WHEN matomo_log_visit.config_browser_name = 'BR' THEN 'Brave'
     WHEN matomo_log_visit.config_browser_name = 'SA' THEN 'Safari'
     WHEN matomo_log_visit.config_browser_name = 'OP' THEN 'Opera'
-    WHEN matomo_log_visit.config_browser_name = 'IE' THEN 'Internet Explorer'
+    WHEN matomo_log_visit.config_browser_name = 'ED' THEN 'Edge'
+    WHEN matomo_log_visit.config_browser_name = 'IE' THEN 'IE'
     ELSE IFNULL(matomo_log_visit.config_browser_name, matomo_log_visit.config_browser_name)
   END AS browserName,
-  IFNULL(matomo_log_visit.config_device_brand, 'Unknown') AS deviceBrand,
+  IFNULL(matomo_log_visit.config_device_brand, matomo_log_visit.config_device_brand) AS deviceBrand,
   CASE
     WHEN matomo_log_visit.config_device_type = 0 THEN 'Desktop'
     WHEN matomo_log_visit.config_device_type = 1 THEN 'Smartphone'
@@ -64,12 +67,13 @@ SELECT
     WHEN matomo_log_visit.config_device_type = 8 THEN 'Camera'
     WHEN matomo_log_visit.config_device_type = 9 THEN 'Portable Media Player'
     WHEN matomo_log_visit.config_device_type = 10 THEN 'Smart Watch'
-    ELSE 'Unknown'
+    ELSE matomo_log_visit.config_device_type
   END AS deviceType
 FROM
   matomo_log_visit
 JOIN matomo_log_link_visit_action ON matomo_log_visit.idvisit = matomo_log_link_visit_action.idvisit
 JOIN matomo_log_action ON matomo_log_link_visit_action.idaction_name = matomo_log_action.idaction
+JOIN matomo_log_action AS matomo_log_action_url ON matomo_log_link_visit_action.idaction_url = matomo_log_action_url.idaction
 WHERE
   matomo_log_action.type = 4
 GROUP BY

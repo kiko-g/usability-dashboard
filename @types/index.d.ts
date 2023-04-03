@@ -14,8 +14,10 @@ export type MouseClicksAPI = {
 // Page Views
 export type PageViewsSQL = {
   id: number
+  visitor: any
   duration: number
-  visitedPages: string
+  pageTitles: string
+  pageUrls: string
   startTime: string
   totalEvents: number
   totalActions: number
@@ -29,8 +31,10 @@ export type PageViewsSQL = {
 
 export type PageViewsAPI = {
   id: number
+  visitor: any // TODO: fix
   duration: number
-  pages: string[]
+  pageTitles: string[]
+  visitedUrls: string[]
   startTime: Date
   totalEvents: number
   totalActions: number
