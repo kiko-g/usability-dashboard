@@ -13,8 +13,8 @@ export default function PageVisitsViz({}: Props) {
   const loading = React.useMemo<boolean>(() => data.length === 0, [data])
 
   // create pages frequencies pie data array
-  const pagesData = React.useMemo<PieData[]>(() => {
-    const pagesFreq = data.map((item) => item.pages).flat()
+  const visitedPagesData = React.useMemo<PieData[]>(() => {
+    const pagesFreq = data.map((item) => item.visitedUrls).flat()
     const pagesCount = pagesFreq.reduce<Record<string, number>>((acc, curr) => {
       acc[curr] = (acc[curr] || 0) + 1
       return acc
@@ -56,7 +56,7 @@ export default function PageVisitsViz({}: Props) {
       </div>
 
       {vizType.value === 'table' && <PageVisitsTable visitsData={data} />}
-      {vizType.value === 'pages' && <PieChart data={pagesData} title="Page Titles Pie Chart" />}
+      {vizType.value === 'urls' && <PieChart data={visitedPagesData} title="Visited URLs Pie Chart" />}
       {vizType.value === 'browsers' && <PieChart data={browserData} title="Browser Usage Pie Chart" />}
     </section>
   )

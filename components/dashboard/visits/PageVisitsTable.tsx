@@ -9,13 +9,14 @@ type Props = {
 
 export default function PageVisitsTable({ visitsData }: Props) {
   const initialRows = Math.min(5, visitsData.length)
+
   const [rows, setRows] = React.useState(initialRows)
-  const shownData = React.useMemo(() => visitsData.slice(0, rows), [visitsData, rows])
+  const slicedData = React.useMemo(() => visitsData.slice(0, rows), [visitsData, rows])
 
   return (
     <>
       <div className="overflow-x-auto">
-        <table className="mt-2 w-full table-auto border border-black bg-lightest dark:border-white dark:bg-navy md:table-fixed">
+        <table className="mt-2 w-full table-auto border border-black bg-lightest dark:border-white dark:bg-navy md:table-auto">
           <tbody>
             <tr className="border-b border-black bg-primary text-left text-xs text-white shadow dark:border-white dark:bg-secondary/80 md:text-sm">
               <th title="Start Datetime">Start</th>
@@ -29,7 +30,7 @@ export default function PageVisitsTable({ visitsData }: Props) {
               <th title="Screen Size">Screen</th>
               <th title="Device Type">Device</th>
             </tr>
-            {shownData.map((item, itemIdx) => {
+            {slicedData.map((item, itemIdx) => {
               const dateString = new Date(item.startTime).toLocaleDateString('pt-PT')
               const timeString = new Date(item.startTime).toLocaleTimeString('pt-PT')
 
@@ -50,9 +51,9 @@ export default function PageVisitsTable({ visitsData }: Props) {
                   </td>
                   <td>{item.duration}s</td>
                   <td className="w-">
-                    <div className="flex flex-col divide-y">
+                    <div className="flex flex-col gap-y-1.5">
                       {item.visitedUrls.map((page, pageIdx) => (
-                        <span key={`page-${pageIdx}`} className="break-all py-1 text-xs leading-tight">
+                        <span key={`page-${pageIdx}`} className="text-xs leading-tight tracking-tighter">
                           {page}
                         </span>
                       ))}

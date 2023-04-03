@@ -48,7 +48,7 @@ SELECT
     WHEN matomo_log_visit.config_browser_name = 'CH' THEN 'Chrome'
     WHEN matomo_log_visit.config_browser_name = 'FF' THEN 'Firefox'
     WHEN matomo_log_visit.config_browser_name = 'BR' THEN 'Brave'
-    WHEN matomo_log_visit.config_browser_name = 'SA' THEN 'Safari'
+    WHEN matomo_log_visit.config_browser_name = 'SF' THEN 'Safari'
     WHEN matomo_log_visit.config_browser_name = 'OP' THEN 'Opera'
     WHEN matomo_log_visit.config_browser_name = 'ED' THEN 'Edge'
     WHEN matomo_log_visit.config_browser_name = 'IE' THEN 'IE'

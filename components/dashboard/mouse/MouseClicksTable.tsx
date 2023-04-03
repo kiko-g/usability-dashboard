@@ -36,7 +36,7 @@ export default function MouseClicksTable({ mouseData }: Props) {
                   <td className="border-b border-r border-black px-3 py-1 text-center dark:border-white">{item.x}</td>
                   <td className="border-b border-r border-black px-3 py-1 text-center dark:border-white">{item.y}</td>
                   <td className="border-b border-r border-black px-3 py-1 text-center dark:border-white">
-                    <div className="flex flex-col">
+                    <div className="flex flex-col text-xs">
                       <span>{dateString}</span>
                       <span>{timeString}</span>
                     </div>
