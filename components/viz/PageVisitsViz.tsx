@@ -34,6 +34,17 @@ export default function PageVisitsViz({}: Props) {
     return Object.entries(frequencies).map(([name, count]) => ({ name, count }))
   }, [data])
 
+  // create browsers frequencies pie data array
+  const deviceData = React.useMemo<PieData[]>(() => {
+    const frequencies = data.reduce<Record<string, number>>((acc, curr) => {
+      const device = curr.deviceType
+      acc[device] = (acc[device] || 0) + 1
+      return acc
+    }, {})
+
+    return Object.entries(frequencies).map(([name, count]) => ({ name, count }))
+  }, [data])
+
   React.useEffect(() => {
     fetch('/api/matomo/visits')
       .then((res) => res.json())
@@ -58,6 +69,7 @@ export default function PageVisitsViz({}: Props) {
       {vizType.value === 'table' && <PageVisitsTable visitsData={data} />}
       {vizType.value === 'urls' && <PieChart data={visitedPagesData} title="Visited URLs Pie Chart" />}
       {vizType.value === 'browsers' && <PieChart data={browserData} title="Browser Usage Pie Chart" />}
+      {vizType.value === 'devices' && <PieChart data={deviceData} title="Devices Type Pie Chart" />}
     </section>
   )
 }
