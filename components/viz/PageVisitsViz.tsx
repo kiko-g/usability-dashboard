@@ -1,6 +1,5 @@
 import React from 'react'
 import type { PageViewsAPI, PageVisitsVizTypeFilter, PieData } from '../../@types'
-import { createPieData } from '../../utils/data'
 import { PieChart } from '../viz'
 import { Loading, NotFound } from '../utils'
 import { PageVisitsTable, SelectPageVisitsType } from '../dashboard/visits'
@@ -11,9 +10,29 @@ export default function PageVisitsViz({}: Props) {
   const [error, setError] = React.useState<boolean>(false)
   const [data, setData] = React.useState<PageViewsAPI[]>([])
   const [vizType, setVizType] = React.useState<PageVisitsVizTypeFilter>({ name: 'Table', value: 'table' })
-
   const loading = React.useMemo<boolean>(() => data.length === 0, [data])
-  const browserData = React.useMemo<PieData[]>(() => createPieData(data, 'browserName'), [data])
+
+  // create pages frequencies pie data array
+  const pagesData = React.useMemo<PieData[]>(() => {
+    const pagesFreq = data.map((item) => item.pages).flat()
+    const pagesCount = pagesFreq.reduce<Record<string, number>>((acc, curr) => {
+      acc[curr] = (acc[curr] || 0) + 1
+      return acc
+    }, {})
+
+    return Object.entries(pagesCount).map(([name, count]) => ({ name, count }))
+  }, [data])
+
+  // create browsers frequencies pie data array
+  const browserData = React.useMemo<PieData[]>(() => {
+    const frequencies = data.reduce<Record<string, number>>((acc, curr) => {
+      const browser = curr.browserName
+      acc[browser] = (acc[browser] || 0) + 1
+      return acc
+    }, {})
+
+    return Object.entries(frequencies).map(([name, count]) => ({ name, count }))
+  }, [data])
 
   React.useEffect(() => {
     fetch('/api/matomo/visits')
@@ -37,6 +56,7 @@ export default function PageVisitsViz({}: Props) {
       </div>
 
       {vizType.value === 'table' && <PageVisitsTable visitsData={data} />}
+      {vizType.value === 'pages' && <PieChart data={pagesData} title="Page Titles Pie Chart" />}
       {vizType.value === 'browsers' && <PieChart data={browserData} title="Browser Usage Pie Chart" />}
     </section>
   )
