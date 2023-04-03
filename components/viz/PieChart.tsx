@@ -11,9 +11,10 @@ const Plot = dynamic(() => import('react-plotly.js').then((mod) => mod.default),
 
 interface PieChartProps {
   data: PieData[]
+  title?: string
 }
 
-export default function PieChart({ data }: PieChartProps) {
+export default function PieChart({ data, title }: PieChartProps) {
   if (data.length === 0) return null
 
   const labels = data.map((item) => item.name)
@@ -28,7 +29,7 @@ export default function PieChart({ data }: PieChartProps) {
   ]
 
   const layout = {
-    title: 'Pie Chart',
+    title: title ? title : 'Pie Chart',
     autosize: true,
     margin: {
       t: 50,

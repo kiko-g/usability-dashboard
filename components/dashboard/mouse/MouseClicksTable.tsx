@@ -28,7 +28,7 @@ export default function MouseClicksTable({ mouseData }: Props) {
               <tr
                 key={`mouse-click-${itemIdx}`}
                 className={classNames(
-                  'text-xs tracking-tighter md:text-sm md:tracking-tight',
+                  'group text-xs tracking-tighter md:text-sm md:tracking-tight',
                   itemIdx % 2 === 0 ? 'bg-lightest dark:bg-darkest' : 'bg-light dark:bg-dark'
                 )}
               >

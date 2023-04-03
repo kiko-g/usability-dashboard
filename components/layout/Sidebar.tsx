@@ -10,10 +10,10 @@ type Props = {
 
 export default function Sidebar({ location }: Props) {
   return (
-    <aside className="hidden h-screen min-w-full flex-col space-y-4 bg-white p-5 dark:bg-darkest md:flex md:min-w-[20rem]">
+    <aside className="hidden h-screen min-w-full flex-col space-y-4 bg-white p-5 dark:bg-darkest md:flex md:min-w-[20%]">
       <div className="flex items-center justify-start gap-2 px-2">
         <span className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 dark:from-violet-400 dark:to-purple-400" />
-        <h1 className="text-3xl font-medium tracking-tighter">CMF MES UX</h1>
+        <h1 className="text-2xl font-medium tracking-tighter">CMF MES UX</h1>
       </div>
       <hr />
       <ul className="flex w-full flex-1 flex-col space-y-2">

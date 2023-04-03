@@ -37,7 +37,7 @@ export default function PageVisitsViz({}: Props) {
       </div>
 
       {vizType.value === 'table' && <PageVisitsTable visitsData={data} />}
-      {vizType.value === 'browsers' && <PieChart data={browserData} />}
+      {vizType.value === 'browsers' && <PieChart data={browserData} title="Browser Usage Pie Chart" />}
     </section>
   )
 }
