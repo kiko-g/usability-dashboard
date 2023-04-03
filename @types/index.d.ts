@@ -58,3 +58,9 @@ export type PageVisitsVizTypeFilter = {
   name: string
   value: PageVisitsVizType
 }
+
+// Data
+export interface PieData {
+  name: string
+  count: number
+}

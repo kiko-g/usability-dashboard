@@ -42,7 +42,15 @@ SELECT
   matomo_log_visit.visit_total_interactions AS totalInteractions,
   matomo_log_visit.config_os AS operatingSystem,
   matomo_log_visit.config_resolution AS deviceScreenSize,
-  IFNULL(matomo_log_visit.config_browser_name, 'Unknown') AS browserName,
+  CASE
+    WHEN matomo_log_visit.config_browser_name = 'CH' THEN 'Chrome'
+    WHEN matomo_log_visit.config_browser_name = 'FF' THEN 'Firefox'
+    WHEN matomo_log_visit.config_browser_name = 'BR' THEN 'Brave'
+    WHEN matomo_log_visit.config_browser_name = 'SA' THEN 'Safari'
+    WHEN matomo_log_visit.config_browser_name = 'OP' THEN 'Opera'
+    WHEN matomo_log_visit.config_browser_name = 'IE' THEN 'Internet Explorer'
+    ELSE IFNULL(matomo_log_visit.config_browser_name, matomo_log_visit.config_browser_name)
+  END AS browserName,
   IFNULL(matomo_log_visit.config_device_brand, 'Unknown') AS deviceBrand,
   CASE
     WHEN matomo_log_visit.config_device_type = 0 THEN 'Desktop'
