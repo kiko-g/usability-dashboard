@@ -14,63 +14,65 @@ export default function PageVisitsTable({ visitsData }: Props) {
 
   return (
     <>
-      <table className="mt-2 w-full table-auto border border-black bg-lightest dark:border-white dark:bg-navy md:table-fixed">
-        <tbody>
-          <tr className="border-b border-black bg-primary text-left text-xs text-white shadow dark:border-white dark:bg-secondary/80 md:text-sm">
-            <th title="Start Datetime">Start</th>
-            <th title="Duration (in seconds)">Duration</th>
-            <th title="Visited Pages">Pages</th>
-            <th title="Total Events">Evt</th>
-            <th title="Total Actions">Act</th>
-            <th title="Total Interactions">Itx</th>
-            <th title="Operating System">OS</th>
-            <th title="Browser Name">Browser</th>
-            <th title="Screen Size">Screen</th>
-            <th title="Device Type">Device</th>
-          </tr>
-          {shownData.map((item, itemIdx) => {
-            const dateString = new Date(item.startTime).toLocaleDateString('pt-PT')
-            const timeString = new Date(item.startTime).toLocaleTimeString('pt-PT')
+      <div className="overflow-x-auto">
+        <table className="mt-2 w-full table-auto border border-black bg-lightest dark:border-white dark:bg-navy md:table-fixed">
+          <tbody>
+            <tr className="border-b border-black bg-primary text-left text-xs text-white shadow dark:border-white dark:bg-secondary/80 md:text-sm">
+              <th title="Start Datetime">Start</th>
+              <th title="Duration (in seconds)">Duration</th>
+              <th title="Visited Pages">Pages</th>
+              <th title="Total Events">Evt</th>
+              <th title="Total Actions">Act</th>
+              <th title="Total Interactions">Itx</th>
+              <th title="Operating System">OS</th>
+              <th title="Browser Name">Browser</th>
+              <th title="Screen Size">Screen</th>
+              <th title="Device Type">Device</th>
+            </tr>
+            {shownData.map((item, itemIdx) => {
+              const dateString = new Date(item.startTime).toLocaleDateString('pt-PT')
+              const timeString = new Date(item.startTime).toLocaleTimeString('pt-PT')
 
-            return (
-              <tr
-                title={`Visit #${item.id}`}
-                key={`mouse-click-${itemIdx}`}
-                className={classNames(
-                  'group text-xs tracking-tighter md:text-sm md:tracking-tight',
-                  itemIdx % 2 === 0 ? 'bg-lightest dark:bg-darkest' : 'bg-light dark:bg-dark'
-                )}
-              >
-                <td>
-                  <div className="flex flex-col text-xs leading-tight">
-                    <span>{dateString}</span>
-                    <span>{timeString}</span>
-                  </div>
-                </td>
-                <td>{item.duration}s</td>
-                <td>
-                  <div className="flex flex-col space-y-1">
-                    {item.pages.map((page, pageIdx) => (
-                      <span key={`page-${pageIdx}`} className="text-xs leading-tight">
-                        {pageIdx + 1}. {page}
-                      </span>
-                    ))}
-                  </div>
-                </td>
-                <td>{item.totalEvents}</td>
-                <td>{item.totalActions}</td>
-                <td>{item.totalInteractions}</td>
-                <td>{item.operatingSystem}</td>
-                <td>{item.browserName}</td>
-                <td>
-                  {item.deviceScreenSize.width}x{item.deviceScreenSize.height}
-                </td>
-                <td>{item.deviceType}</td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
+              return (
+                <tr
+                  title={`Visit #${item.id}`}
+                  key={`mouse-click-${itemIdx}`}
+                  className={classNames(
+                    'group text-xs tracking-tighter md:text-sm md:tracking-tight',
+                    itemIdx % 2 === 0 ? 'bg-lightest dark:bg-darkest' : 'bg-light dark:bg-dark'
+                  )}
+                >
+                  <td>
+                    <div className="flex flex-col text-xs leading-tight">
+                      <span>{dateString}</span>
+                      <span>{timeString}</span>
+                    </div>
+                  </td>
+                  <td>{item.duration}s</td>
+                  <td>
+                    <div className="flex flex-col space-y-1">
+                      {item.pages.map((page, pageIdx) => (
+                        <span key={`page-${pageIdx}`} className="text-xs leading-tight">
+                          {pageIdx + 1}. {page}
+                        </span>
+                      ))}
+                    </div>
+                  </td>
+                  <td>{item.totalEvents}</td>
+                  <td>{item.totalActions}</td>
+                  <td>{item.totalInteractions}</td>
+                  <td>{item.operatingSystem}</td>
+                  <td>{item.browserName}</td>
+                  <td>
+                    {item.deviceScreenSize.width}x{item.deviceScreenSize.height}
+                  </td>
+                  <td>{item.deviceType}</td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
       <TableInteractButtons data={visitsData} initialRows={initialRows} rowsHook={[rows, setRows]} />
     </>
   )

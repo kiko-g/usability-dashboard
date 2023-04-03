@@ -13,7 +13,7 @@ export default function TableInteractButtons({ data, initialRows, rowsHook }: Pr
   const noMore = React.useMemo(() => rowCount >= data.length, [rowCount, data])
 
   return (
-    <div className="mt-2 flex flex-col justify-center gap-3 md:flex-row">
+    <div className="mt-3 flex flex-col justify-center gap-3 md:flex-row">
       {/* Show less rows */}
       <button
         disabled={noLess}
