@@ -9,7 +9,7 @@ type Props = {}
 export default function PageVisitsViz({}: Props) {
   const [error, setError] = React.useState<boolean>(false)
   const [data, setData] = React.useState<PageViewsAPI[]>([])
-  const [vizType, setVizType] = React.useState<PageVisitsVizTypeFilter>({ name: 'Table', value: 'table' })
+  const [vizType, setVizType] = React.useState<PageVisitsVizTypeFilter>({ name: 'All', value: 'all' })
   const loading = React.useMemo<boolean>(() => data.length === 0, [data])
   const seeAll = React.useMemo<boolean>(() => vizType.value === 'all', [vizType])
 

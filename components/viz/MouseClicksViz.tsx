@@ -14,7 +14,7 @@ type Props = {}
 export default function MouseClicksViz({}: Props) {
   const [error, setError] = React.useState<boolean>(false)
   const [data, setData] = React.useState<MouseClicksAPI[]>([])
-  const [vizType, setVizType] = React.useState<MouseClickVizTypeFilter>({ name: 'Heatmap', value: 'heatmap' })
+  const [vizType, setVizType] = React.useState<MouseClickVizTypeFilter>({ name: 'All', value: 'all' })
 
   const seeAll = React.useMemo<boolean>(() => vizType.value === 'all', [vizType])
   const loading = React.useMemo<boolean>(() => data.length === 0, [data])
