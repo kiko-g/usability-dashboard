@@ -12,7 +12,8 @@ export default function SelectMouseClicksType({ pickedHook }: Props) {
   const [picked, setPicked] = pickedHook
   const vizTypes: PageVisitsVizTypeFilter[] = [
     { name: 'Table', value: 'table' },
-    { name: 'URL', value: 'urls' },
+    { name: 'Pages', value: 'urls' },
+    { name: 'OS', value: 'os' },
     { name: 'Browsers', value: 'browsers' },
     { name: 'Devices', value: 'devices' },
     { name: 'Screens', value: 'screens' },
