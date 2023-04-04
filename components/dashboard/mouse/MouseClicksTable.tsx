@@ -13,9 +13,9 @@ export default function MouseClicksTable({ mouseData }: Props) {
   const shownData = React.useMemo(() => mouseData.slice(0, rows), [mouseData, rows])
 
   return (
-    <>
+    <div>
       <div className="overflow-x-auto">
-        <table className="mt-2 w-full table-auto border border-black bg-lightest dark:border-white dark:bg-navy md:table-fixed">
+        <table className="w-full table-auto border border-black bg-lightest dark:border-white dark:bg-navy md:table-fixed">
           <tbody>
             <tr className="border-b border-black bg-primary text-left text-xs text-white shadow dark:border-white dark:bg-secondary/80 md:text-sm">
               <th title="Mouse Click X Coordinate">X</th>
@@ -48,6 +48,6 @@ export default function MouseClicksTable({ mouseData }: Props) {
         </table>
       </div>
       <TableInteractButtons data={mouseData} rowsHook={[rows, setRows]} initialRows={initialRows} />
-    </>
+    </div>
   )
 }

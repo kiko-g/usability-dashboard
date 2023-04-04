@@ -16,6 +16,7 @@ export default function MouseClicksViz({}: Props) {
   const [data, setData] = React.useState<MouseClicksAPI[]>([])
   const [vizType, setVizType] = React.useState<MouseClickVizTypeFilter>({ name: 'Heatmap', value: 'heatmap' })
 
+  const seeAll = React.useMemo<boolean>(() => vizType.value === 'all', [vizType])
   const loading = React.useMemo<boolean>(() => data.length === 0, [data])
   const stats = React.useMemo(() => {
     const avgX = data.reduce((acc, curr) => acc + curr.x, 0) / data.length
@@ -50,9 +51,11 @@ export default function MouseClicksViz({}: Props) {
         <SelectMouseClicksType pickedHook={[vizType, setVizType]} />
       </div>
 
-      {vizType.value === 'table' ? <MouseClicksTable mouseData={data} /> : null}
-      {vizType.value === 'chart' ? <MouseClicksChart mouseData={data} /> : null}
-      {vizType.value === 'heatmap' ? <MouseClicksHeatmap mouseData={data} /> : null}
+      <div className="flex flex-col space-y-8">
+        {vizType.value === 'chart' || seeAll ? <MouseClicksChart mouseData={data} /> : null}
+        {vizType.value === 'heatmap' || seeAll ? <MouseClicksHeatmap mouseData={data} /> : null}
+        {vizType.value === 'table' || seeAll ? <MouseClicksTable mouseData={data} /> : null}
+      </div>
     </section>
   )
 }

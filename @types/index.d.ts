@@ -50,14 +50,14 @@ export type PageViewsAPI = {
 }
 
 // Mouse Clicks Viz Types
-export type MouseClickVizType = 'table' | 'chart' | 'heatmap'
+export type MouseClickVizType = 'table' | 'chart' | 'heatmap' | 'all'
 export type MouseClickVizTypeFilter = {
   name: string
   value: MouseClickVizType
 }
 
 // Page Visits Viz Types
-export type PageVisitsVizType = 'table' | 'urls' | 'browsers' | 'devices' | 'screens' | 'os'
+export type PageVisitsVizType = 'table' | 'urls' | 'browsers' | 'devices' | 'screens' | 'os' | 'all'
 export type PageVisitsVizTypeFilter = {
   name: string
   value: PageVisitsVizType

@@ -11,6 +11,7 @@ export default function PageVisitsViz({}: Props) {
   const [data, setData] = React.useState<PageViewsAPI[]>([])
   const [vizType, setVizType] = React.useState<PageVisitsVizTypeFilter>({ name: 'Table', value: 'table' })
   const loading = React.useMemo<boolean>(() => data.length === 0, [data])
+  const seeAll = React.useMemo<boolean>(() => vizType.value === 'all', [vizType])
 
   // create pages frequencies
   const visitedPagesFreqs = React.useMemo<PieData[]>(() => {
@@ -89,12 +90,18 @@ export default function PageVisitsViz({}: Props) {
         <SelectPageVisitsType pickedHook={[vizType, setVizType]} />
       </div>
 
-      {vizType.value === 'table' && <PageVisitsTable visitsData={data} />}
-      {vizType.value === 'urls' && <PieChart data={visitedPagesFreqs} title="Visited URLs Pie Chart" />}
-      {vizType.value === 'browsers' && <PieChart data={browserFreqs} title="Browser Usage Pie Chart" />}
-      {vizType.value === 'devices' && <PieChart data={deviceFreqs} title="Devices Type Pie Chart" />}
-      {vizType.value === 'screens' && <PieChart data={screenFreqs} title="Screen Sizes Pie Chart" />}
-      {vizType.value === 'os' && <PieChart data={osFreqs} title="Operating Systems Pie Chart" />}
+      <div className="flex flex-col space-y-8">
+        {vizType.value === 'urls' || seeAll ? (
+          <PieChart data={visitedPagesFreqs} title="Visited URLs Pie Chart" />
+        ) : null}
+        {vizType.value === 'browsers' || seeAll ? (
+          <PieChart data={browserFreqs} title="Browser Usage Pie Chart" />
+        ) : null}
+        {vizType.value === 'devices' || seeAll ? <PieChart data={deviceFreqs} title="Devices Type Pie Chart" /> : null}
+        {vizType.value === 'screens' || seeAll ? <PieChart data={screenFreqs} title="Screen Sizes Pie Chart" /> : null}
+        {vizType.value === 'os' || seeAll ? <PieChart data={osFreqs} title="Operating Systems Pie Chart" /> : null}
+        {vizType.value === 'table' || seeAll ? <PageVisitsTable visitsData={data} /> : null}
+      </div>
     </section>
   )
 }

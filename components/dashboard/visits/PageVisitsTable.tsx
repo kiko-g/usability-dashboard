@@ -14,9 +14,9 @@ export default function PageVisitsTable({ visitsData }: Props) {
   const slicedData = React.useMemo(() => visitsData.slice(0, rows), [visitsData, rows])
 
   return (
-    <>
+    <div>
       <div className="overflow-x-auto">
-        <table className="mt-2 w-full table-auto border border-black bg-lightest dark:border-white dark:bg-navy md:table-auto">
+        <table className="w-full table-auto border border-black bg-lightest dark:border-white dark:bg-navy md:table-auto">
           <tbody>
             <tr className="border-b border-black bg-primary text-left text-xs text-white shadow dark:border-white dark:bg-secondary/80 md:text-sm">
               <th title="Start Datetime">Start</th>
@@ -75,6 +75,6 @@ export default function PageVisitsTable({ visitsData }: Props) {
         </table>
       </div>
       <TableInteractButtons data={visitsData} initialRows={initialRows} rowsHook={[rows, setRows]} />
-    </>
+    </div>
   )
 }
