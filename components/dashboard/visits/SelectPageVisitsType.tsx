@@ -15,6 +15,7 @@ export default function SelectMouseClicksType({ pickedHook }: Props) {
     { name: 'URL', value: 'urls' },
     { name: 'Browsers', value: 'browsers' },
     { name: 'Devices', value: 'devices' },
+    { name: 'Screens', value: 'screens' },
   ]
 
   return (

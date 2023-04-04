@@ -57,7 +57,7 @@ export type MouseClickVizTypeFilter = {
 }
 
 // Page Visits Viz Types
-export type PageVisitsVizType = 'table' | 'urls' | 'browsers' | 'devices'
+export type PageVisitsVizType = 'table' | 'urls' | 'browsers' | 'devices' | 'screens' | 'os'
 export type PageVisitsVizTypeFilter = {
   name: string
   value: PageVisitsVizType

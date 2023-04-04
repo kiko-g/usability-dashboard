@@ -13,7 +13,7 @@ export default function PageVisitsViz({}: Props) {
   const loading = React.useMemo<boolean>(() => data.length === 0, [data])
 
   // create pages frequencies pie data array
-  const visitedPagesData = React.useMemo<PieData[]>(() => {
+  const visitedPagesFreqs = React.useMemo<PieData[]>(() => {
     const pagesFreq = data.map((item) => item.visitedUrls).flat()
     const pagesCount = pagesFreq.reduce<Record<string, number>>((acc, curr) => {
       acc[curr] = (acc[curr] || 0) + 1
@@ -24,7 +24,7 @@ export default function PageVisitsViz({}: Props) {
   }, [data])
 
   // create browsers frequencies pie data array
-  const browserData = React.useMemo<PieData[]>(() => {
+  const browserFreqs = React.useMemo<PieData[]>(() => {
     const frequencies = data.reduce<Record<string, number>>((acc, curr) => {
       const browser = curr.browserName
       acc[browser] = (acc[browser] || 0) + 1
@@ -34,11 +34,23 @@ export default function PageVisitsViz({}: Props) {
     return Object.entries(frequencies).map(([name, count]) => ({ name, count }))
   }, [data])
 
-  // create browsers frequencies pie data array
-  const deviceData = React.useMemo<PieData[]>(() => {
+  // create device type frequencies pie data array
+  const deviceFreqs = React.useMemo<PieData[]>(() => {
     const frequencies = data.reduce<Record<string, number>>((acc, curr) => {
       const device = curr.deviceType
       acc[device] = (acc[device] || 0) + 1
+      return acc
+    }, {})
+
+    return Object.entries(frequencies).map(([name, count]) => ({ name, count }))
+  }, [data])
+
+  // create screen width*height frequencies pie data array
+  const screenFreqs = React.useMemo<PieData[]>(() => {
+    const frequencies = data.reduce<Record<string, number>>((acc, curr) => {
+      const screen = curr.deviceScreenSize
+      const screenStr = `${screen.width}x${screen.height}`
+      acc[screenStr] = (acc[screenStr] || 0) + 1
       return acc
     }, {})
 
@@ -67,9 +79,10 @@ export default function PageVisitsViz({}: Props) {
       </div>
 
       {vizType.value === 'table' && <PageVisitsTable visitsData={data} />}
-      {vizType.value === 'urls' && <PieChart data={visitedPagesData} title="Visited URLs Pie Chart" />}
-      {vizType.value === 'browsers' && <PieChart data={browserData} title="Browser Usage Pie Chart" />}
-      {vizType.value === 'devices' && <PieChart data={deviceData} title="Devices Type Pie Chart" />}
+      {vizType.value === 'urls' && <PieChart data={visitedPagesFreqs} title="Visited URLs Pie Chart" />}
+      {vizType.value === 'browsers' && <PieChart data={browserFreqs} title="Browser Usage Pie Chart" />}
+      {vizType.value === 'devices' && <PieChart data={deviceFreqs} title="Devices Type Pie Chart" />}
+      {vizType.value === 'screens' && <PieChart data={screenFreqs} title="Devices Type Pie Chart" />}
     </section>
   )
 }
