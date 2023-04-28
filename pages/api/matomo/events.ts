@@ -7,8 +7,8 @@ const matomoToken = '9a7c2dea66b81a8a903c10a06ebcd5e0';
 
 export default function matomoApiTest(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
-    const period = 'range'; // day, range
-    const date = '2023-04-22,today'; // YYYY-MM-DD
+    const period = 'week'; // day, week, month, year, range
+    const date = '2023-04-28'; // YYYY-MM-DD
     const method = 'Events.getCategory';
     const format = 'json';
     const apiUrl = `${matomoUrl}/index.php?module=API&method=${method}&expanded=1&format=${format}&idSite=${siteId}&period=${period}&date=${date}&token_auth=${matomoToken}`;
@@ -18,11 +18,10 @@ export default function matomoApiTest(req: NextApiRequest, res: NextApiResponse)
         return res.status(500).json({ error: 'Internal server error' });
       }
 
-      if (response.statusCode !== 200) {
-        return res.status(response.statusCode).json({ error: 'Error from Matomo API' });
+      if (response.statusCode !== 200 || body.result === 'error') {
+        return res.status(response.statusCode).json({ error: 'Error from Matomo API', message: body.message });
       }
 
-      console.log(body)
       const data = [];
       const events = Array.isArray(body) ? body : JSON.parse(body);
       if (!events) {
