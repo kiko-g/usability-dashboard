@@ -1,4 +1,5 @@
 import request from 'request';
+import { isJson } from '../../../utils';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 const siteId = 1;
@@ -33,7 +34,7 @@ export default function matomoApiTest(req: NextApiRequest, res: NextApiResponse)
       }
 
       for (const event of events) {
-        const meta = JSON.parse(event.label);
+        const meta =  isJson(event.label) ? JSON.parse(event.label) : event.label;
         meta.action = event.subtable[0].label;
         data.push(meta);
       }
