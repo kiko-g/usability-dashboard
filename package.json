@@ -24,7 +24,8 @@
     "react-dom": "18.2.0",
     "react-plotly.js": "^2.6.0",
     "request": "^2.88.2",
-    "typescript": "^5.0.3"
+    "typescript": "^5.0.3",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@types/mysql": "^2.15.21",
