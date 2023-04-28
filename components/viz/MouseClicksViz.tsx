@@ -1,49 +1,49 @@
-import React from 'react'
-import type { MouseClicksAPI, MouseClickVizTypeFilter } from '../../@types'
-import { Loading, NotFound } from '../utils'
+import React from 'react';
+import type { MouseClicksAPI, MouseClickVizTypeFilter } from '../../@types';
+import { Loading, NotFound } from '../utils';
 import {
   MouseClicksChart,
   MouseClickStats,
   MouseClicksHeatmap,
   MouseClicksTable,
   SelectMouseClicksType,
-} from '../dashboard/mouse'
+} from '../dashboard/mouse';
 
-type Props = {}
+type Props = {};
 
 export default function MouseClicksViz({}: Props) {
-  const [error, setError] = React.useState<boolean>(false)
-  const [loading, setLoading] = React.useState<boolean>(true)
-  const [data, setData] = React.useState<MouseClicksAPI[]>([])
-  const [vizType, setVizType] = React.useState<MouseClickVizTypeFilter>({ name: 'All', value: 'all' })
+  const [error, setError] = React.useState<boolean>(false);
+  const [loading, setLoading] = React.useState<boolean>(true);
+  const [data, setData] = React.useState<MouseClicksAPI[]>([]);
+  const [vizType, setVizType] = React.useState<MouseClickVizTypeFilter>({ name: 'All', value: 'all' });
 
-  const seeAll = React.useMemo<boolean>(() => vizType.value === 'all', [vizType])
+  const seeAll = React.useMemo<boolean>(() => vizType.value === 'all', [vizType]);
   const stats = React.useMemo(() => {
-    const avgX = data.reduce((acc, curr) => acc + curr.x, 0) / data.length
-    const avgY = data.reduce((acc, curr) => acc + curr.y, 0) / data.length
+    const avgX = data.reduce((acc, curr) => acc + curr.x, 0) / data.length;
+    const avgY = data.reduce((acc, curr) => acc + curr.y, 0) / data.length;
 
     return {
       'Average X': avgX.toFixed(2),
       'Average Y': avgY.toFixed(2),
       'Total Clicks': data.length,
-    }
-  }, [data])
+    };
+  }, [data]);
 
   React.useEffect(() => {
     fetch('/api/matomo/mouse')
       .then((res) => res.json())
       .then((data: MouseClicksAPI[]) => {
-        setLoading(false)
-        setData(data)
+        setLoading(false);
+        setData(data);
       })
       .catch((err) => {
-        setError(true)
-        console.error(err)
-      })
-  }, [])
+        setError(true);
+        console.error(err);
+      });
+  }, []);
 
-  if (loading) return <Loading />
-  if (error) return <NotFound />
+  if (loading) return <Loading />;
+  if (error) return <NotFound />;
 
   return data.length === 0 ? (
     <div className="mt-2 rounded border bg-black/20 p-4 dark:bg-white/20">No Mouse Data Found.</div>
@@ -60,5 +60,5 @@ export default function MouseClicksViz({}: Props) {
         {vizType.value === 'table' || seeAll ? <MouseClicksTable mouseData={data} /> : null}
       </div>
     </section>
-  )
+  );
 }

@@ -1,16 +1,16 @@
-import React from 'react'
-import { ArrowDownCircleIcon, MinusCircleIcon, PlusCircleIcon, XCircleIcon } from '@heroicons/react/24/outline'
+import React from 'react';
+import { ArrowDownCircleIcon, MinusCircleIcon, PlusCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
 
 type Props = {
-  data: any[]
-  initialRows: number
-  rowsHook: [number, React.Dispatch<React.SetStateAction<number>>]
-}
+  data: any[];
+  initialRows: number;
+  rowsHook: [number, React.Dispatch<React.SetStateAction<number>>];
+};
 
 export default function TableInteractButtons({ data, initialRows, rowsHook }: Props) {
-  const [rowCount, setRowCount] = rowsHook
-  const noLess = React.useMemo(() => rowCount - initialRows <= 0, [rowCount, initialRows])
-  const noMore = React.useMemo(() => rowCount >= data.length, [rowCount, data])
+  const [rowCount, setRowCount] = rowsHook;
+  const noLess = React.useMemo(() => rowCount - initialRows <= 0, [rowCount, initialRows]);
+  const noMore = React.useMemo(() => rowCount >= data.length, [rowCount, data]);
 
   return (
     <div className="mt-3 flex flex-col justify-center gap-3 md:flex-row">
@@ -54,5 +54,5 @@ export default function TableInteractButtons({ data, initialRows, rowsHook }: Pr
         <XCircleIcon className="h-5 w-5" />
       </button>
     </div>
-  )
+  );
 }

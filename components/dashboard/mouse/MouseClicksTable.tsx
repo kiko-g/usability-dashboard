@@ -1,16 +1,16 @@
-import React from 'react'
-import classNames from 'classnames'
-import { MouseClicksAPI } from '../../../@types'
-import { TableInteractButtons } from '../../utils'
+import React from 'react';
+import classNames from 'classnames';
+import { MouseClicksAPI } from '../../../@types';
+import { TableInteractButtons } from '../../utils';
 
 type Props = {
-  mouseData: MouseClicksAPI[]
-}
+  mouseData: MouseClicksAPI[];
+};
 
 export default function MouseClicksTable({ mouseData }: Props) {
-  const initialRows = Math.min(10, mouseData.length)
-  const [rows, setRows] = React.useState(initialRows)
-  const shownData = React.useMemo(() => mouseData.slice(0, rows), [mouseData, rows])
+  const initialRows = Math.min(10, mouseData.length);
+  const [rows, setRows] = React.useState(initialRows);
+  const shownData = React.useMemo(() => mouseData.slice(0, rows), [mouseData, rows]);
 
   return (
     <div>
@@ -23,8 +23,8 @@ export default function MouseClicksTable({ mouseData }: Props) {
               <th title="Mouse Click Datetime">Date</th>
             </tr>
             {shownData.map((item, itemIdx) => {
-              const dateString = new Date(item.date).toLocaleDateString('pt-PT')
-              const timeString = new Date(item.date).toLocaleTimeString('pt-PT')
+              const dateString = new Date(item.date).toLocaleDateString('pt-PT');
+              const timeString = new Date(item.date).toLocaleTimeString('pt-PT');
               return (
                 <tr
                   key={`mouse-click-${itemIdx}`}
@@ -42,12 +42,12 @@ export default function MouseClicksTable({ mouseData }: Props) {
                     </div>
                   </td>
                 </tr>
-              )
+              );
             })}
           </tbody>
         </table>
       </div>
       <TableInteractButtons data={mouseData} rowsHook={[rows, setRows]} initialRows={initialRows} />
     </div>
-  )
+  );
 }

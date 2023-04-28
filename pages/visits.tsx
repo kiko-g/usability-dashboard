@@ -1,6 +1,6 @@
-import React from 'react'
-import { Layout } from '../components/layout'
-import { PageVisitsViz } from '../components/viz'
+import React from 'react';
+import { Layout } from '../components/layout';
+import { PageVisitsViz } from '../components/viz';
 
 export default function Visits() {
   return (
@@ -16,5 +16,5 @@ export default function Visits() {
         <PageVisitsViz />
       </main>
     </Layout>
-  )
+  );
 }

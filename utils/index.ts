@@ -1,4 +1,4 @@
-import { CursorArrowRippleIcon, HomeIcon, MagnifyingGlassCircleIcon } from '@heroicons/react/24/outline'
+import { CursorArrowRippleIcon, HomeIcon, MagnifyingGlassCircleIcon } from '@heroicons/react/24/outline';
 
 export const navigations = [
   {
@@ -16,7 +16,7 @@ export const navigations = [
     href: '/mouse',
     icon: CursorArrowRippleIcon,
   },
-]
+];
 
 export const socials = [
   {
@@ -27,4 +27,4 @@ export const socials = [
     ],
     viewBox: '0 0 496 512',
   },
-]
+];

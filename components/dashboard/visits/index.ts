@@ -1,4 +1,4 @@
-import PageVisitsTable from './PageVisitsTable'
-import SelectPageVisitsType from './SelectPageVisitsType'
+import PageVisitsTable from './PageVisitsTable';
+import SelectPageVisitsType from './SelectPageVisitsType';
 
-export { PageVisitsTable, SelectPageVisitsType }
+export { PageVisitsTable, SelectPageVisitsType };

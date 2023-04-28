@@ -1,15 +1,15 @@
-import React, { Dispatch, Fragment, SetStateAction } from 'react'
-import type { PageVisitsVizTypeFilter } from '../../../@types'
-import { Listbox, Transition } from '@headlessui/react'
-import { ChevronUpDownIcon } from '@heroicons/react/24/outline'
-import { CheckCircleIcon } from '@heroicons/react/24/solid'
+import React, { Dispatch, Fragment, SetStateAction } from 'react';
+import type { PageVisitsVizTypeFilter } from '../../../@types';
+import { Listbox, Transition } from '@headlessui/react';
+import { ChevronUpDownIcon } from '@heroicons/react/24/outline';
+import { CheckCircleIcon } from '@heroicons/react/24/solid';
 
 type Props = {
-  pickedHook: [PageVisitsVizTypeFilter, Dispatch<SetStateAction<PageVisitsVizTypeFilter>>]
-}
+  pickedHook: [PageVisitsVizTypeFilter, Dispatch<SetStateAction<PageVisitsVizTypeFilter>>];
+};
 
 export default function SelectMouseClicksType({ pickedHook }: Props) {
-  const [picked, setPicked] = pickedHook
+  const [picked, setPicked] = pickedHook;
   const vizTypes: PageVisitsVizTypeFilter[] = [
     { name: 'All', value: 'all' },
     { name: 'Table', value: 'table' },
@@ -18,7 +18,7 @@ export default function SelectMouseClicksType({ pickedHook }: Props) {
     { name: 'Browsers', value: 'browsers' },
     { name: 'Devices', value: 'devices' },
     { name: 'Screens', value: 'screens' },
-  ]
+  ];
 
   return (
     <Listbox value={picked} onChange={setPicked}>
@@ -56,5 +56,5 @@ export default function SelectMouseClicksType({ pickedHook }: Props) {
         </Transition>
       </div>
     </Listbox>
-  )
+  );
 }

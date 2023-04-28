@@ -1,15 +1,15 @@
-import React from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
-import { Disclosure } from '@headlessui/react'
-import { DarkModeSwitch } from '.'
-import { XMarkIcon, Bars3Icon } from '@heroicons/react/24/outline'
-import { navigations, socials } from '../../utils'
+import React from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { Disclosure } from '@headlessui/react';
+import { DarkModeSwitch } from '.';
+import { XMarkIcon, Bars3Icon } from '@heroicons/react/24/outline';
+import { navigations, socials } from '../../utils';
 
 type Props = {
-  title: string
-  location: string
-}
+  title: string;
+  location: string;
+};
 
 export default function MobileNav({ title, location }: Props) {
   return (
@@ -96,8 +96,8 @@ export default function MobileNav({ title, location }: Props) {
               </div>
             </Disclosure.Panel>
           </header>
-        )
+        );
       }}
     </Disclosure>
-  )
+  );
 }

@@ -1,9 +1,9 @@
-import Link from 'next/link'
-import React from 'react'
+import Link from 'next/link';
+import React from 'react';
 
 type Props = {
-  message?: string
-}
+  message?: string;
+};
 
 export default function NotFound({ message }: Props) {
   return (
@@ -13,5 +13,5 @@ export default function NotFound({ message }: Props) {
         {message ? message : 'There was a problem loading the content'} ❌
       </p>
     </div>
-  )
+  );
 }

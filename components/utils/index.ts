@@ -1,5 +1,5 @@
-import Loading from './Loading'
-import NotFound from './NotFound'
-import TableInteractButtons from './TableInteractButtons'
+import Loading from './Loading';
+import NotFound from './NotFound';
+import TableInteractButtons from './TableInteractButtons';
 
-export { Loading, NotFound, TableInteractButtons }
+export { Loading, NotFound, TableInteractButtons };

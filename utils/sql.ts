@@ -1,12 +1,12 @@
-import mysql from 'mysql2'
+import mysql from 'mysql2';
 
 export const estabilishMySQLConnection = () => {
   return mysql.createConnection({
     user: process.env.NEXT_PUBLIC_MYSQL_USER!,
     password: process.env.NEXT_PUBLIC_MYSQL_PASSWORD!,
     database: process.env.NEXT_PUBLIC_MYSQL_DATABASE!,
-  })
-}
+  });
+};
 
 export const clicksQuery = `
 SELECT
@@ -29,7 +29,7 @@ WHERE
   matomo_log_action.type = 11
 ORDER BY
   dateString ASC;
-`
+`;
 
 export const pageVisitsQuery = `
 SELECT
@@ -80,4 +80,4 @@ GROUP BY
   matomo_log_visit.idvisit
 ORDER BY
   matomo_log_visit.visit_first_action_time ASC;
-`
+`;

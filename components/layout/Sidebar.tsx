@@ -1,12 +1,12 @@
-import React from 'react'
-import Link from 'next/link'
-import classNames from 'classnames'
-import { DarkModeSwitch } from './'
-import { navigations, socials } from '../../utils'
+import React from 'react';
+import Link from 'next/link';
+import classNames from 'classnames';
+import { DarkModeSwitch } from './';
+import { navigations, socials } from '../../utils';
 
 type Props = {
-  location: string
-}
+  location: string;
+};
 
 export default function Sidebar({ location }: Props) {
   return (
@@ -18,7 +18,7 @@ export default function Sidebar({ location }: Props) {
       <hr />
       <ul className="flex w-full flex-1 flex-col space-y-2">
         {navigations.map((item, itemIdx) => {
-          const isActive = location.toLowerCase() === item.name.toLowerCase()
+          const isActive = location.toLowerCase() === item.name.toLowerCase();
           return (
             <li key={`nav-${itemIdx}`}>
               <Link
@@ -34,7 +34,7 @@ export default function Sidebar({ location }: Props) {
                 <span>{item.name}</span>
               </Link>
             </li>
-          )
+          );
         })}
       </ul>
       <hr />
@@ -65,5 +65,5 @@ export default function Sidebar({ location }: Props) {
         <DarkModeSwitch />
       </div>
     </aside>
-  )
+  );
 }
