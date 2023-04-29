@@ -1,3 +1,14 @@
+export interface ITrackerEventCategory {
+  component: string;
+  name: string;
+  time: string;
+  path: string;
+}
+
+export interface ITrackerEvent extends ITrackerEventCategory {
+  action: string;
+}
+
 // Mouse Clicks
 export type MouseClicksSQL = {
   x: string;

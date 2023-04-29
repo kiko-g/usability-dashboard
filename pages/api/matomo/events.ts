@@ -1,5 +1,6 @@
 import request from 'request';
 import { isJson } from '../../../utils';
+import { ITrackerEventCategory, ITrackerEvent } from '../../../@types';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 const siteId = 1;
@@ -11,12 +12,14 @@ export default function matomoApiTest(req: NextApiRequest, res: NextApiResponse)
     const period = 'range'; // day, week, month, year, range
 
     const currentDate = new Date();
-    const formattedCurrentDate = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`;
-    const date = `2023-01-01,${formattedCurrentDate}`;
-    
+    const formattedCurrentDate = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1)
+      .toString()
+      .padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`;
+    const date = `2023-04-29,${formattedCurrentDate}`;
+
     const method = 'Events.getCategory';
     const format = 'json';
-    const apiUrl = `${matomoUrl}/index.php?module=API&method=${method}&expanded=1&format=${format}&idSite=${siteId}&period=${period}&date=${date}&token_auth=${matomoToken}`;
+    const apiUrl = `${matomoUrl}/index.php?module=API&method=${method}&expanded=1&secondaryDimension=eventAction&flat=1&format=${format}&idSite=${siteId}&period=${period}&date=${date}&token_auth=${matomoToken}`;
 
     request(apiUrl, { json: true }, (err, response, body) => {
       if (err) {
@@ -29,14 +32,17 @@ export default function matomoApiTest(req: NextApiRequest, res: NextApiResponse)
 
       const data = [];
       const events = Array.isArray(body) ? body : JSON.parse(body);
-      if (!events) {
-        return res.status(200).json([]);
-      }
 
       for (const event of events) {
-        const meta =  isJson(event.label) ? JSON.parse(event.label) : event.label;
-        meta.action = event.subtable[0].label;
-        data.push(meta);
+        if (isJson(event.Events_EventCategory)) {
+          const category = JSON.parse(event.Events_EventCategory) as ITrackerEventCategory;
+          const parsedEvent = { ...category, action: event.Events_EventAction } as ITrackerEvent;
+          data.push(parsedEvent);
+        }
+        else {
+          const parsedEvent = { category: event.Events_EventCategory, action: event.Events_EventAction };
+          data.push(parsedEvent);
+        }
       }
 
       return res.status(200).json(data);
