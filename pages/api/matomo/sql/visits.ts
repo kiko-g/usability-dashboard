@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import type { PageViewsAPI, PageViewsSQL } from '../../../@types';
-import { estabilishMySQLConnection, pageVisitsQuery } from '../../../utils/sql';
+import type { PageViewsAPI, PageViewsSQL } from '../../../../@types';
+import { estabilishMySQLConnection, pageVisitsQuery } from '../../../../utils/sql';
 
 export default function getPageViewsSQL(req: NextApiRequest, res: NextApiResponse) {
   const connection = estabilishMySQLConnection();

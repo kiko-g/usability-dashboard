@@ -1,8 +1,6 @@
 import request from 'request';
-import { isJson } from '../../../../../utils/utils';
-import { config } from '../../../../../utils/matomo';
-import { ITrackerEventCategory, ITrackerEvent } from '../../../../../@types';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { config, parseAndGroupEvents } from '../../../../../utils/matomo';
 
 export default function eventsGroupedMatomoApi(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
@@ -19,29 +17,7 @@ export default function eventsGroupedMatomoApi(req: NextApiRequest, res: NextApi
         return res.status(response.statusCode).json({ error: 'Error from Matomo API', message: body.message });
       }
 
-      const eventsByComponent = new Map();
-      const events = Array.isArray(body) ? body : JSON.parse(body);
-
-      for (const event of events) {
-        let parsedEvent;
-
-        if (isJson(event.Events_EventCategory)) {
-          const category = JSON.parse(event.Events_EventCategory) as ITrackerEventCategory;
-          parsedEvent = { ...category, action: event.Events_EventAction } as ITrackerEvent;
-        }
-        else {
-          parsedEvent = { category: event.Events_EventCategory, action: event.Events_EventAction };
-        }
-
-        const component = parsedEvent.component;
-        if (eventsByComponent.has(component)) {
-          eventsByComponent.get(component).push(parsedEvent);
-        } else {
-          eventsByComponent.set(component, [parsedEvent]);
-        }
-      }
-
-      const groupedEvents = Array.from(eventsByComponent.values());
+      const groupedEvents = parseAndGroupEvents(body);
       return res.status(200).json(groupedEvents);
     });
   } else {

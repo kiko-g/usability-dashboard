@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import type { MouseClicksAPI, MouseClicksSQL } from '../../../@types';
-import { estabilishMySQLConnection, clicksQuery } from '../../../utils/sql';
+import type { MouseClicksAPI, MouseClicksSQL } from '../../../../@types';
+import { estabilishMySQLConnection, clicksQuery } from '../../../../utils/sql';
 
 export default function getMouseClicksSQL(req: NextApiRequest, res: NextApiResponse) {
   const connection = estabilishMySQLConnection();

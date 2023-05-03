@@ -30,7 +30,7 @@ export default function MouseClicksViz({}: Props) {
   }, [data]);
 
   React.useEffect(() => {
-    fetch('/api/matomo/mouse')
+    fetch('/api/matomo/sql/mouse')
       .then((res) => res.json())
       .then((data: MouseClicksAPI[]) => {
         setLoading(false);

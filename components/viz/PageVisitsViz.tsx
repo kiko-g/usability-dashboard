@@ -70,7 +70,7 @@ export default function PageVisitsViz({}: Props) {
   }, [data]);
 
   React.useEffect(() => {
-    fetch('/api/matomo/visits')
+    fetch('/api/matomo/sql/visits')
       .then((res) => res.json())
       .then((data: PageViewsAPI[]) => {
         setLoading(false);

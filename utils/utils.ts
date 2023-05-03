@@ -3,6 +3,6 @@ export function isJson(str: string) {
     JSON.parse(str);
   } catch (e) {
     return false;
-  }  
+  }
   return true;
 }
