@@ -1,19 +1,14 @@
 import request from 'request';
-import { isJson } from '../../../../utils';
+import { isJson } from '../../../../utils/utils';
+import { config } from "../../../../utils/matomo"
 import { ITrackerEventCategory, ITrackerEvent } from '../../../../@types';
 import { NextApiRequest, NextApiResponse } from 'next';
 
-const siteId = 1;
-const matomoUrl = 'http://localhost:80';
-const matomoToken = '9a7c2dea66b81a8a903c10a06ebcd5e0';
-
-export default function matomoApiTest(req: NextApiRequest, res: NextApiResponse) {
+export default function eventsMatomoApi(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     const period = 'range'; // day, week, month, year, range
     const date = `2023-04-29,today`; // YYYY-MM-DD
-    const method = 'Events.getCategory';
-    const format = 'json';
-    const apiUrl = `${matomoUrl}/index.php?module=API&method=${method}&secondaryDimension=eventAction&flat=1&format=${format}&idSite=${siteId}&period=${period}&date=${date}&token_auth=${matomoToken}`;
+    const apiUrl = `${config.matomoSiteUrl}/index.php?module=API&method=Events.getCategory&secondaryDimension=eventAction&flat=1&format=json&idSite=${config.matomoSiteId}&period=${period}&date=${date}&token_auth=${config.matomoToken}`;
 
     request(apiUrl, { json: true }, (err, response, body) => {
       if (err) {

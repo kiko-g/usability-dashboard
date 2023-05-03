@@ -28,12 +28,3 @@ export const socials = [
     viewBox: '0 0 496 512',
   },
 ];
-
-export function isJson(str: string) {
-  try {
-    JSON.parse(str);
-  } catch (e) {
-    return false;
-  }  
-  return true;
-}

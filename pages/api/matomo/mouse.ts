@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import type { MouseClicksAPI, MouseClicksSQL } from '../../../@types';
 import { estabilishMySQLConnection, clicksQuery } from '../../../utils/sql';
 
-export default function getMouseClicks(req: NextApiRequest, res: NextApiResponse) {
+export default function getMouseClicksSQL(req: NextApiRequest, res: NextApiResponse) {
   const connection = estabilishMySQLConnection();
   const query = clicksQuery;
 
