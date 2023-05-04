@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const envVariables = z.object({
+const envVariables = z.object({
   NEXT_PUBLIC_MYSQL_USER: z.string(),
   NEXT_PUBLIC_MYSQL_PASSWORD: z.string(),
   NEXT_PUBLIC_MYSQL_DATABASE: z.string(),
@@ -10,3 +10,5 @@ export const envVariables = z.object({
 });
 
 envVariables.parse(process.env);
+
+export { envVariables };

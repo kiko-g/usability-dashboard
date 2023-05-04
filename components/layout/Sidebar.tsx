@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import classNames from 'classnames';
 import { DarkModeSwitch } from './';
-import { navigations, socials } from '../../utils';
+import { navigations, socials } from '../../utils/vars';
 
 type Props = {
   location: string;

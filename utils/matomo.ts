@@ -1,4 +1,4 @@
-import { isJson } from './utils';
+import { isJson } from './index';
 import { ITrackerEventCategory, ITrackerEvent } from '../@types';
 
 export const config = {
