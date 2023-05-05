@@ -7,17 +7,17 @@ export const config = {
   matomoSiteUrl: process.env.NEXT_PUBLIC_MATOMO_SITE_URL,
 };
 
-function findComponentName(group: any[]): string {
+function findComponentName(group: ITrackerEventRawEvent[]): string {
   let name = ""
   for (let i = 0; i < group.length; i++) {
-    name = group[i];
+    name = group[i].name;
     if (name !== "") break;
   }
 
   return name
 }
 
-function transformGroupedEvents(groupedEvents: any[][]): ITrackerEventGroup[] {
+function transformGroupedEvents(groupedEvents: ITrackerEventRawEvent[][]): ITrackerEventGroup[] {
   const result: ITrackerEventGroup[] = [];
 
   groupedEvents.forEach((group) => {
