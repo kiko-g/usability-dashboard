@@ -1,11 +1,29 @@
-export interface ITrackerEventCategory {
+export interface ITrackerEventRawCategory {
   component: string;
   name: string;
   time: string;
   path: string;
 }
 
-export interface ITrackerEvent extends ITrackerEventCategory {
+export interface ITrackerEventRawEvent extends ITrackerEventRawCategory {
+  action: string;
+}
+
+export interface ITrackerEvent {
+  time: string;
+  path: string;
+  action: string;
+}
+
+export interface ITrackerEventGroup {
+  component: string;
+  name: string;
+  events: ITrackerEvent[];
+}
+
+export interface ITrackerEvent {
+  time: string;
+  path: string;
   action: string;
 }
 
