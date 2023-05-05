@@ -1,11 +1,12 @@
 import request from 'request';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { config, parseAndGroupEvents } from '../../../../utils/matomo';
+import { CustomAPIError, ITrackerEventGroup } from '../../../../@types';
 
+type ResponseType = ITrackerEventGroup[] | CustomAPIError;
 
-
-export default function eventsGroupedWizardsMatomoApi(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'GET') return res.status(405).json({ error: 'Method Not Allowed' })
+export default function getAllEvents(req: NextApiRequest, res: NextApiResponse<ResponseType>) {
+  if (req.method !== 'GET') return res.status(405).json({ error: 'Method Not Allowed' });
 
   const period = 'range'; // day, week, month, year, range
   const date = `2023-04-29,today`; // YYYY-MM-DD

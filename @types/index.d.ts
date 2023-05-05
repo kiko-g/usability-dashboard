@@ -1,3 +1,8 @@
+export type CustomAPIError = {
+  error: string;
+  message?: string;
+};
+
 export interface ITrackerEventRawCategory {
   component: string;
   name: string;

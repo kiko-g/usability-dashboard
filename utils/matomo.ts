@@ -41,7 +41,7 @@ function transformGroupedEvents(groupedEvents: ITrackerEventRawEvent[][]): ITrac
   return result;
 }
 
-export const parseAndGroupEvents = (body: string | any[], filterBy?: string) => {
+export const parseAndGroupEvents = (body: string | any[], filterBy?: string): ITrackerEventGroup[] => {
   const eventsByComponent = new Map();
   const events = Array.isArray(body) ? body : JSON.parse(body);
 

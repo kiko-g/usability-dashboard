@@ -1,10 +1,12 @@
 import request from 'request';
 import { isJson } from '../../../../utils';
 import { config } from '../../../../utils/matomo';
-import { ITrackerEventRawCategory, ITrackerEvent } from '../../../../@types';
+import { ITrackerEventRawCategory, ITrackerEvent, CustomAPIError } from '../../../../@types';
 import { NextApiRequest, NextApiResponse } from 'next';
 
-export default function eventsMatomoApi(req: NextApiRequest, res: NextApiResponse) {
+type ResponseType = any | CustomAPIError;
+
+export default function getRawMatomoApiEvents(req: NextApiRequest, res: NextApiResponse<ResponseType>) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method Not Allowed' })
 
   const period = 'range'; // day, week, month, year, range
