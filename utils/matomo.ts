@@ -7,13 +7,23 @@ export const config = {
   matomoSiteUrl: process.env.NEXT_PUBLIC_MATOMO_SITE_URL,
 };
 
+function findComponentName(group: any[]): string {
+  let name = ""
+  for (let i = 0; i < group.length; i++) {
+    name = group[i];
+    if (name !== "") break;
+  }
+
+  return name
+}
+
 function transformGroupedEvents(groupedEvents: any[][]): ITrackerEventGroup[] {
   const result: ITrackerEventGroup[] = [];
 
   groupedEvents.forEach((group) => {
     const transformedGroup: ITrackerEventGroup = {
       component: group[0].component,
-      name: group[0].name,
+      name: findComponentName(group),
       events: [],
     };
 
