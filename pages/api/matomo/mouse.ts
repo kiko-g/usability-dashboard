@@ -3,10 +3,10 @@ import type { MouseClicksAPI, MouseClicksSQL } from '../../../@types';
 import { estabilishMySQLConnection, clicksQuery as query } from '../../../utils/sql';
 
 export default function getMouseClicksSQL(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'GET') return res.status(405).json({ error: 'Method Not Allowed' });
+  if (req.method !== 'GET') res.status(405).json({ error: 'Method Not Allowed' });
 
   const connection = estabilishMySQLConnection();
-  if (!connection) return res.status(404).json({ error: 'MySQL connection failed' });
+  if (!connection) res.status(403).json({ error: 'MySQL connection failed' });
 
   connection.query(query, (error, results) => {
     if (error) {
