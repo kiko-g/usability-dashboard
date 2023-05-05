@@ -1,10 +1,10 @@
 import request from 'request';
-import { isJson } from '../../../../utils';
-import { config } from '../../../../utils/matomo';
-import { ITrackerEventCategory, ITrackerEvent } from '../../../../@types';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { config, parseAndGroupEvents } from '../../../../utils/matomo';
 
-export default function eventsMatomoApi(req: NextApiRequest, res: NextApiResponse) {
+
+
+export default function eventsGroupedWizardsMatomoApi(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method Not Allowed' })
 
   const period = 'range'; // day, week, month, year, range
@@ -20,20 +20,7 @@ export default function eventsMatomoApi(req: NextApiRequest, res: NextApiRespons
       return res.status(response.statusCode).json({ error: 'Error from Matomo API', message: body.message });
     }
 
-    const parsedEvents = [];
-    const events = Array.isArray(body) ? body : JSON.parse(body);
-
-    for (const event of events) {
-      let parsedEvent;
-
-      if (isJson(event.Events_EventCategory)) {
-        const category = JSON.parse(event.Events_EventCategory) as ITrackerEventCategory;
-        parsedEvent = { ...category, action: event.Events_EventAction } as ITrackerEvent;
-      } else parsedEvent = { category: event.Events_EventCategory, action: event.Events_EventAction };
-
-      parsedEvents.push(parsedEvent);
-    }
-
-    return res.status(200).json(parsedEvents);
+    const groupedEvents = parseAndGroupEvents(body);
+    return res.status(200).json(groupedEvents);
   });
 }
