@@ -26,6 +26,11 @@ export interface ITrackerEventGroup {
   events: ITrackerEvent[];
 }
 
+export interface IWizard extends ITrackerEventGroup {
+  score: number;
+  completed: boolean;
+}
+
 export interface ITrackerEvent {
   time: string;
   path: string;

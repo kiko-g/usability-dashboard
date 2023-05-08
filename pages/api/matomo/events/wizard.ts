@@ -1,6 +1,6 @@
 import request from 'request';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { config, parseAndGroupEvents } from '../../../../utils/matomo';
+import { config, parseAndGroupEvents, evaluateWizards } from '../../../../utils/matomo';
 import { CustomAPIError, ITrackerEventGroup } from '../../../../@types';
 
 type ResponseType = ITrackerEventGroup[] | CustomAPIError;
@@ -21,7 +21,8 @@ export default function getWizardEvents(req: NextApiRequest, res: NextApiRespons
       res.status(response.statusCode).json({ error: 'Error from Matomo API', message: body.message });
     }
 
-    const groupedEvents = parseAndGroupEvents(body, 'wizard');
-    res.status(200).json(groupedEvents);
+    const groupedWizards = parseAndGroupEvents(body, 'wizard');
+    const evaluatedWizards = evaluateWizards(groupedWizards)
+    res.status(200).json(evaluatedWizards);
   });
 }

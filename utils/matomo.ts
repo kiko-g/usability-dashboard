@@ -1,5 +1,5 @@
 import { isJson } from './index';
-import { ITrackerEventRawCategory, ITrackerEventRawEvent, ITrackerEventGroup } from '../@types';
+import { ITrackerEventRawCategory, ITrackerEventRawEvent, ITrackerEventGroup, IWizard } from '../@types';
 
 export const config = {
   matomoToken: process.env.NEXT_PUBLIC_MATOMO_TOKEN,
@@ -65,4 +65,33 @@ export const parseAndGroupEvents = (body: string | any[], filterBy?: string): IT
   const transformedGroupedEvents = transformGroupedEvents(groupedEvents);
 
   return transformedGroupedEvents;
+};
+
+export const evaluateWizards = (groupedWizards: ITrackerEventGroup[]): IWizard[] => {
+  const result: IWizard[] = [];
+
+  for (const wizard of groupedWizards) {
+    let score = 100;
+    let completed = false;
+
+    for (const event of wizard.events) {
+      if (event.action.includes('Error')) {
+        score -= 2;
+      }
+    }
+
+    if (wizard.events.length > 0 && wizard.events[wizard.events.length - 1].action.includes('Completed')) {
+      completed = true;
+    }
+
+    const evaluatedWizard: IWizard = {
+      ...wizard,
+      score,
+      completed,
+    };
+
+    result.push(evaluatedWizard);
+  }
+
+  return result;
 };
