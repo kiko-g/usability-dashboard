@@ -8,13 +8,13 @@ export const config = {
 };
 
 function findComponentName(group: ITrackerEventRawEvent[]): string {
-  let name = ""
+  let name = '';
   for (let i = 0; i < group.length; i++) {
     name = group[i].name;
-    if (name !== "") break;
+    if (name !== '') break;
   }
 
-  return name
+  return name;
 }
 
 function transformGroupedEvents(groupedEvents: ITrackerEventRawEvent[][]): ITrackerEventGroup[] {
@@ -46,7 +46,7 @@ export const parseAndGroupEvents = (body: string | any[], filterBy?: string): IT
   const events = Array.isArray(body) ? body : JSON.parse(body);
 
   for (const event of events) {
-    if (!isJson(event.Events_EventCategory)) continue
+    if (!isJson(event.Events_EventCategory)) continue;
 
     const category = JSON.parse(event.Events_EventCategory) as ITrackerEventRawCategory;
     const parsedEvent = { ...category, action: event.Events_EventAction } as ITrackerEventRawEvent;
@@ -71,16 +71,25 @@ export const evaluateWizards = (groupedWizards: ITrackerEventGroup[]): IWizard[]
   const result: IWizard[] = [];
 
   for (const wizard of groupedWizards) {
+    if (wizard.events.length === 0) {
+      result.push({
+        ...wizard,
+        score: 0,
+        completed: false,
+      });
+    }
+
     let score = 100;
     let completed = false;
 
     for (const event of wizard.events) {
       if (event.action.includes('Error')) {
-        score -= 2;
+        score -= 3;
       }
     }
 
-    if (wizard.events.length > 0 && wizard.events[wizard.events.length - 1].action.includes('Completed')) {
+    const lastEvent = wizard.events[wizard.events.length - 1]
+    if (lastEvent.action.includes('Complete')) {
       completed = true;
     }
 
