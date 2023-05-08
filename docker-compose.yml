@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  matomo:
+    image: matomo
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - db
+    env_file:
+      - .env
+    volumes:
+      - matomo_data:/var/www/html
+  db:
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    env_file:
+      - .env
+    volumes:
+      - db_data:/var/lib/mysql
+  phpmyadmin:
+    image: phpmyadmin:latest
+    ports:
+      - "8080:80"
+    env_file:
+      - .env
+    depends_on:
+      - db
+  grafana:
+    build:
+      context: .
+      dockerfile: Dockerfile.grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+
+volumes:
+  matomo_data:
+  db_data:
+  grafana_data:

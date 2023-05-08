@@ -1,0 +1,13 @@
+# Dockerfile.grafana
+FROM grafana/grafana
+
+USER grafana
+
+# Install the Matomo plugin
+RUN grafana-cli plugins install thiagoarrais-matomotracking-panel
+
+# Install the SimpleJson plugin
+RUN grafana-cli plugins install grafana-simple-json-datasource
+
+# Expose Grafana's default port
+EXPOSE 3000
