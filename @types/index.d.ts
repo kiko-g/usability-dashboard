@@ -28,18 +28,6 @@ export interface IWizard extends ITrackerEventGroup {
   completed: boolean;
 }
 
-export enum WizardAction {
-  Start = 'Start',
-  Complete = 'Complete',
-  Cancel = 'Cancel',
-  Error = 'Error',
-  ActivateStep = 'Activate Step',
-  SuccessStep = 'Success Step',
-  FailStep = 'Fail Step',
-  NextStep = 'Next Step',
-  BackStep = 'Back Step',
-}
-
 // Template
 export type CustomAPIError = {
   error: string;

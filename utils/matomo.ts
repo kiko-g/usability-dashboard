@@ -1,5 +1,17 @@
 import { isJson } from './index';
-import { ITrackerEventRawCategory, ITrackerEventRawEvent, ITrackerEventGroup, IWizard, WizardAction } from '../@types';
+import { ITrackerEventRawCategory, ITrackerEventRawEvent, ITrackerEventGroup, IWizard } from '../@types';
+
+export enum WizardAction {
+  Start = 'Start',
+  Complete = 'Complete',
+  Cancel = 'Cancel',
+  Error = 'Error',
+  ActivateStep = 'Activate Step',
+  SuccessStep = 'Success Step',
+  FailStep = 'Fail Step',
+  NextStep = 'Next Step',
+  BackStep = 'Back Step',
+}
 
 export const config = {
   matomoToken: process.env.NEXT_PUBLIC_MATOMO_TOKEN,
