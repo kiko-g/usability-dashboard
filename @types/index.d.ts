@@ -25,6 +25,7 @@ export interface ITrackerEventGroup {
 // Wizards
 export interface IWizard extends ITrackerEventGroup {
   score: number;
+  timespan: number;
   completed: boolean;
 }
 

@@ -1,5 +1,5 @@
 import { isJson } from './index';
-import { ITrackerEventRawCategory, ITrackerEventRawEvent, ITrackerEventGroup, IWizard } from '../@types';
+import { ITrackerEventRawCategory, ITrackerEventRawEvent, ITrackerEventGroup, IWizard, ITrackerEvent } from '../@types';
 
 export enum WizardAction {
   Start = 'Start',
@@ -28,6 +28,19 @@ function findComponentName(group: ITrackerEventRawEvent[]): string {
 
   return name;
 }
+
+function findComponentTimespan(group: ITrackerEvent[]) {
+  if (group.length <= 1) return 0;
+
+  const first = group[0];
+  const last = group[group.length - 1];
+
+  const firstTime = new Date(first.time);
+  const lastTime = new Date(last.time);
+
+  return (lastTime.getTime() - firstTime.getTime()) / 1000;
+}
+
 
 function transformGroupedEvents(groupedEvents: ITrackerEventRawEvent[][]): ITrackerEventGroup[] {
   const result: ITrackerEventGroup[] = [];
@@ -87,12 +100,14 @@ export const evaluateWizards = (groupedWizards: ITrackerEventGroup[]): IWizard[]
       result.push({
         ...wizard,
         score: 0,
+        timespan: 0,
         completed: false,
       });
     }
 
     let score = 100;
     let completed = false;
+    let timespan = findComponentTimespan(wizard.events);
 
     for (const event of wizard.events) {
       // wizard error penalty
@@ -119,6 +134,7 @@ export const evaluateWizards = (groupedWizards: ITrackerEventGroup[]): IWizard[]
     const evaluatedWizard: IWizard = {
       ...wizard,
       score,
+      timespan,
       completed,
     };
 
