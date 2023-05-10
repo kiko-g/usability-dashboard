@@ -83,7 +83,13 @@ export const evaluateWizards = (groupedWizards: ITrackerEventGroup[]): IWizard[]
     let completed = false;
 
     for (const event of wizard.events) {
+      // back penalty
       if (event.action.includes('Error')) {
+        score -= 10;
+      }
+
+      // error penalty
+      if (event.action.includes('Back')) {
         score -= 3;
       }
     }
