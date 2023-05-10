@@ -1,5 +1,5 @@
 import { isJson } from './index';
-import { ITrackerEventRawCategory, ITrackerEventRawEvent, ITrackerEventGroup, IWizard } from '../@types';
+import { ITrackerEventRawCategory, ITrackerEventRawEvent, ITrackerEventGroup, IWizard, WizardAction } from '../@types';
 
 export const config = {
   matomoToken: process.env.NEXT_PUBLIC_MATOMO_TOKEN,
@@ -83,19 +83,24 @@ export const evaluateWizards = (groupedWizards: ITrackerEventGroup[]): IWizard[]
     let completed = false;
 
     for (const event of wizard.events) {
-      // back penalty
-      if (event.action.includes('Error')) {
+      // wizard error penalty
+      if (event.action.includes(WizardAction.Error)) {
         score -= 10;
       }
 
-      // error penalty
-      if (event.action.includes('Back')) {
+      // back to previous step penalty
+      if (event.action.includes(WizardAction.BackStep)) {
+        score -= 2;
+      }
+
+      // fail step penalty
+      if (event.action.includes(WizardAction.FailStep)) {
         score -= 3;
       }
     }
 
-    const lastEvent = wizard.events[wizard.events.length - 1]
-    if (lastEvent.action.includes('Complete')) {
+    const lastEvent = wizard.events[wizard.events.length - 1];
+    if (lastEvent.action.includes(WizardAction.Complete)) {
       completed = true;
     }
 

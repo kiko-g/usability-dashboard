@@ -1,8 +1,4 @@
-export type CustomAPIError = {
-  error: string;
-  message?: string;
-};
-
+// Event typing
 export interface ITrackerEventRawCategory {
   component: string;
   name: string;
@@ -26,16 +22,29 @@ export interface ITrackerEventGroup {
   events: ITrackerEvent[];
 }
 
+// Wizards
 export interface IWizard extends ITrackerEventGroup {
   score: number;
   completed: boolean;
 }
 
-export interface ITrackerEvent {
-  time: string;
-  path: string;
-  action: string;
+export enum WizardAction {
+  Start = 'Start',
+  Complete = 'Complete',
+  Cancel = 'Cancel',
+  Error = 'Error',
+  ActivateStep = 'Activate Step',
+  SuccessStep = 'Success Step',
+  FailStep = 'Fail Step',
+  NextStep = 'Next Step',
+  BackStep = 'Back Step',
 }
+
+// Template
+export type CustomAPIError = {
+  error: string;
+  message?: string;
+};
 
 // Mouse Clicks
 export type MouseClicksSQL = {
