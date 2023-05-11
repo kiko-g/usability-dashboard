@@ -13,7 +13,7 @@ type ResponseType = VisitsPerDay[] | CustomAPIError;
 export default function getVisitsPerDay(req: NextApiRequest, res: NextApiResponse<ResponseType>) {
   if (req.method !== 'GET') res.status(405).json({ error: 'Method Not Allowed' });
 
-  const period = 'day';
+  const period = 'range';
   const date = `2023-04-29,today`;
   const apiUrl = `${config.matomoSiteUrl}/index.php?module=API&method=VisitsSummary.get&format=json&idSite=${config.matomoSiteId}&period=${period}&date=${date}&token_auth=${config.matomoToken}`;
 
