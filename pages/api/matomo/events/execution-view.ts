@@ -1,6 +1,6 @@
 import request from 'request';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { config, parseAndGroupEvents } from '../../../../utils/matomo';
+import { config, parseEvents } from '../../../../utils/matomo';
 import { CustomAPIError, ITrackerEventGroup } from '../../../../@types';
 
 type ResponseType = ITrackerEventGroup[] | CustomAPIError;
@@ -21,7 +21,7 @@ export default function eventsGroupedWizardsMatomoApi(req: NextApiRequest, res: 
       res.status(response.statusCode).json({ error: 'Error from Matomo API', message: body.message });
     }
 
-    const groupedEvents = parseAndGroupEvents(body, 'execution-view');
+    const groupedEvents = parseEvents(body, 'execution-view');
     res.status(200).json(groupedEvents);
   });
 }

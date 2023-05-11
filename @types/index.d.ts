@@ -29,6 +29,16 @@ export interface IWizard extends ITrackerEventGroup {
   completed: boolean;
 }
 
+export interface IWizardGroup {
+  name: string;
+  avgScore: number;
+  avgTimespan: number;
+  completed: number;
+  notCompleted: number;
+  completedRatio: number;
+  wizards: IWizard[];
+}
+
 // Template
 export type CustomAPIError = {
   error: string;

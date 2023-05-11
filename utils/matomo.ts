@@ -1,5 +1,5 @@
 import { isJson } from './index';
-import { ITrackerEventRawCategory, ITrackerEventRawEvent, ITrackerEventGroup, IWizard, ITrackerEvent } from '../@types';
+import { ITrackerEventRawCategory, ITrackerEventRawEvent, ITrackerEventGroup, IWizard, ITrackerEvent, IWizardGroup } from '../@types';
 
 export enum WizardAction {
   Start = 'Start',
@@ -65,7 +65,7 @@ function transformGroupedEvents(groupedEvents: ITrackerEventRawEvent[][]): ITrac
   return result;
 }
 
-export const parseAndGroupEvents = (body: string | any[], filterBy?: string): ITrackerEventGroup[] => {
+export const parseEvents = (body: string | any[], filterBy?: string): ITrackerEventGroup[] => {
   const eventsByComponent = new Map();
   const events = Array.isArray(body) ? body : JSON.parse(body);
 
@@ -141,4 +141,40 @@ export const evaluateWizards = (groupedWizards: ITrackerEventGroup[]): IWizard[]
   }
 
   return result;
+};
+
+export const groupWizards = (wizards: IWizard[]): IWizardGroup[] => {
+  const groupedWizards: IWizardGroup[] = [];
+
+  for (const wizard of wizards) {
+    let group = groupedWizards.find(g => g.name === wizard.name);
+    const timespan = findComponentTimespan(wizard.events);
+
+    if (!group) {
+      group = {
+        name: wizard.name,
+        avgScore: 0,
+        avgTimespan: 0,
+        completed: 0,
+        notCompleted: 0,
+        completedRatio: 0,
+        wizards: [],
+      };
+      groupedWizards.push(group);
+    }
+
+    group.avgScore += wizard.score;
+    group.avgTimespan += timespan;
+    wizard.completed ? group.completed++ : group.notCompleted++;
+    group.wizards.push(wizard);
+  }
+
+  for (const group of groupedWizards) {
+    const totalCount = group.completed + group.notCompleted;
+    group.avgScore /= totalCount;
+    group.avgTimespan /= totalCount;
+    group.completedRatio = group.completed / totalCount;
+  }
+
+  return groupedWizards.sort((a, b) => (a.completed + a.notCompleted) < (b.completed + b.notCompleted) ? 1 : -1);
 };

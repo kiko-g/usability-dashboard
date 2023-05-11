@@ -1,9 +1,9 @@
 import request from 'request';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { config, parseAndGroupEvents, evaluateWizards } from '../../../../utils/matomo';
-import { CustomAPIError, ITrackerEventGroup } from '../../../../@types';
+import { config, parseEvents, evaluateWizards, groupWizards } from '../../../../utils/matomo';
+import { CustomAPIError, IWizardGroup } from '../../../../@types';
 
-type ResponseType = ITrackerEventGroup[] | CustomAPIError;
+type ResponseType = IWizardGroup[] | CustomAPIError;
 
 export default function getWizardEvents(req: NextApiRequest, res: NextApiResponse<ResponseType>) {
   if (req.method !== 'GET') res.status(405).json({ error: 'Method Not Allowed' });
@@ -21,8 +21,9 @@ export default function getWizardEvents(req: NextApiRequest, res: NextApiRespons
       res.status(response.statusCode).json({ error: 'Error from Matomo API', message: body.message });
     }
 
-    const groupedWizards = parseAndGroupEvents(body, 'wizard');
-    const evaluatedWizards = evaluateWizards(groupedWizards);
-    res.status(200).json(evaluatedWizards);
+    const wizards = parseEvents(body, 'wizard');
+    const evaluatedWizards = evaluateWizards(wizards);
+    const groupedWizards = groupWizards(evaluatedWizards);
+    res.status(200).json(groupedWizards);
   });
 }
