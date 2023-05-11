@@ -12,14 +12,6 @@ export default function getMostUsedOperatingSystems(req: NextApiRequest, res: Ne
   const date = `2023-04-29,today`; // YYYY-MM-DD
   const apiUrl = `${config.matomoSiteUrl}/index.php?module=API&method=DevicesDetection.getBrowsers&format=json&idSite=${config.matomoSiteId}&period=${period}&date=${date}&token_auth=${config.matomoToken}`;
 
-  const osMapping: { [key: string]: string } = {
-    WIN: 'Windows',
-    MAC: 'macOS',
-    LIN: 'Linux',
-    AND: 'Android',
-    IOS: 'iOS',
-  };
-
   request(apiUrl, { json: true }, (err, response, body) => {
     if (err) {
       res.status(500).json({ error: 'Internal server error' });
