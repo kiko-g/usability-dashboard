@@ -28,7 +28,7 @@ export default function getVisitsPerDay(req: NextApiRequest, res: NextApiRespons
 
     const visitsPerDay: VisitsPerDay[] = Object.entries(body).map(([day, dayData]: [string, any]) => ({
       day,
-      visitCount: dayData.nb_visits !== null ? dayData.nb_visits : 0,
+      visitCount: dayData.nb_visits || 0,
     }));
 
     res.status(200).json(visitsPerDay);
