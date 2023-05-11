@@ -41,7 +41,6 @@ function findComponentTimespan(group: ITrackerEvent[]) {
   return (lastTime.getTime() - firstTime.getTime()) / 1000;
 }
 
-
 function transformGroupedEvents(groupedEvents: ITrackerEventRawEvent[][]): ITrackerEventGroup[] {
   const result: ITrackerEventGroup[] = [];
 

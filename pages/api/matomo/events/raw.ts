@@ -7,7 +7,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 type ResponseType = any | CustomAPIError;
 
 export default function getRawMatomoApiEvents(req: NextApiRequest, res: NextApiResponse<ResponseType>) {
-  if (req.method !== 'GET') res.status(405).json({ error: 'Method Not Allowed' })
+  if (req.method !== 'GET') res.status(405).json({ error: 'Method Not Allowed' });
 
   const period = 'range'; // day, week, month, year, range
   const date = `2023-04-29,today`; // YYYY-MM-DD
