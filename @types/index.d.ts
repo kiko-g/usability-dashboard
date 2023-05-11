@@ -47,7 +47,8 @@ export type VisitedPage = {
 
 // Screens
 export type ScreenSize = {
-  screen: string;
+  x: number;
+  y: number;
   visitCount: number;
 };
 

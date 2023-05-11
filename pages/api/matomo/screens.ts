@@ -21,10 +21,14 @@ export default function getMostUsedScreenSizes(req: NextApiRequest, res: NextApi
       res.status(response.statusCode).json({ error: 'Error from Matomo API', message: body.message });
     }
 
-    const mostUsedScreenSizes: ScreenSize[] = body.map((screen: any) => ({
-      screen: screen.label,
-      visitCount: screen.nb_visits,
-    })).sort((a: ScreenSize, b: ScreenSize) => (a.visitCount < b.visitCount ? 1 : -1));
+    const mostUsedScreenSizes: ScreenSize[] = body.map((screen: any) => {
+      const [x, y] = screen.label.split('x');
+      return {
+        x: parseInt(x),
+        y: parseInt(y),
+        visitCount: screen.nb_visits,
+      };
+    }).sort((a: ScreenSize, b: ScreenSize) => (a.visitCount < b.visitCount ? 1 : -1));
 
     res.status(200).json(mostUsedScreenSizes);
   });
