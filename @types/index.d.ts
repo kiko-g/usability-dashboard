@@ -52,6 +52,24 @@ export type ScreenSize = {
   visitCount: number;
 };
 
+// Devices
+export type Device = {
+  name: string;
+  visitCount: number;
+};
+
+// Browsers
+export type Browser = {
+  name: string;
+  visitCount: number;
+};
+
+// Operating Systems
+export type OperatingSystem = {
+  name: string;
+  visitCount: number;
+};
+
 // API Error
 export type CustomAPIError = {
   error: string;

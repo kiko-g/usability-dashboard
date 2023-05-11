@@ -21,10 +21,12 @@ export default function getMostVisitedPages(req: NextApiRequest, res: NextApiRes
       res.status(response.statusCode).json({ error: 'Error from Matomo API', message: body.message });
     }
 
-    const mostVisitedPages: VisitedPage[] = body.map((page: any) => ({
-      page: page.label,
-      visitCount: page.nb_visits,
-    })).sort((a: VisitedPage, b: VisitedPage) => (a.visitCount < b.visitCount ? 1 : -1));
+    const mostVisitedPages: VisitedPage[] = body
+      .map((page: any) => ({
+        page: page.label,
+        visitCount: page.nb_visits,
+      }))
+      .sort((a: VisitedPage, b: VisitedPage) => (a.visitCount < b.visitCount ? 1 : -1));
 
     res.status(200).json(mostVisitedPages);
   });
