@@ -1,5 +1,12 @@
 import { isJson } from './index';
-import { ITrackerEventRawCategory, ITrackerEventRawEvent, ITrackerEventGroup, IWizard, ITrackerEvent, IWizardGroup } from '../@types';
+import {
+  ITrackerEventRawCategory,
+  ITrackerEventRawEvent,
+  ITrackerEventGroup,
+  IWizard,
+  ITrackerEvent,
+  IWizardGroup,
+} from '../@types';
 
 export enum WizardAction {
   Start = 'Start',
@@ -147,7 +154,7 @@ export const groupWizards = (wizards: IWizard[]): IWizardGroup[] => {
   const groupedWizards: IWizardGroup[] = [];
 
   for (const wizard of wizards) {
-    let group = groupedWizards.find(g => g.name === wizard.name);
+    let group = groupedWizards.find((g) => g.name === wizard.name);
     const timespan = findComponentTimespan(wizard.events);
 
     if (!group) {
@@ -176,5 +183,5 @@ export const groupWizards = (wizards: IWizard[]): IWizardGroup[] => {
     group.completedRatio = group.completed / totalCount;
   }
 
-  return groupedWizards.sort((a, b) => (a.completed + a.notCompleted) < (b.completed + b.notCompleted) ? 1 : -1);
+  return groupedWizards.sort((a, b) => (a.avgScore < b.avgScore ? 1 : -1));
 };
