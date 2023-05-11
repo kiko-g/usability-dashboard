@@ -10,7 +10,7 @@ export default function getMostUsedOperatingSystems(req: NextApiRequest, res: Ne
 
   const period = 'range'; // day, week, month, year, range
   const date = `2023-04-29,today`; // YYYY-MM-DD
-  const apiUrl = `${config.matomoSiteUrl}/index.php?module=API&method=Resolution.getResolution&idSite=${config.matomoSiteId}&period=${period}&date=${date}&format=json&token_auth=${config.matomoToken}`;
+  const apiUrl = `${config.matomoSiteUrl}/index.php?module=API&method=DevicesDetection.getOsFamilies&format=json&idSite=${config.matomoSiteId}&period=${period}&date=${date}&token_auth=${config.matomoToken}`;
 
   const osMapping: { [key: string]: string } = {
     WIN: 'Windows',
