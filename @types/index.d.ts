@@ -45,6 +45,12 @@ export type CustomAPIError = {
   message?: string;
 };
 
+// Pages
+export type VisitedPage = {
+  page: string;
+  visitCount: number;
+};
+
 // Mouse Clicks
 export type MouseClicksSQL = {
   x: string;
