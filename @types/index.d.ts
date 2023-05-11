@@ -39,16 +39,22 @@ export interface IWizardGroup {
   wizards: IWizard[];
 }
 
-// Template
-export type CustomAPIError = {
-  error: string;
-  message?: string;
-};
-
 // Pages
 export type VisitedPage = {
   page: string;
   visitCount: number;
+};
+
+// Screens
+export type ScreenSize = {
+  screen: string;
+  visitCount: number;
+};
+
+// API Error
+export type CustomAPIError = {
+  error: string;
+  message?: string;
 };
 
 // Mouse Clicks
