@@ -22,10 +22,11 @@ export default function getMostUsedScreenSizes(req: NextApiRequest, res: NextApi
     }
 
     const mostUsedScreenSizes: ScreenSize[] = body.map((screen: any) => {
-      const [x, y] = screen.label.split('x');
+      const [width, height] = screen.label.split('x');
       return {
-        x: parseInt(x),
-        y: parseInt(y),
+        screen: screen.label,
+        width: parseInt(width),
+        height: parseInt(height),
         visitCount: screen.nb_visits,
       };
     }).sort((a: ScreenSize, b: ScreenSize) => (a.visitCount < b.visitCount ? 1 : -1));
