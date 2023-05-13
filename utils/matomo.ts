@@ -107,28 +107,35 @@ export const evaluateWizards = (groupedWizards: ITrackerEventGroup[]): IWizard[]
         ...wizard,
         score: 0,
         timespan: 0,
+        errorCount: 0,
+        backStepCount: 0,
         completed: false,
       });
     }
 
     let score = 100;
     let completed = false;
+    let errorCount = 0;
+    let backStepCount = 0;
     let timespan = findComponentTimespan(wizard.events);
 
     for (const event of wizard.events) {
       // wizard error penalty
       if (event.action.includes(WizardAction.Error)) {
         score -= 10;
+        errorCount++;
       }
 
       // back to previous step penalty
       if (event.action.includes(WizardAction.BackStep)) {
         score -= 2;
+        backStepCount++;
       }
 
       // fail step penalty
       if (event.action.includes(WizardAction.FailStep)) {
         score -= 3;
+        errorCount++;
       }
     }
 
@@ -142,6 +149,8 @@ export const evaluateWizards = (groupedWizards: ITrackerEventGroup[]): IWizard[]
       score,
       timespan,
       completed,
+      errorCount,
+      backStepCount,
     };
 
     result.push(evaluatedWizard);
@@ -165,6 +174,7 @@ export const groupWizards = (wizards: IWizard[]): IWizardGroup[] => {
         completed: 0,
         notCompleted: 0,
         completedRatio: 0,
+        total: 0,
         wizards: [],
       };
       groupedWizards.push(group);
@@ -178,6 +188,7 @@ export const groupWizards = (wizards: IWizard[]): IWizardGroup[] => {
 
   for (const group of groupedWizards) {
     const totalCount = group.completed + group.notCompleted;
+    group.total = totalCount;
     group.avgScore /= totalCount;
     group.avgTimespan /= totalCount;
     group.completedRatio = group.completed / totalCount;

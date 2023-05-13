@@ -27,6 +27,8 @@ export interface IWizard extends ITrackerEventGroup {
   score: number;
   timespan: number;
   completed: boolean;
+  backStepCount: number;
+  errorCount: number;
 }
 
 export interface IWizardGroup {
@@ -36,6 +38,7 @@ export interface IWizardGroup {
   completed: number;
   notCompleted: number;
   completedRatio: number;
+  total: number;
   wizards: IWizard[];
 }
 
