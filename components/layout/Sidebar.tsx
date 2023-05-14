@@ -9,6 +9,7 @@ import {
   MagnifyingGlassCircleIcon,
   XMarkIcon,
   Bars3Icon,
+  MapIcon,
 } from '@heroicons/react/24/outline';
 
 const navigations = [
@@ -26,6 +27,11 @@ const navigations = [
     name: 'Mouse',
     href: '/mouse',
     icon: CursorArrowRippleIcon,
+  },
+  {
+    name: 'Wizards',
+    href: '/wizards',
+    icon: MapIcon,
   },
 ];
 
