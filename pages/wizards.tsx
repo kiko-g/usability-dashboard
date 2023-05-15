@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import type { IWizardGroup } from '../@types';
 import { mockWizardData } from '../utils/mock';
 import { Layout } from '../components/layout';
 import { Loading, NotFound } from '../components/utils';
 import { ArrowPathIcon, CircleStackIcon } from '@heroicons/react/24/outline';
+import { Dialog, Transition } from '@headlessui/react';
 
 export default function Wizards() {
   return (
@@ -61,14 +62,14 @@ function WizardKPIs() {
   const completionRate = React.useMemo<CompletionRate | null>(() => {
     if (data.length === 0) return null;
 
-    const totalCompleted = data.reduce((acc, item) => acc + item.completed, 0);
-    const totalNotCompleted = data.reduce((acc, item) => acc + item.notCompleted, 0);
-    const total = totalCompleted + totalNotCompleted;
+    const completed = data.reduce((acc, item) => acc + item.completed, 0);
+    const notCompleted = data.reduce((acc, item) => acc + item.notCompleted, 0);
+    const total = completed + notCompleted;
 
     return {
-      completed: totalCompleted,
-      notCompleted: totalNotCompleted,
-      ratio: total > 0 ? totalCompleted / total : 0,
+      completed: completed,
+      notCompleted: notCompleted,
+      ratio: total > 0 ? completed / total : 0,
     };
   }, [data]);
 
@@ -113,6 +114,33 @@ function WizardKPIs() {
     return { avg: averageStepTime, min: minStepTime, max: maxStepTime };
   }, [data]);
 
+  // calculate average, minimum and maximum error and back step considering all wizards
+  const errorAndBackStepStats = React.useMemo(() => {
+    let totalErrors = 0;
+    let totalBackSteps = 0;
+    let errorCount = 0;
+    let backStepCount = 0;
+
+    data.forEach((item) => {
+      item.wizards.forEach((wizard) => {
+        totalErrors += wizard.errorCount;
+        totalBackSteps += wizard.backStepCount;
+
+        if (wizard.errorCount > 0) {
+          errorCount++;
+        }
+        if (wizard.backStepCount > 0) {
+          backStepCount++;
+        }
+      });
+    });
+
+    const avgError = errorCount > 0 ? totalErrors / errorCount : 0;
+    const avgBack = backStepCount > 0 ? totalBackSteps / backStepCount : 0;
+
+    return { avgError, totalErrors, avgBack, totalBackSteps };
+  }, [data]);
+
   // return early if loading
   if (loading)
     return (
@@ -154,20 +182,16 @@ function WizardKPIs() {
 
   return data.length === 0 ? null : (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center gap-4">
+      <div className="flex flex-1 gap-4 self-stretch">
         {completionRate === null ? null : <WizardCompletionRateCard completion={completionRate} />}
         {avgScore === null ? null : <WizardAverageUXScoreCard score={avgScore} />}
+        <div className="flex flex-1 flex-col items-start justify-start gap-4 self-stretch">
+          <TimeStatsCard text="Wizard Time Stats" stats={wizardTimeStats} />
+          <TimeStatsCard text="Step Time Stats" stats={stepTimeStats} />
+          <ErrorStatsCard text="Negative Actions Stats" stats={errorAndBackStepStats} />
+        </div>
       </div>
-      <div className="flex items-center gap-4">
-        <TimeStatsCard
-          text="Wizard Time Stats"
-          stats={{ avg: wizardTimeStats.avg, min: wizardTimeStats.min, max: wizardTimeStats.max }}
-        />
-        <TimeStatsCard
-          text="Step Time Stats"
-          stats={{ avg: stepTimeStats.avg, min: stepTimeStats.min, max: stepTimeStats.max }}
-        />
-      </div>
+      <WizardSortedList data={data} />
     </div>
   );
 }
@@ -274,32 +298,173 @@ function WizardAverageUXScoreCard({ score }: { score: number }) {
   );
 }
 
-const TimeStatsCard = ({ stats, text }: { text: string; stats: { avg: number; min: number; max: number } }) => {
+type AvgMinMax = {
+  avg: number;
+  min: number;
+  max: number;
+};
+
+const TimeStatsCard = ({ stats, text }: { text: string; stats: AvgMinMax }) => {
   const { avg, min, max } = stats;
 
   return (
-    <div className="relative max-w-sm rounded bg-white/80 p-4 dark:bg-white/10">
-      <h2 className="mb-4 text-xl font-bold">{text}</h2>
+    <div className="relative flex flex-1 flex-col self-stretch rounded bg-white/80 p-4 dark:bg-white/10">
+      <h2 className="mb-2 text-xl font-bold">{text}</h2>
       <div className="flex items-center gap-x-2">
         <span className="h-4 w-4 rounded-full bg-cyan-500" />
-        <span className="font-semibold">
+        <span className="whitespace-nowrap text-sm font-semibold">
           Average: <span className="font-normal">{avg.toFixed(2)}s</span>
         </span>
       </div>
 
       <div className="flex items-center gap-x-2">
         <span className="h-4 w-4 rounded-full bg-pink-500" />
-        <span className="font-semibold">
-          Average: <span className="font-normal">{min.toFixed(2)}s</span>
+        <span className="whitespace-nowrap text-sm font-semibold">
+          Minimum: <span className="font-normal">{min.toFixed(2)}s</span>
         </span>
       </div>
 
       <div className="flex items-center gap-x-2">
         <span className="h-4 w-4 rounded-full bg-violet-500" />
-        <span className="font-semibold">
+        <span className="whitespace-nowrap text-sm font-semibold">
           Maximum: <span className="font-normal">{max.toFixed(2)}s</span>
         </span>
       </div>
     </div>
   );
 };
+
+type ErrorStatsCard = {
+  avgError: number;
+  totalErrors: number;
+  avgBack: number;
+  totalBackSteps: number;
+};
+
+const ErrorStatsCard = ({ text, stats }: { text: string; stats: ErrorStatsCard }) => {
+  const { avgError, totalErrors, avgBack, totalBackSteps } = stats;
+
+  return (
+    <div className="relative flex flex-1 flex-col self-stretch rounded bg-white/80 p-4 dark:bg-white/10">
+      <h2 className="mb-2 text-xl font-bold">{text}</h2>
+      <div className="flex items-center gap-x-2">
+        <span className="h-4 w-4 rounded-full bg-cyan-500" />
+        <span className="whitespace-nowrap text-sm font-semibold">
+          Average Errors: <span className="font-normal">{avgError.toFixed(2)}</span>
+        </span>
+      </div>
+
+      <div className="flex items-center gap-x-2">
+        <span className="h-4 w-4 rounded-full bg-pink-500" />
+        <span className="whitespace-nowrap text-sm font-semibold">
+          Average Backs: <span className="font-normal">{avgBack.toFixed(2)}</span>
+        </span>
+      </div>
+
+      <div className="flex items-center gap-x-2">
+        <span className="h-4 w-4 rounded-full bg-violet-500" />
+        <span className="whitespace-nowrap text-sm font-semibold">
+          Total Errors: <span className="font-normal">{totalErrors}</span>
+        </span>
+      </div>
+
+      <div className="flex items-center gap-x-2">
+        <span className="h-4 w-4 rounded-full bg-teal-500" />
+        <span className="whitespace-nowrap text-sm font-semibold">
+          Total Backs: <span className="font-normal">{totalBackSteps}</span>
+        </span>
+      </div>
+    </div>
+  );
+};
+
+function WizardSortedList({ data }: { data: IWizardGroup[] }) {
+  return (
+    <div className="relative w-full rounded bg-white/80 p-4 dark:bg-white/10">
+      <h2 className="mb-2 text-xl font-bold">Sorted Wizards by Low Score</h2>
+      <ul className="flex flex-col gap-y-3">
+        {data.map((wizardGroup, wizardGroupIdx) => (
+          <li key={wizardGroupIdx} className="flex items-center gap-x-2">
+            <WizardGroupFocus wizardGroup={wizardGroup} />{' '}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
+  let [isOpen, setIsOpen] = React.useState(true);
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={openModal}
+        className="rounded-md bg-black bg-opacity-20 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
+      >
+        Open dialog
+      </button>
+
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={closeModal}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-25" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
+                    Payment successful
+                  </Dialog.Title>
+                  <div className="mt-2">
+                    <p className="text-sm text-gray-500">
+                      Your payment has been successfully submitted. We’ve sent you an email with all of the details of
+                      your order.
+                    </p>
+                  </div>
+
+                  <div className="mt-4">
+                    <button
+                      type="button"
+                      className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                      onClick={closeModal}
+                    >
+                      Got it, thanks!
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+    </>
+  );
+}
