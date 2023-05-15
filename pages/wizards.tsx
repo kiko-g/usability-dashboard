@@ -3,12 +3,19 @@ import type { IWizardGroup } from '../@types';
 import { mockWizardData } from '../utils/mock';
 import { Layout } from '../components/layout';
 import { Loading, NotFound } from '../components/utils';
-import { CircleStackIcon } from '@heroicons/react/24/outline';
+import { ArrowPathIcon, CircleStackIcon } from '@heroicons/react/24/outline';
 
-export default function Visits() {
+type CompletionRate = {
+  completed: number;
+  notCompleted: number;
+  ratio: number;
+};
+
+export default function Wizards() {
   const [data, setData] = React.useState<IWizardGroup[]>([]);
   const [error, setError] = React.useState<boolean>(false);
   const [loading, setLoading] = React.useState<boolean>(false);
+  const [willFetch, setWillFetch] = React.useState<boolean>(true);
 
   const avgScore = React.useMemo<number | null>(() => {
     if (data.length === 0) return null;
@@ -17,22 +24,29 @@ export default function Visits() {
     return data.length > 0 ? sum / data.length : 0;
   }, [data]);
 
-  const completionRate = React.useMemo<number | null>(() => {
+  const completionRate = React.useMemo<CompletionRate | null>(() => {
     if (data.length === 0) return null;
 
     const totalCompleted = data.reduce((acc, item) => acc + item.completed, 0);
     const totalNotCompleted = data.reduce((acc, item) => acc + item.notCompleted, 0);
     const total = totalCompleted + totalNotCompleted;
 
-    return total > 0 ? totalCompleted / total : 0;
+    return {
+      completed: totalCompleted,
+      notCompleted: totalNotCompleted,
+      ratio: total > 0 ? totalCompleted / total : 0,
+    };
   }, [data]);
 
   React.useEffect(() => {
+    if (!willFetch) return;
+
     fetch('/api/matomo/events/wizard')
       .then((res) => {
         if (!res.ok) {
           setError(true);
-          setLoading(true);
+          setLoading(false);
+          setWillFetch(false);
           return null;
         } else {
           return res.json();
@@ -40,9 +54,10 @@ export default function Visits() {
       })
       .then((data: IWizardGroup[]) => {
         setLoading(false);
+        setWillFetch(false);
         setData(data === null ? [] : data);
       });
-  }, []);
+  }, [willFetch]);
 
   return (
     <Layout location="Wizards">
@@ -60,20 +75,33 @@ export default function Visits() {
           ) : error ? (
             <div className="space-y-3">
               <NotFound />
-              <button
-                onClick={() => {
-                  setError(false);
-                  setData(mockWizardData);
-                }}
-                className="flex items-center gap-1 rounded bg-rose-700 px-3 py-2 transition hover:opacity-80"
-              >
-                <CircleStackIcon className="h-5 w-5" />
-                <span className="text-sm">Use mock Data</span>
-              </button>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    setError(false);
+                    setData(mockWizardData);
+                  }}
+                  className="flex items-center gap-1 rounded bg-rose-600 px-3 py-2 text-white transition hover:opacity-80"
+                >
+                  <CircleStackIcon className="h-5 w-5" />
+                  <span className="text-sm">Use mock Data</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setError(false);
+                    setLoading(true);
+                    setWillFetch(true);
+                  }}
+                  className="flex items-center gap-1 rounded bg-blue-600 px-3 py-2 text-white transition hover:opacity-80"
+                >
+                  <ArrowPathIcon className="h-5 w-5" />
+                  <span className="text-sm">Fetch again</span>
+                </button>
+              </div>
             </div>
           ) : (
             <div className="mt-3 flex gap-6">
-              {completionRate === null ? null : <WizardCompletionRateCard rate={completionRate} />}
+              {completionRate === null ? null : <WizardCompletionRateCard completion={completionRate} />}
               {avgScore === null ? null : <WizardAverageUXScoreCard score={avgScore} />}
             </div>
           )}
@@ -83,8 +111,8 @@ export default function Visits() {
   );
 }
 
-function WizardCompletionRateCard({ rate }: { rate: number }) {
-  const progress = Math.min(Math.max(rate, 0), 1) * 100;
+function WizardCompletionRateCard({ completion }: { completion: CompletionRate }) {
+  const progress = Math.min(Math.max(completion.ratio, 0), 1) * 100;
   const diameter = 200;
   const strokeWidth = 12;
   const radius = (diameter - strokeWidth) / 2;
@@ -122,8 +150,10 @@ function WizardCompletionRateCard({ rate }: { rate: number }) {
           />
         </svg>
         <div className="absolute flex w-full flex-col text-center">
-          <span className="text-4xl font-bold">{`${Math.round(progress)}%`}</span>
-          <span className="text-xl">232/386</span>
+          <span className="text-4xl font-bold">{`${progress.toFixed(1)}%`}</span>
+          <span className="text-xl">
+            {completion.completed}/{completion.completed + completion.notCompleted}
+          </span>
         </div>
       </div>
     </div>
@@ -169,7 +199,7 @@ function WizardAverageUXScoreCard({ score }: { score: number }) {
           />
         </svg>
         <div className="absolute flex w-full flex-col text-center">
-          <span className="text-4xl font-bold">{score.toFixed(2)}</span>
+          <span className="text-4xl font-bold">{score.toFixed(1)}</span>
           <span className="text-xl">out of 100</span>
         </div>
       </div>

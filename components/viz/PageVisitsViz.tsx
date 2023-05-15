@@ -1,14 +1,16 @@
 import React from 'react';
 import type { PageViewsAPI, PageVisitsVizTypeFilter, PieData } from '../../@types';
-import { PieChart } from '../viz';
-import { Loading, NotFound } from '../utils';
+import { Loading, NotFound, PieChart } from '../utils';
 import { PageVisitsTable, SelectPageVisitsType } from '../dashboard/visits';
+import { ArrowPathIcon } from '@heroicons/react/24/outline';
 
 type Props = {};
 
 export default function PageVisitsViz({}: Props) {
   const [error, setError] = React.useState<boolean>(false);
   const [loading, setLoading] = React.useState<boolean>(true);
+  const [willFetch, setWillFetch] = React.useState<boolean>(true);
+
   const [data, setData] = React.useState<PageViewsAPI[]>([]);
   const [vizType, setVizType] = React.useState<PageVisitsVizTypeFilter>({ name: 'All', value: 'all' });
   const seeAll = React.useMemo<boolean>(() => vizType.value === 'all', [vizType]);
@@ -70,23 +72,49 @@ export default function PageVisitsViz({}: Props) {
   }, [data]);
 
   React.useEffect(() => {
-    fetch('/api/matomo/sql/visits')
-      .then((res) => res.json())
+    if (!willFetch) return;
+
+    fetch('/api/matomo/visits')
+      .then((res) => (res.ok ? res.json() : null))
       .then((data: PageViewsAPI[]) => {
-        setLoading(false);
-        setData(data);
-      })
-      .catch((err) => {
-        setError(true);
-        console.error(err);
+        if (data === null) {
+          setData([]);
+          setError(true);
+          setLoading(false);
+          setWillFetch(false);
+        } else {
+          setData(data);
+          setError(false);
+          setLoading(false);
+          setWillFetch(false);
+        }
       });
-  }, []);
+  }, [willFetch]);
 
   if (loading) return <Loading />;
-  if (error) return <NotFound />;
+
+  if (error)
+    return (
+      <div className="space-y-3">
+        <NotFound />
+        <div className="flex gap-3">
+          <button
+            onClick={() => {
+              setError(false);
+              setLoading(true);
+              setWillFetch(true);
+            }}
+            className="flex items-center gap-1 rounded bg-blue-600 px-3 py-2 text-white transition hover:opacity-80"
+          >
+            <ArrowPathIcon className="h-5 w-5" />
+            <span className="text-sm">Fetch again</span>
+          </button>
+        </div>
+      </div>
+    );
 
   return data.length === 0 ? (
-    <div className="mt-2 rounded border bg-black/20 p-4 dark:bg-white/20">No Mouse Data Found.</div>
+    <div className="mt-2 rounded border bg-black/20 p-4 dark:bg-white/20">No Page Visits Data Found.</div>
   ) : (
     <section className="mt-2 flex flex-col space-y-4">
       <div className="flex flex-col items-end justify-end gap-2 md:flex-row">
