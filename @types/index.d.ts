@@ -39,6 +39,10 @@ export interface IWizardGroup {
   notCompleted: number;
   completedRatio: number;
   total: number;
+  totalErrors: number;
+  totalBackSteps: number;
+  avgErrors: number;
+  avgBackSteps: number;
   wizards: IWizard[];
 }
 

@@ -173,6 +173,10 @@ export const groupWizards = (wizards: IWizard[]): IWizardGroup[] => {
         avgTimespan: 0,
         completed: 0,
         notCompleted: 0,
+        totalErrors: 0,
+        totalBackSteps: 0,
+        avgErrors: 0,
+        avgBackSteps: 0,
         completedRatio: 0,
         total: 0,
         wizards: [],
@@ -180,6 +184,8 @@ export const groupWizards = (wizards: IWizard[]): IWizardGroup[] => {
       groupedWizards.push(group);
     }
 
+    group.totalErrors += wizard.errorCount;
+    group.totalBackSteps += wizard.backStepCount;
     group.avgScore += wizard.score;
     group.avgTimespan += timespan;
     wizard.completed ? group.completed++ : group.notCompleted++;
@@ -189,6 +195,8 @@ export const groupWizards = (wizards: IWizard[]): IWizardGroup[] => {
   for (const group of groupedWizards) {
     const totalCount = group.completed + group.notCompleted;
     group.total = totalCount;
+    group.avgErrors = group.totalErrors / totalCount;
+    group.avgBackSteps = group.totalBackSteps / totalCount;
     group.avgScore /= totalCount;
     group.avgTimespan /= totalCount;
     group.completedRatio = group.completed / totalCount;
