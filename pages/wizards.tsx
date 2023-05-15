@@ -3,7 +3,7 @@ import type { IWizardGroup } from '../@types';
 import { mockWizardData } from '../utils/mock';
 import { Layout } from '../components/layout';
 import { Loading, NotFound } from '../components/utils';
-import { ArrowPathIcon, CircleStackIcon } from '@heroicons/react/24/outline';
+import { ArrowPathIcon, CircleStackIcon, MagnifyingGlassPlusIcon } from '@heroicons/react/24/outline';
 import { Dialog, Transition } from '@headlessui/react';
 
 export default function Wizards() {
@@ -116,6 +116,8 @@ function WizardKPIs() {
 
   // calculate average, minimum and maximum error and back step considering all wizards
   const errorAndBackStepStats = React.useMemo(() => {
+    let totalWizards = 0;
+
     let totalErrors = 0;
     let totalBackSteps = 0;
     let errorCount = 0;
@@ -123,6 +125,7 @@ function WizardKPIs() {
 
     data.forEach((item) => {
       item.wizards.forEach((wizard) => {
+        totalWizards++;
         totalErrors += wizard.errorCount;
         totalBackSteps += wizard.backStepCount;
 
@@ -135,8 +138,8 @@ function WizardKPIs() {
       });
     });
 
-    const avgError = errorCount > 0 ? totalErrors / errorCount : 0;
-    const avgBack = backStepCount > 0 ? totalBackSteps / backStepCount : 0;
+    const avgError = errorCount > 0 ? totalErrors / totalWizards : 0;
+    const avgBack = backStepCount > 0 ? totalBackSteps / totalWizards : 0;
 
     return { avgError, totalErrors, avgBack, totalBackSteps };
   }, [data]);
@@ -215,7 +218,7 @@ function WizardCompletionRateCard({ completion }: { completion: CompletionRate }
       {/* Adjusted max-w value */}
       <h3 className="font-medium text-slate-700 dark:text-slate-100">Wizard Completion Rate</h3>
       <p className="mt-1 min-h-[5rem] text-sm tracking-tight">
-        Ratio of wizards that were submitted successfully vs. all the wizards started in the platform
+        Ratio of wizards that were submitted successfully vs. all the wizards started in the platform.
       </p>
       {/* Circular Progress */}
       <div className="mt-2 flex items-center justify-center p-4">
@@ -223,7 +226,7 @@ function WizardCompletionRateCard({ completion }: { completion: CompletionRate }
           <circle
             fill="none"
             stroke="currentColor"
-            className="text-green-500 opacity-20"
+            className="text-emerald-500 opacity-20"
             r={radius}
             cx={diameter / 2}
             cy={diameter / 2}
@@ -231,7 +234,7 @@ function WizardCompletionRateCard({ completion }: { completion: CompletionRate }
           />
           <circle
             fill="none"
-            className="origin-center -rotate-90 transform stroke-current text-green-500"
+            className="origin-center -rotate-90 transform stroke-current text-emerald-500"
             r={radius}
             cx={diameter / 2}
             cy={diameter / 2}
@@ -264,7 +267,7 @@ function WizardAverageUXScoreCard({ score }: { score: number }) {
       <h3 className="font-medium text-slate-700 dark:text-slate-100">Wizard Average UX Score</h3>
       <p className="mt-1 min-h-[5rem] text-sm tracking-tight">
         Ratio of wizards that were submitted successfully vs. all the wizards started in the platform. Score is
-        calculated based on <span className="underline">this approach</span>.
+        calculated based on <ScoreCalculcationApproachDialog />.
       </p>
       {/* Circular Progress */}
       <div className="mt-2 flex items-center justify-center p-4">
@@ -272,7 +275,7 @@ function WizardAverageUXScoreCard({ score }: { score: number }) {
           <circle
             fill="none"
             stroke="currentColor"
-            className="text-cyan-400 opacity-20"
+            className="text-blue-500 opacity-20"
             r={radius}
             cx={diameter / 2}
             cy={diameter / 2}
@@ -280,7 +283,7 @@ function WizardAverageUXScoreCard({ score }: { score: number }) {
           />
           <circle
             fill="none"
-            className="origin-center -rotate-90 transform stroke-current text-cyan-400"
+            className="origin-center -rotate-90 transform stroke-current text-blue-500"
             r={radius}
             cx={diameter / 2}
             cy={diameter / 2}
@@ -311,7 +314,7 @@ const TimeStatsCard = ({ stats, text }: { text: string; stats: AvgMinMax }) => {
     <div className="relative flex flex-1 flex-col self-stretch rounded bg-white/80 p-4 dark:bg-white/10">
       <h2 className="mb-2 text-xl font-bold">{text}</h2>
       <div className="flex items-center gap-x-2">
-        <span className="h-4 w-4 rounded-full bg-cyan-500" />
+        <span className="h-4 w-4 rounded-full bg-blue-500" />
         <span className="whitespace-nowrap text-sm font-semibold">
           Average: <span className="font-normal">{avg.toFixed(2)}s</span>
         </span>
@@ -348,30 +351,30 @@ const ErrorStatsCard = ({ text, stats }: { text: string; stats: ErrorStatsCard }
     <div className="relative flex flex-1 flex-col self-stretch rounded bg-white/80 p-4 dark:bg-white/10">
       <h2 className="mb-2 text-xl font-bold">{text}</h2>
       <div className="flex items-center gap-x-2">
-        <span className="h-4 w-4 rounded-full bg-cyan-500" />
+        <span className="h-4 w-4 rounded-full bg-rose-600" />
         <span className="whitespace-nowrap text-sm font-semibold">
-          Average Errors: <span className="font-normal">{avgError.toFixed(2)}</span>
+          Average Errors: <span className="font-normal">{avgError.toFixed(2)} per wizard</span>
         </span>
       </div>
 
       <div className="flex items-center gap-x-2">
-        <span className="h-4 w-4 rounded-full bg-pink-500" />
+        <span className="h-4 w-4 rounded-full bg-orange-500" />
         <span className="whitespace-nowrap text-sm font-semibold">
-          Average Backs: <span className="font-normal">{avgBack.toFixed(2)}</span>
+          Average Backs: <span className="font-normal">{avgBack.toFixed(2)} per wizard</span>
         </span>
       </div>
 
       <div className="flex items-center gap-x-2">
-        <span className="h-4 w-4 rounded-full bg-violet-500" />
+        <span className="h-4 w-4 rounded-full bg-rose-600" />
         <span className="whitespace-nowrap text-sm font-semibold">
-          Total Errors: <span className="font-normal">{totalErrors}</span>
+          Total Errors: <span className="font-normal">{totalErrors} per wizard</span>
         </span>
       </div>
 
       <div className="flex items-center gap-x-2">
-        <span className="h-4 w-4 rounded-full bg-teal-500" />
+        <span className="h-4 w-4 rounded-full bg-orange-500" />
         <span className="whitespace-nowrap text-sm font-semibold">
-          Total Backs: <span className="font-normal">{totalBackSteps}</span>
+          Total Backs: <span className="font-normal">{totalBackSteps} per wizard</span>
         </span>
       </div>
     </div>
@@ -381,7 +384,9 @@ const ErrorStatsCard = ({ text, stats }: { text: string; stats: ErrorStatsCard }
 function WizardSortedList({ data }: { data: IWizardGroup[] }) {
   return (
     <div className="relative w-full rounded bg-white/80 p-4 dark:bg-white/10">
-      <h2 className="mb-2 text-xl font-bold">Sorted Wizards by Low Score</h2>
+      <h2 className="mb-2 text-xl font-bold">
+        Wizards Sorted by <span className="underline">Low Score</span>
+      </h2>
       <ul className="flex flex-col gap-y-3">
         <li className="flex items-center justify-between rounded bg-slate-200 px-4 py-2 text-sm font-medium tracking-tighter dark:bg-slate-500">
           <span>Wizard Name</span>
@@ -407,7 +412,7 @@ function WizardSortedList({ data }: { data: IWizardGroup[] }) {
 }
 
 function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
-  const [isOpen, setIsOpen] = React.useState(true);
+  const [isOpen, setIsOpen] = React.useState(false);
 
   function closeModal() {
     setIsOpen(false);
@@ -422,25 +427,28 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
       <button
         type="button"
         onClick={openModal}
-        className="flex w-full items-center justify-between gap-2 rounded border border-slate-600 bg-slate-400 px-4 py-2.5 text-white transition hover:bg-slate-600/80 dark:border-secondary dark:bg-secondary/20 dark:hover:bg-secondary/80"
+        className="group flex w-full items-center justify-between gap-2 rounded border border-primary bg-primary/40 px-4 py-2.5 text-white transition hover:bg-primary/80 dark:border-secondary dark:bg-secondary/20 dark:hover:bg-secondary/80"
       >
-        <span className="text-sm font-medium">{wizardGroup.name}</span>
-        <span className="flex items-center gap-2 text-xs font-normal">
+        <span className="flex items-center justify-center gap-1.5 text-sm font-medium">
+          <span>{wizardGroup.name}</span>
+          <MagnifyingGlassPlusIcon className="h-5 w-5" />
+        </span>
+        <span className="flex items-center gap-2 text-xs font-medium">
           <span
             title="Average Completed Ratio"
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-green-500 text-white shadow"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-emerald-500 bg-emerald-500/70 text-white group-hover:bg-emerald-500"
           >
             {(wizardGroup.completedRatio * 100).toFixed(0)}%
           </span>
           <span
             title="Average UX Score"
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-cyan-400 text-white shadow"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-blue-600 bg-blue-600/70 text-white group-hover:bg-blue-600"
           >
             {wizardGroup.avgScore}
           </span>
           <span
             title="Total Wizards Opened"
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-700 text-white shadow"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-700 bg-slate-700/70 text-white group-hover:bg-slate-700 dark:border-slate-500 dark:bg-slate-500/70 dark:group-hover:bg-slate-500"
           >
             {wizardGroup.total}
           </span>
@@ -498,11 +506,90 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                         <strong>{wizardGroup.avgScore.toFixed(2)} out of a possible 100 points</strong>. This score is
                         calculated based on the amount of wizard errors, step errors and back to previous step button
                         clicks, where we deduct point to a wizard based on negative actions.
-                        <code className="block bg-slate-700 bg-transparent py-3 tracking-tighter text-cyan-500">
+                        <code className="block bg-slate-700 bg-transparent py-3 tracking-tighter text-blue-500">
                           wizardScore = max(0, 100 - 10*wizardErrors - 3*stepErrors - 2*backStepClicks)
                         </code>
                       </li>
                     </ul>
+                  </div>
+
+                  <div className="mt-8 flex items-center justify-end">
+                    <button
+                      type="button"
+                      className="flex items-center gap-2 rounded bg-primary px-4 py-2 text-sm text-white transition hover:opacity-80 dark:bg-secondary"
+                      onClick={closeModal}
+                    >
+                      <span>Got it, thanks!</span>
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+    </>
+  );
+}
+
+function ScoreCalculcationApproachDialog() {
+  const [isOpen, setIsOpen] = React.useState(false);
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  return (
+    <>
+      <button type="button" onClick={openModal} className="underline hover:opacity-80">
+        this approach
+      </button>
+
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={closeModal}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm dark:bg-black/40" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all dark:bg-navy">
+                  <Dialog.Title
+                    as="h3"
+                    className="font-sans text-lg font-normal leading-6 text-slate-800 dark:text-white"
+                  >
+                    Wizard Scoring Approach
+                  </Dialog.Title>
+
+                  <div className="mt-2 font-normal text-gray-700 dark:text-white">
+                    The score is a number between 0 and 100. This score is calculated based on the amount of{' '}
+                    <strong>wizard errors</strong>, <strong>step errors</strong> and{' '}
+                    <strong>back to previous step </strong> button clicks, where we deduct points to a wizard based on
+                    negative actions. The initial score is 100, and we subtract from there as follows:
+                    <code className="block bg-slate-700 bg-transparent py-3 tracking-tighter text-blue-500">
+                      wizardScore = max(0, 100 - 10*wizardErrors - 3*stepErrors - 2*backStepClicks)
+                    </code>
                   </div>
 
                   <div className="mt-8 flex items-center justify-end">
