@@ -3,8 +3,14 @@ import type { IWizardGroup } from '../@types';
 import { mockWizardData } from '../utils/mock';
 import { Layout } from '../components/layout';
 import { Loading, NotFound } from '../components/utils';
-import { ArrowPathIcon, CircleStackIcon, MagnifyingGlassPlusIcon } from '@heroicons/react/24/outline';
-import { Dialog, Transition } from '@headlessui/react';
+import {
+  ArrowPathIcon,
+  CheckCircleIcon,
+  ChevronUpDownIcon,
+  CircleStackIcon,
+  MagnifyingGlassPlusIcon,
+} from '@heroicons/react/24/outline';
+import { Dialog, Listbox, Transition } from '@headlessui/react';
 
 export default function Wizards() {
   return (
@@ -382,11 +388,93 @@ const ErrorStatsCard = ({ text, stats }: { text: string; stats: ErrorStatsCard }
 };
 
 function WizardSortedList({ data }: { data: IWizardGroup[] }) {
+  const options = [
+    'Low Score First',
+    'High Score First',
+    'Low Completion First',
+    'High Completion First',
+    'Low Frequency First',
+    'High Frequency First',
+  ];
+
+  const getSortFunction = (picked: any) => {
+    switch (picked) {
+      case 'Low Score First':
+        return (a: IWizardGroup, b: IWizardGroup) => a.avgScore - b.avgScore;
+      case 'High Score First':
+        return (a: IWizardGroup, b: IWizardGroup) => b.avgScore - a.avgScore;
+      case 'Low Completion First':
+        return (a: IWizardGroup, b: IWizardGroup) => a.completedRatio - b.completedRatio;
+      case 'High Completion First':
+        return (a: IWizardGroup, b: IWizardGroup) => b.completedRatio - a.completedRatio;
+      case 'Low Frequency First':
+        return (a: IWizardGroup, b: IWizardGroup) => a.total - b.total;
+      case 'High Frequency First':
+        return (a: IWizardGroup, b: IWizardGroup) => b.total - a.total;
+      default:
+        return (a: IWizardGroup, b: IWizardGroup) => a.avgScore - b.avgScore;
+    }
+  };
+
+  const [picked, setPicked] = React.useState(options[0]);
+  const sortedData = React.useMemo(() => {
+    const sortFunction = getSortFunction(picked);
+    return [...data].sort(sortFunction);
+  }, [data, picked]);
+
   return (
     <div className="relative w-full rounded bg-white/80 p-4 dark:bg-white/10">
-      <h2 className="mb-2 text-xl font-bold">
-        Wizards Sorted by <span className="underline">Low Score</span>
-      </h2>
+      <div className="mb-3 flex w-full flex-col items-center justify-between gap-2 lg:flex-row">
+        <h2 className="mb-2 w-full text-center text-base font-bold tracking-tighter lg:text-left lg:text-xl lg:tracking-normal">
+          Wizards Sorted by <span className="underline">{picked}</span>
+        </h2>
+        <div className="w-full lg:w-auto">
+          <Listbox value={picked} onChange={setPicked}>
+            <div className="relative z-50 w-full min-w-full lg:w-auto lg:min-w-[15rem]">
+              <Listbox.Button
+                as="button"
+                className="inline-flex w-full items-center justify-center gap-x-1 rounded border border-primary bg-primary/50 py-2 pl-3 pr-2 text-center text-sm font-medium tracking-tight text-white transition hover:bg-primary/80 disabled:cursor-not-allowed disabled:opacity-50 dark:border-secondary dark:bg-secondary/50 dark:hover:bg-secondary/80 lg:px-2 lg:py-1.5"
+              >
+                <span className="block truncate text-sm font-normal">{picked}</span>
+                <ChevronUpDownIcon className="h-5 w-5" aria-hidden="true" />
+              </Listbox.Button>
+              <Transition
+                as={Fragment}
+                leave="transition ease-in duration-100"
+                leaveFrom="opacity-100"
+                leaveTo="opacity-0"
+              >
+                <Listbox.Options className="absolute mt-2 max-h-60 w-full overflow-auto rounded border border-gray-300 bg-gray-100 py-2 shadow lg:w-full">
+                  {options.map((option: string, optionIdx: number) => (
+                    <Listbox.Option
+                      key={`option-${optionIdx}`}
+                      className={({ active }) =>
+                        `relative cursor-pointer select-none py-1.5 pl-10 pr-5 text-sm font-normal tracking-tight ${
+                          active
+                            ? 'bg-primary/10 text-primary dark:bg-secondary/10 dark:text-secondary'
+                            : 'text-gray-800'
+                        }`
+                      }
+                      value={option}
+                    >
+                      <span
+                        className={`block whitespace-nowrap ${option === picked ? 'font-semibold' : 'font-normal'}`}
+                      >
+                        {option}
+                      </span>
+                      {picked === option ? (
+                        <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-primary dark:text-secondary">
+                          <CheckCircleIcon className="h-5 w-5" aria-hidden="true" />
+                        </span>
+                      ) : null}
+                    </Listbox.Option>
+                  ))}
+                </Listbox.Options>
+              </Transition>
+            </div>
+          </Listbox>
+        </div>
+      </div>
       <ul className="flex flex-col gap-y-3">
         <li className="flex items-center justify-between rounded bg-slate-200 px-4 py-2 text-sm font-medium tracking-tighter dark:bg-slate-500">
           <span>Wizard Name</span>
@@ -401,9 +489,9 @@ function WizardSortedList({ data }: { data: IWizardGroup[] }) {
             <span className="inline sm:hidden">FQ</span>
           </span>
         </li>
-        {data.map((wizardGroup, wizardGroupIdx) => (
+        {sortedData.map((wizardGroup, wizardGroupIdx) => (
           <li key={wizardGroupIdx}>
-            <WizardGroupFocus wizardGroup={wizardGroup} />{' '}
+            <WizardGroupFocus wizardGroup={wizardGroup} />
           </li>
         ))}
       </ul>
