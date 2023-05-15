@@ -13,7 +13,7 @@ export default function Wizards() {
         <article className="flex flex-col justify-center gap-1">
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Wizard Insights</h1>
           <p className="mb-2 max-w-4xl grow text-lg font-normal">
-            Delve into how your users are behaving and inspect the data collected from the wizard components across MES.
+            Inspect how your users are using the wizards across the platform.
           </p>
           <WizardKPIs />
         </article>
@@ -383,8 +383,21 @@ function WizardSortedList({ data }: { data: IWizardGroup[] }) {
     <div className="relative w-full rounded bg-white/80 p-4 dark:bg-white/10">
       <h2 className="mb-2 text-xl font-bold">Sorted Wizards by Low Score</h2>
       <ul className="flex flex-col gap-y-3">
+        <li className="flex items-center justify-between rounded bg-slate-200 px-4 py-2 text-sm font-medium tracking-tighter dark:bg-slate-500">
+          <span>Wizard Name</span>
+          <span className="flex items-center gap-2">
+            <span className="hidden sm:inline">Rate</span>
+            <span className="inline sm:hidden">CR</span>
+            <span>&middot;</span>
+            <span className="hidden sm:inline">UX</span>
+            <span className="inline sm:hidden">UX</span>
+            <span>&middot;</span>
+            <span className="hidden sm:inline">Freq</span>
+            <span className="inline sm:hidden">FQ</span>
+          </span>
+        </li>
         {data.map((wizardGroup, wizardGroupIdx) => (
-          <li key={wizardGroupIdx} className="flex items-center gap-x-2">
+          <li key={wizardGroupIdx}>
             <WizardGroupFocus wizardGroup={wizardGroup} />{' '}
           </li>
         ))}
@@ -394,7 +407,7 @@ function WizardSortedList({ data }: { data: IWizardGroup[] }) {
 }
 
 function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
-  let [isOpen, setIsOpen] = React.useState(true);
+  const [isOpen, setIsOpen] = React.useState(true);
 
   function closeModal() {
     setIsOpen(false);
@@ -409,9 +422,29 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
       <button
         type="button"
         onClick={openModal}
-        className="rounded-md bg-black bg-opacity-20 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
+        className="flex w-full items-center justify-between gap-2 rounded border border-slate-600 bg-slate-400 px-4 py-2.5 text-white transition hover:bg-slate-600/80 dark:border-secondary dark:bg-secondary/20 dark:hover:bg-secondary/80"
       >
-        Open dialog
+        <span className="text-sm font-medium">{wizardGroup.name}</span>
+        <span className="flex items-center gap-2 text-xs font-normal">
+          <span
+            title="Average Completed Ratio"
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-green-500 text-white shadow"
+          >
+            {(wizardGroup.completedRatio * 100).toFixed(0)}%
+          </span>
+          <span
+            title="Average UX Score"
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-cyan-400 text-white shadow"
+          >
+            {wizardGroup.avgScore}
+          </span>
+          <span
+            title="Total Wizards Opened"
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-700 text-white shadow"
+          >
+            {wizardGroup.total}
+          </span>
+        </span>
       </button>
 
       <Transition appear show={isOpen} as={Fragment}>
@@ -425,7 +458,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-black bg-opacity-25" />
+            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm dark:bg-black/40" />
           </Transition.Child>
 
           <div className="fixed inset-0 overflow-y-auto">
@@ -439,24 +472,46 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                  <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
-                    Payment successful
+                <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all dark:bg-navy">
+                  <Dialog.Title
+                    as="h3"
+                    className="font-sans text-lg font-normal leading-6 text-slate-800 dark:text-white"
+                  >
+                    <strong>Wizard:</strong> <span className="underline">{wizardGroup.name}</span>
                   </Dialog.Title>
-                  <div className="mt-2">
-                    <p className="text-sm text-gray-500">
-                      Your payment has been successfully submitted. We’ve sent you an email with all of the details of
-                      your order.
-                    </p>
+
+                  <div className="mt-2 font-normal text-gray-700 dark:text-white">
+                    <p>For this wizard category:</p>
+                    <ul className="mt-1 flex list-inside list-disc flex-col gap-1 text-sm text-gray-600 dark:text-gray-200">
+                      <li>
+                        The average time spent on this wizard type is <strong>{wizardGroup.avgTimespan}s</strong>.
+                      </li>
+
+                      <li>
+                        A total of <strong>{wizardGroup.total} wizards were initiated</strong>, {wizardGroup.completed}{' '}
+                        were completed, and {wizardGroup.notCompleted} were abandoned or cancelled, meaning that{' '}
+                        <strong>{(wizardGroup.completedRatio * 100).toFixed(2)}% of wizards were completed</strong>.
+                      </li>
+
+                      <li>
+                        The average score was{' '}
+                        <strong>{wizardGroup.avgScore.toFixed(2)} out of a possible 100 points</strong>. This score is
+                        calculated based on the amount of wizard errors, step errors and back to previous step button
+                        clicks, where we deduct point to a wizard based on negative actions.
+                        <code className="block bg-slate-700 bg-transparent py-3 tracking-tighter text-cyan-500">
+                          wizardScore = max(0, 100 - 10*wizardErrors - 3*stepErrors - 2*backStepClicks)
+                        </code>
+                      </li>
+                    </ul>
                   </div>
 
-                  <div className="mt-4">
+                  <div className="mt-8 flex items-center justify-end">
                     <button
                       type="button"
-                      className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                      className="flex items-center gap-2 rounded bg-primary px-4 py-2 text-sm text-white transition hover:opacity-80 dark:bg-secondary"
                       onClick={closeModal}
                     >
-                      Got it, thanks!
+                      <span>Got it, thanks!</span>
                     </button>
                   </div>
                 </Dialog.Panel>
