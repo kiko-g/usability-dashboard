@@ -12,31 +12,26 @@ type CompletionRate = {
 };
 
 export default function Wizards() {
+  return (
+    <Layout location="Wizards">
+      <main className="space-y-6">
+        <article className="flex flex-col justify-center gap-1">
+          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Wizard Insights</h1>
+          <p className="mb-2 max-w-4xl grow text-lg font-normal">
+            Delve into how your users are behaving and inspect the data collected from the wizard components across MES.
+          </p>
+          <WizardKPIs />
+        </article>
+      </main>
+    </Layout>
+  );
+}
+
+function WizardKPIs() {
   const [data, setData] = React.useState<IWizardGroup[]>([]);
   const [error, setError] = React.useState<boolean>(false);
-  const [loading, setLoading] = React.useState<boolean>(false);
+  const [loading, setLoading] = React.useState<boolean>(true);
   const [willFetch, setWillFetch] = React.useState<boolean>(true);
-
-  const avgScore = React.useMemo<number | null>(() => {
-    if (data.length === 0) return null;
-
-    const sum = data.reduce((acc, item) => acc + item.avgScore, 0);
-    return data.length > 0 ? sum / data.length : 0;
-  }, [data]);
-
-  const completionRate = React.useMemo<CompletionRate | null>(() => {
-    if (data.length === 0) return null;
-
-    const totalCompleted = data.reduce((acc, item) => acc + item.completed, 0);
-    const totalNotCompleted = data.reduce((acc, item) => acc + item.notCompleted, 0);
-    const total = totalCompleted + totalNotCompleted;
-
-    return {
-      completed: totalCompleted,
-      notCompleted: totalNotCompleted,
-      ratio: total > 0 ? totalCompleted / total : 0,
-    };
-  }, [data]);
 
   React.useEffect(() => {
     if (!willFetch) return;
@@ -59,55 +54,69 @@ export default function Wizards() {
       });
   }, [willFetch]);
 
-  return (
-    <Layout location="Wizards">
-      <main className="space-y-6">
-        <article className="flex flex-col justify-center gap-1">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Wizard Insights</h1>
-          <p className="mb-2 max-w-4xl grow text-lg font-normal">
-            Delve into how your users are behaving and inspect the data collected from the wizard components across MES.
-          </p>
+  const avgScore = React.useMemo<number | null>(() => {
+    if (data.length === 0) return null;
 
-          {loading ? (
-            <div className="space-y-3">
-              <Loading />
-            </div>
-          ) : error ? (
-            <div className="space-y-3">
-              <NotFound />
-              <div className="flex gap-3">
-                <button
-                  onClick={() => {
-                    setError(false);
-                    setData(mockWizardData);
-                  }}
-                  className="flex items-center gap-1 rounded bg-rose-600 px-3 py-2 text-white transition hover:opacity-80"
-                >
-                  <CircleStackIcon className="h-5 w-5" />
-                  <span className="text-sm">Use mock Data</span>
-                </button>
-                <button
-                  onClick={() => {
-                    setError(false);
-                    setLoading(true);
-                    setWillFetch(true);
-                  }}
-                  className="flex items-center gap-1 rounded bg-blue-600 px-3 py-2 text-white transition hover:opacity-80"
-                >
-                  <ArrowPathIcon className="h-5 w-5" />
-                  <span className="text-sm">Fetch again</span>
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className="mt-3 flex gap-6">
-              {completionRate === null ? null : <WizardCompletionRateCard completion={completionRate} />}
-              {avgScore === null ? null : <WizardAverageUXScoreCard score={avgScore} />}
-            </div>
-          )}
-        </article>
-      </main>
-    </Layout>
+    const sum = data.reduce((acc, item) => acc + item.avgScore, 0);
+    return data.length > 0 ? sum / data.length : 0;
+  }, [data]);
+
+  const completionRate = React.useMemo<CompletionRate | null>(() => {
+    if (data.length === 0) return null;
+
+    const totalCompleted = data.reduce((acc, item) => acc + item.completed, 0);
+    const totalNotCompleted = data.reduce((acc, item) => acc + item.notCompleted, 0);
+    const total = totalCompleted + totalNotCompleted;
+
+    return {
+      completed: totalCompleted,
+      notCompleted: totalNotCompleted,
+      ratio: total > 0 ? totalCompleted / total : 0,
+    };
+  }, [data]);
+
+  if (loading)
+    return (
+      <div className="space-y-3">
+        <Loading />
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="space-y-3">
+        <NotFound />
+        <div className="flex gap-3">
+          <button
+            onClick={() => {
+              setError(false);
+              setData(mockWizardData);
+            }}
+            className="flex items-center gap-1 rounded bg-rose-600 px-3 py-2 text-white transition hover:opacity-80"
+          >
+            <CircleStackIcon className="h-5 w-5" />
+            <span className="text-sm">Use mock Data</span>
+          </button>
+          <button
+            onClick={() => {
+              setError(false);
+              setLoading(true);
+              setWillFetch(true);
+            }}
+            className="flex items-center gap-1 rounded bg-blue-600 px-3 py-2 text-white transition hover:opacity-80"
+          >
+            <ArrowPathIcon className="h-5 w-5" />
+            <span className="text-sm">Fetch again</span>
+          </button>
+        </div>
+      </div>
+    );
+
+  return data.length === 0 ? null : (
+    <div className="mt-3 flex gap-6">
+      {completionRate === null ? null : <WizardCompletionRateCard completion={completionRate} />}
+      {avgScore === null ? null : <WizardAverageUXScoreCard score={avgScore} />}
+    </div>
   );
 }
 
