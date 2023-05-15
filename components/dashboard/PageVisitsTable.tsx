@@ -1,7 +1,7 @@
 import React from 'react';
-import { PageViewsAPI } from '../../../@types';
-import { TableInteractButtons } from '../../utils';
 import classNames from 'classnames';
+import type { PageViewsAPI } from '../../@types';
+import { TableInteractButtons } from '../utils';
 
 type Props = {
   visitsData: PageViewsAPI[];

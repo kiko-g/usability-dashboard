@@ -1,7 +1,7 @@
 import request from 'request';
-import { NextApiRequest, NextApiResponse } from 'next';
 import { config, parseEvents, evaluateWizards, groupWizards } from '../../../../utils/matomo';
-import { CustomAPIError, IWizardGroup } from '../../../../@types';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import type { CustomAPIError, IWizardGroup } from '../../../../@types';
 
 type ResponseType = IWizardGroup[] | CustomAPIError;
 

@@ -1,7 +1,7 @@
 import request from 'request';
-import { NextApiRequest, NextApiResponse } from 'next';
 import { config } from '../../../utils/matomo';
-import { CustomAPIError, ScreenSize } from '../../../@types';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import type { CustomAPIError, ScreenSize } from '../../../@types';
 
 type ResponseType = ScreenSize[] | CustomAPIError;
 

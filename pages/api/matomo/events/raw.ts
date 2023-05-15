@@ -1,8 +1,8 @@
 import request from 'request';
 import { isJson } from '../../../../utils';
 import { config } from '../../../../utils/matomo';
-import { ITrackerEventRawCategory, ITrackerEvent, CustomAPIError } from '../../../../@types';
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import type { ITrackerEventRawCategory, ITrackerEvent, CustomAPIError } from '../../../../@types';
 
 type ResponseType = any | CustomAPIError;
 

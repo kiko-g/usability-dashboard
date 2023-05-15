@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import type { PageViewsAPI, PageViewsSQL } from '../../../@types';
 import { estabilishMySQLConnection, pageVisitsQuery as query } from '../../../utils/sql';
+import type { PageViewsAPI, PageViewsSQL } from '../../../@types';
 
 export default function getPageViewsSQL(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method Not Allowed' });

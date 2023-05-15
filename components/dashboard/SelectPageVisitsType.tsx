@@ -1,5 +1,5 @@
 import React, { Dispatch, Fragment, SetStateAction } from 'react';
-import type { PageVisitsVizTypeFilter } from '../../../@types';
+import type { PageVisitsVizTypeFilter } from '../../@types';
 import { Listbox, Transition } from '@headlessui/react';
 import { ChevronUpDownIcon } from '@heroicons/react/24/outline';
 import { CheckCircleIcon } from '@heroicons/react/24/solid';

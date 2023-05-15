@@ -9,7 +9,7 @@ import {
   MouseClicksHeatmap,
   MouseClicksTable,
   SelectMouseClicksType,
-} from '../components/dashboard/mouse';
+} from '../components/dashboard';
 
 export default function Mouse() {
   return (

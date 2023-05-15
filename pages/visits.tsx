@@ -3,7 +3,7 @@ import type { PageViewsAPI, PageVisitsVizTypeFilter, PieData } from '../@types';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import { Layout } from '../components/layout';
 import { Loading, NotFound, PieChart } from '../components/utils';
-import { PageVisitsTable, SelectPageVisitsType } from '../components/dashboard/visits';
+import { PageVisitsTable, SelectPageVisitsType } from '../components/dashboard';
 
 export default function Visits() {
   return (

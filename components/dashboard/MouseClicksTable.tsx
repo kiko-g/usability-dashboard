@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
-import { MouseClicksAPI } from '../../../@types';
-import { TableInteractButtons } from '../../utils';
+import type { MouseClicksAPI } from '../../@types';
+import { TableInteractButtons } from '../utils';
 
 type Props = {
   mouseData: MouseClicksAPI[];

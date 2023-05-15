@@ -1,5 +1,5 @@
 import { isJson } from './index';
-import {
+import type {
   ITrackerEventRawCategory,
   ITrackerEventRawEvent,
   ITrackerEventGroup,

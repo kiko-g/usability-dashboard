@@ -1,7 +1,7 @@
 import request from 'request';
-import { NextApiRequest, NextApiResponse } from 'next';
 import { config, parseEvents } from '../../../../utils/matomo';
-import { CustomAPIError, ITrackerEventGroup } from '../../../../@types';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import type { CustomAPIError, ITrackerEventGroup } from '../../../../@types';
 
 type ResponseType = ITrackerEventGroup[] | CustomAPIError;
 

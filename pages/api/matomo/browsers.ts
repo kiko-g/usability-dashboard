@@ -1,7 +1,7 @@
 import request from 'request';
-import { NextApiRequest, NextApiResponse } from 'next';
 import { config } from '../../../utils/matomo';
-import { CustomAPIError, Browser } from '../../../@types';
+import type { CustomAPIError, Browser } from '../../../@types';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
 type ResponseType = Browser[] | CustomAPIError;
 

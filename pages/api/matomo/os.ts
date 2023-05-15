@@ -1,7 +1,7 @@
 import request from 'request';
-import { NextApiRequest, NextApiResponse } from 'next';
 import { config } from '../../../utils/matomo';
-import { CustomAPIError, OperatingSystem } from '../../../@types';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import type { CustomAPIError, OperatingSystem } from '../../../@types';
 
 type ResponseType = OperatingSystem[] | CustomAPIError;
 
