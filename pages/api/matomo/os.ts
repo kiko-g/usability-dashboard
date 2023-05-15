@@ -6,7 +6,7 @@ import { CustomAPIError, OperatingSystem } from '../../../@types';
 type ResponseType = OperatingSystem[] | CustomAPIError;
 
 export default function getMostUsedOperatingSystems(req: NextApiRequest, res: NextApiResponse<ResponseType>) {
-  if (req.method !== 'GET') res.status(405).json({ error: 'Method Not Allowed' });
+  if (req.method !== 'GET') return res.status(405).json({ error: 'Method Not Allowed' });
 
   const period = 'range'; // day, week, month, year, range
   const date = `2023-04-29,today`; // YYYY-MM-DD
@@ -22,11 +22,11 @@ export default function getMostUsedOperatingSystems(req: NextApiRequest, res: Ne
 
   request(apiUrl, { json: true }, (err, response, body) => {
     if (err) {
-      res.status(500).json({ error: 'Internal server error' });
+      return res.status(500).json({ error: 'Internal server error' });
     }
 
     if (response.statusCode !== 200 || body.result === 'error') {
-      res.status(response.statusCode).json({ error: 'Error from Matomo API', message: body.message });
+      return res.status(response.statusCode).json({ error: 'Error from Matomo API', message: body.message });
     }
 
     const mostUsedOperatingSystems: OperatingSystem[] = body
@@ -38,6 +38,6 @@ export default function getMostUsedOperatingSystems(req: NextApiRequest, res: Ne
       })
       .sort((a: OperatingSystem, b: OperatingSystem) => (a.visitCount < b.visitCount ? 1 : -1));
 
-    res.status(200).json(mostUsedOperatingSystems);
+    return res.status(200).json(mostUsedOperatingSystems);
   });
 }

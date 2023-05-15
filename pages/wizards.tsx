@@ -1,124 +1,46 @@
 import React from 'react';
+import type { IWizardGroup } from '../@types';
+import { mockWizardData } from '../utils/mock';
 import { Layout } from '../components/layout';
-import { IWizardGroup } from '../@types';
-
-const mockData: IWizardGroup[] = [
-  {
-    name: 'Create New Augmented Reality Tag',
-    avgScore: 100,
-    avgTimespan: 113.955,
-    completed: 2,
-    notCompleted: 1,
-    completedRatio: 0.6666666666666666,
-    total: 3,
-    wizards: [
-      {
-        component: 'wizard-168357091638068',
-        name: 'Create New Augmented Reality Tag',
-        events: [
-          {
-            time: '2023-05-08T18:35:16.414Z',
-            path: '/Administration/AugmentedReality',
-            action: 'Start',
-          },
-          {
-            time: '2023-05-08T18:35:16.580Z',
-            path: '/Administration/AugmentedReality',
-            action: 'Activate Step cmf.core.augmentedreality.wizardCreateEditEntityTag.step.details',
-          },
-          {
-            time: '2023-05-08T18:35:54.658Z',
-            path: '/Administration/AugmentedReality',
-            action: 'Success Step cmf.core.augmentedreality.wizardCreateEditEntityTag.step.details',
-          },
-          {
-            time: '2023-05-08T18:35:54.851Z',
-            path: '/Administration/AugmentedReality',
-            action: 'Complete',
-          },
-        ],
-        score: 100,
-        timespan: 38.437,
-        completed: true,
-        errorCount: 0,
-        backStepCount: 0,
-      },
-      {
-        component: 'wizard-168373558363277',
-        name: 'Create New Augmented Reality Tag',
-        events: [
-          {
-            time: '2023-05-10T16:19:43.643Z',
-            path: '/Administration/AugmentedReality',
-            action: 'Start',
-          },
-          {
-            time: '2023-05-10T16:19:43.784Z',
-            path: '/Administration/AugmentedReality',
-            action: 'Activate Step cmf.core.augmentedreality.wizardCreateEditEntityTag.step.details',
-          },
-          {
-            time: '2023-05-10T16:21:13.642Z',
-            path: '/Administration/AugmentedReality',
-            action: 'Success Step cmf.core.augmentedreality.wizardCreateEditEntityTag.step.details',
-          },
-          {
-            time: '2023-05-10T16:21:13.746Z',
-            path: '/Administration/AugmentedReality',
-            action: 'Complete',
-          },
-        ],
-        score: 100,
-        timespan: 90.103,
-        completed: true,
-        errorCount: 0,
-        backStepCount: 0,
-      },
-      {
-        component: 'wizard-1683735958646106',
-        name: 'Create New Augmented Reality Tag',
-        events: [
-          {
-            time: '2023-05-10T16:25:58.657Z',
-            path: '/Administration/AugmentedReality',
-            action: 'Start',
-          },
-          {
-            time: '2023-05-10T16:25:58.789Z',
-            path: '/Administration/AugmentedReality',
-            action: 'Activate Step cmf.core.augmentedreality.wizardCreateEditEntityTag.step.details',
-          },
-          {
-            time: '2023-05-10T16:29:31.982Z',
-            path: '/Administration/AugmentedReality',
-            action: 'Cancel',
-          },
-        ],
-        score: 100,
-        timespan: 213.325,
-        completed: false,
-        errorCount: 0,
-        backStepCount: 0,
-      },
-    ],
-  },
-];
+import { Loading, NotFound } from '../components/utils';
+import { CircleStackIcon } from '@heroicons/react/24/outline';
 
 export default function Visits() {
   const [data, setData] = React.useState<IWizardGroup[]>([]);
   const [error, setError] = React.useState<boolean>(false);
-  const [loading, setLoading] = React.useState<boolean>(true);
+  const [loading, setLoading] = React.useState<boolean>(false);
+
+  const avgScore = React.useMemo<number | null>(() => {
+    if (data.length === 0) return null;
+
+    const sum = data.reduce((acc, item) => acc + item.avgScore, 0);
+    return data.length > 0 ? sum / data.length : 0;
+  }, [data]);
+
+  const completionRate = React.useMemo<number | null>(() => {
+    if (data.length === 0) return null;
+
+    const totalCompleted = data.reduce((acc, item) => acc + item.completed, 0);
+    const totalNotCompleted = data.reduce((acc, item) => acc + item.notCompleted, 0);
+    const total = totalCompleted + totalNotCompleted;
+
+    return total > 0 ? totalCompleted / total : 0;
+  }, [data]);
 
   React.useEffect(() => {
     fetch('/api/matomo/events/wizard')
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          setError(true);
+          setLoading(true);
+          return null;
+        } else {
+          return res.json();
+        }
+      })
       .then((data: IWizardGroup[]) => {
         setLoading(false);
-        setData(data);
-      })
-      .catch((err) => {
-        setError(true);
-        console.error(err);
+        setData(data === null ? [] : data);
       });
   }, []);
 
@@ -127,21 +49,41 @@ export default function Visits() {
       <main className="space-y-6">
         <article className="flex flex-col justify-center gap-1">
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Wizard Insights</h1>
-          <p className="max-w-4xl grow text-lg font-normal">
+          <p className="mb-2 max-w-4xl grow text-lg font-normal">
             Delve into how your users are behaving and inspect the data collected from the wizard components across MES.
           </p>
-          <div className="mt-3 flex gap-6">
-            <WizardCompletionRateCard />
-            <WizardAverageUXScoreCard />
-          </div>
+
+          {loading ? (
+            <div className="space-y-3">
+              <Loading />
+            </div>
+          ) : error ? (
+            <div className="space-y-3">
+              <NotFound />
+              <button
+                onClick={() => {
+                  setError(false);
+                  setData(mockWizardData);
+                }}
+                className="flex items-center gap-1 rounded bg-rose-700 px-3 py-2 transition hover:opacity-80"
+              >
+                <CircleStackIcon className="h-5 w-5" />
+                <span className="text-sm">Use mock Data</span>
+              </button>
+            </div>
+          ) : (
+            <div className="mt-3 flex gap-6">
+              {completionRate === null ? null : <WizardCompletionRateCard rate={completionRate} />}
+              {avgScore === null ? null : <WizardAverageUXScoreCard score={avgScore} />}
+            </div>
+          )}
         </article>
       </main>
     </Layout>
   );
 }
 
-function WizardCompletionRateCard() {
-  const rate = 0.9;
+function WizardCompletionRateCard({ rate }: { rate: number }) {
   const progress = Math.min(Math.max(rate, 0), 1) * 100;
   const diameter = 200;
   const strokeWidth = 12;
@@ -188,13 +130,12 @@ function WizardCompletionRateCard() {
   );
 }
 
-function WizardAverageUXScoreCard() {
-  const avgScore = 90;
+function WizardAverageUXScoreCard({ score }: { score: number }) {
   const diameter = 200;
   const strokeWidth = 12;
   const radius = (diameter - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (avgScore / 100) * circumference;
+  const offset = circumference - (score / 100) * circumference;
 
   return (
     <div className="relative max-w-xs rounded bg-white/80 p-4 dark:bg-white/10">
@@ -228,7 +169,7 @@ function WizardAverageUXScoreCard() {
           />
         </svg>
         <div className="absolute flex w-full flex-col text-center">
-          <span className="text-4xl font-bold">{avgScore}</span>
+          <span className="text-4xl font-bold">{score.toFixed(2)}</span>
           <span className="text-xl">out of 100</span>
         </div>
       </div>

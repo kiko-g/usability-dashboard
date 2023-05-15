@@ -6,7 +6,7 @@ import { CustomAPIError, ITrackerEventGroup } from '../../../../@types';
 type ResponseType = ITrackerEventGroup[] | CustomAPIError;
 
 export default function getAllEvents(req: NextApiRequest, res: NextApiResponse<ResponseType>) {
-  if (req.method !== 'GET') res.status(405).json({ error: 'Method Not Allowed' });
+  if (req.method !== 'GET') return res.status(405).json({ error: 'Method Not Allowed' });
 
   const period = 'range'; // day, week, month, year, range
   const date = `2023-04-29,today`; // YYYY-MM-DD
@@ -14,14 +14,14 @@ export default function getAllEvents(req: NextApiRequest, res: NextApiResponse<R
 
   request(apiUrl, { json: true }, (err, response, body) => {
     if (err) {
-      res.status(500).json({ error: 'Internal server error' });
+      return res.status(500).json({ error: 'Internal server error' });
     }
 
     if (response.statusCode !== 200 || body.result === 'error') {
-      res.status(response.statusCode).json({ error: 'Error from Matomo API', message: body.message });
+      return res.status(response.statusCode).json({ error: 'Error from Matomo API', message: body.message });
     }
 
     const groupedEvents = parseEvents(body);
-    res.status(200).json(groupedEvents);
+    return res.status(200).json(groupedEvents);
   });
 }

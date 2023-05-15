@@ -7,5 +7,5 @@ type Data = {
 };
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
-  res.status(200).json({ x: [1, 2, 3, 4, 5], y: [2, 4, 6, 8, 10] });
+  return res.status(200).json({ x: [1, 2, 3, 4, 5], y: [2, 4, 6, 8, 10] });
 }

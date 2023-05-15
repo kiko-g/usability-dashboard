@@ -6,5 +6,5 @@ type Data = {
 };
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
-  res.status(200).json({ message: 'Ping to "CMF Usability Metrics API" successful' });
+  return res.status(200).json({ message: 'Ping to "CMF Usability Metrics API" successful' });
 }
