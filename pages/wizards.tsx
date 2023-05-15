@@ -191,7 +191,7 @@ function WizardKPIs() {
 
   return data.length === 0 ? null : (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-1 gap-4 self-stretch">
+      <div className="flex flex-1 flex-col gap-4 self-stretch lg:flex-row">
         {completionRate === null ? null : <WizardCompletionRateCard completion={completionRate} />}
         {avgScore === null ? null : <WizardAverageUXScoreCard score={avgScore} />}
         <div className="flex flex-1 flex-col items-start justify-start gap-4 self-stretch">
@@ -220,7 +220,7 @@ function WizardCompletionRateCard({ completion }: { completion: CompletionRate }
   const offset = circumference - (progress / 100) * circumference;
 
   return (
-    <div className="relative max-w-xs overflow-hidden rounded bg-white/80 p-4 dark:bg-white/10">
+    <div className="relative max-w-full overflow-hidden rounded bg-white/80 p-4 dark:bg-white/10 lg:max-w-xs">
       {/* Adjusted max-w value */}
       <h3 className="font-medium text-slate-700 dark:text-slate-100">Wizard Completion Rate</h3>
       <p className="mt-1 min-h-[5rem] text-sm tracking-tight">
@@ -268,7 +268,7 @@ function WizardAverageUXScoreCard({ score }: { score: number }) {
   const offset = circumference - (score / 100) * circumference;
 
   return (
-    <div className="relative max-w-xs rounded bg-white/80 p-4 dark:bg-white/10">
+    <div className="relative max-w-full rounded bg-white/80 p-4 dark:bg-white/10 lg:max-w-xs">
       {/* Adjusted max-w value */}
       <h3 className="font-medium text-slate-700 dark:text-slate-100">Wizard Average UX Score</h3>
       <p className="mt-1 min-h-[5rem] text-sm tracking-tight">
@@ -424,13 +424,13 @@ function WizardSortedList({ data }: { data: IWizardGroup[] }) {
 
   return (
     <div className="relative w-full rounded bg-white/80 p-4 dark:bg-white/10">
-      <div className="mb-3 flex w-full flex-col items-center justify-between gap-2 lg:flex-row">
-        <h2 className="mb-2 w-full text-center text-base font-bold tracking-tighter lg:text-left lg:text-xl lg:tracking-normal">
+      <div className="mb-4 flex w-full flex-col items-center justify-between gap-1 lg:mb-3 lg:flex-row lg:gap-2">
+        <h2 className="mb-2 w-full text-center text-sm font-bold tracking-tighter lg:text-left lg:text-xl lg:tracking-normal">
           Wizards Sorted by <span className="underline">{picked}</span>
         </h2>
         <div className="w-full lg:w-auto">
           <Listbox value={picked} onChange={setPicked}>
-            <div className="relative z-50 w-full min-w-full lg:w-auto lg:min-w-[15rem]">
+            <div className="relative w-full min-w-full lg:w-auto lg:min-w-[15rem]">
               <Listbox.Button
                 as="button"
                 className="inline-flex w-full items-center justify-center gap-x-1 rounded border border-primary bg-primary/50 py-2 pl-3 pr-2 text-center text-sm font-medium tracking-tight text-white transition hover:bg-primary/80 disabled:cursor-not-allowed disabled:opacity-50 dark:border-secondary dark:bg-secondary/50 dark:hover:bg-secondary/80 lg:px-2 lg:py-1.5"
@@ -475,10 +475,10 @@ function WizardSortedList({ data }: { data: IWizardGroup[] }) {
           </Listbox>
         </div>
       </div>
-      <ul className="flex flex-col gap-y-3">
-        <li className="flex items-center justify-between rounded bg-slate-200 px-4 py-2 text-sm font-medium tracking-tighter dark:bg-slate-500">
+      <ul className="flex flex-col gap-y-2 lg:gap-y-3">
+        <li className="flex items-center justify-between rounded bg-slate-200 px-2 py-2 text-xs font-normal tracking-tighter dark:bg-slate-500 lg:px-4 lg:py-2 lg:text-sm lg:font-medium">
           <span>Wizard Name</span>
-          <span className="flex items-center gap-2">
+          <span className="flex items-center gap-1 lg:gap-2">
             <span className="hidden sm:inline">Rate</span>
             <span className="inline sm:hidden">CR</span>
             <span>&middot;</span>
@@ -515,28 +515,28 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
       <button
         type="button"
         onClick={openModal}
-        className="group flex w-full items-center justify-between gap-2 rounded border border-primary bg-primary/40 px-4 py-2.5 text-white transition hover:bg-primary/80 dark:border-secondary dark:bg-secondary/20 dark:hover:bg-secondary/80"
+        className="group flex w-full items-center justify-between gap-2 rounded border border-primary bg-primary/40 px-2 py-2 text-white transition hover:bg-primary/80 dark:border-secondary dark:bg-secondary/20 dark:hover:bg-secondary/80 lg:px-4 lg:py-2.5"
       >
-        <span className="flex items-center justify-center gap-1.5 text-sm font-medium">
-          <span>{wizardGroup.name}</span>
+        <span className="flex items-center justify-between gap-1.5 text-xs font-normal lg:text-sm lg:font-medium">
+          <span className="text-left tracking-tighter lg:tracking-normal">{wizardGroup.name}</span>
           <MagnifyingGlassPlusIcon className="h-5 w-5" />
         </span>
-        <span className="flex items-center gap-2 text-xs font-medium">
+        <span className="flex items-center gap-1 text-[0.60rem] font-normal lg:gap-2 lg:text-xs lg:font-medium">
           <span
             title="Average Completed Ratio"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-emerald-500 bg-emerald-500/70 text-white group-hover:bg-emerald-500"
+            className="flex h-7 w-7 items-center justify-center rounded-full border border-emerald-500 bg-emerald-500/70 text-white group-hover:bg-emerald-500 lg:h-10 lg:w-10"
           >
             {(wizardGroup.completedRatio * 100).toFixed(0)}%
           </span>
           <span
             title="Average UX Score"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-blue-600 bg-blue-600/70 text-white group-hover:bg-blue-600"
+            className="flex h-7 w-7 items-center justify-center rounded-full border border-blue-600 bg-blue-600/70 text-white group-hover:bg-blue-600 lg:h-10 lg:w-10"
           >
             {wizardGroup.avgScore}
           </span>
           <span
             title="Total Wizards Opened"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-700 bg-slate-700/70 text-white group-hover:bg-slate-700 dark:border-slate-500 dark:bg-slate-500/70 dark:group-hover:bg-slate-500"
+            className="flex h-7 w-7 items-center justify-center rounded-full border border-slate-100 bg-slate-100/70 text-gray-800 group-hover:bg-slate-100 dark:border-slate-200 dark:bg-slate-200/70 dark:group-hover:bg-slate-200 lg:h-10 lg:w-10"
           >
             {wizardGroup.total}
           </span>
