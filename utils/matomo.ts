@@ -144,6 +144,8 @@ export const evaluateWizards = (groupedWizards: ITrackerEventGroup[]): IWizard[]
       completed = true;
     }
 
+    if (score < 0) score = 0;
+
     const evaluatedWizard: IWizard = {
       ...wizard,
       score,
