@@ -5,12 +5,6 @@ import { Layout } from '../components/layout';
 import { Loading, NotFound } from '../components/utils';
 import { ArrowPathIcon, CircleStackIcon } from '@heroicons/react/24/outline';
 
-type CompletionRate = {
-  completed: number;
-  notCompleted: number;
-  ratio: number;
-};
-
 export default function Wizards() {
   return (
     <Layout location="Wizards">
@@ -33,6 +27,7 @@ function WizardKPIs() {
   const [loading, setLoading] = React.useState<boolean>(true);
   const [willFetch, setWillFetch] = React.useState<boolean>(true);
 
+  // fetch data from API
   React.useEffect(() => {
     if (!willFetch) return;
 
@@ -54,6 +49,7 @@ function WizardKPIs() {
       });
   }, [willFetch]);
 
+  // calculate average score for every wizard
   const avgScore = React.useMemo<number | null>(() => {
     if (data.length === 0) return null;
 
@@ -61,6 +57,7 @@ function WizardKPIs() {
     return data.length > 0 ? sum / data.length : 0;
   }, [data]);
 
+  // calculate average completion rate for every wizard
   const completionRate = React.useMemo<CompletionRate | null>(() => {
     if (data.length === 0) return null;
 
@@ -75,6 +72,20 @@ function WizardKPIs() {
     };
   }, [data]);
 
+  // calculate average, minimum and maximum time for every wizard
+  const { averageTime, minTime, maxTime } = React.useMemo(() => {
+    const totalTime = data.reduce((acc, item) => acc + item.avgTimespan * item.total, 0);
+    const totalCount = data.reduce((acc, item) => acc + item.total, 0);
+
+    const timespans = data.flatMap((item) => item.wizards.map((wizard) => wizard.timespan));
+    const minTime = Math.min(...timespans);
+    const maxTime = Math.max(...timespans);
+    const averageTime = totalCount > 0 ? totalTime / totalCount : 0;
+
+    return { averageTime, minTime, maxTime };
+  }, [data]);
+
+  // return early if loading
   if (loading)
     return (
       <div className="space-y-3">
@@ -82,6 +93,7 @@ function WizardKPIs() {
       </div>
     );
 
+  // return early if error
   if (error)
     return (
       <div className="space-y-3">
@@ -116,9 +128,16 @@ function WizardKPIs() {
     <div className="mt-3 flex gap-6">
       {completionRate === null ? null : <WizardCompletionRateCard completion={completionRate} />}
       {avgScore === null ? null : <WizardAverageUXScoreCard score={avgScore} />}
+      <AverageTimeCard stats={{ avg: averageTime, min: minTime, max: maxTime }} />
     </div>
   );
 }
+
+type CompletionRate = {
+  completed: number;
+  notCompleted: number;
+  ratio: number;
+};
 
 function WizardCompletionRateCard({ completion }: { completion: CompletionRate }) {
   const progress = Math.min(Math.max(completion.ratio, 0), 1) * 100;
@@ -215,3 +234,33 @@ function WizardAverageUXScoreCard({ score }: { score: number }) {
     </div>
   );
 }
+
+const AverageTimeCard = ({ stats }: { stats: { avg: number; min: number; max: number } }) => {
+  const { avg, min, max } = stats;
+
+  return (
+    <div className="relative max-w-xs rounded bg-white/80 p-4 dark:bg-white/10">
+      <h2 className="mb-4 text-xl font-bold">Wizard Time Stats</h2>
+      <div className="flex items-center gap-x-2">
+        <span className="h-4 w-4 rounded-full bg-cyan-500" />
+        <span className="font-semibold">
+          Average: <span className="font-normal">{avg.toFixed(2)}s</span>
+        </span>
+      </div>
+
+      <div className="flex items-center gap-x-2">
+        <span className="h-4 w-4 rounded-full bg-pink-500" />
+        <span className="font-semibold">
+          Average: <span className="font-normal">{min.toFixed(2)}s</span>
+        </span>
+      </div>
+
+      <div className="flex items-center gap-x-2">
+        <span className="h-4 w-4 rounded-full bg-violet-500" />
+        <span className="font-semibold">
+          Maximum: <span className="font-normal">{max.toFixed(2)}s</span>
+        </span>
+      </div>
+    </div>
+  );
+};
