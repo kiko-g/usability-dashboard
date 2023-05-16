@@ -391,6 +391,20 @@ const ErrorStatsCard = ({ text, stats }: { text: string; stats: ErrorStatsCard }
       <div className="flex items-center gap-x-2">
         <span className="h-4 w-4 rounded-full bg-rose-600" />
         <span className="whitespace-nowrap text-sm font-semibold">
+          Total Errors: <span className="font-normal">{totalErrors}</span>
+        </span>
+      </div>
+
+      <div className="flex items-center gap-x-2">
+        <span className="h-4 w-4 rounded-full bg-orange-500" />
+        <span className="whitespace-nowrap text-sm font-semibold">
+          Total Backs: <span className="font-normal">{totalBackSteps}</span>
+        </span>
+      </div>
+
+      <div className="flex items-center gap-x-2">
+        <span className="h-4 w-4 rounded-full bg-rose-600" />
+        <span className="whitespace-nowrap text-sm font-semibold">
           Average Errors: <span className="font-normal">{avgError.toFixed(2)} per wizard</span>
         </span>
       </div>
@@ -399,20 +413,6 @@ const ErrorStatsCard = ({ text, stats }: { text: string; stats: ErrorStatsCard }
         <span className="h-4 w-4 rounded-full bg-orange-500" />
         <span className="whitespace-nowrap text-sm font-semibold">
           Average Backs: <span className="font-normal">{avgBack.toFixed(2)} per wizard</span>
-        </span>
-      </div>
-
-      <div className="flex items-center gap-x-2">
-        <span className="h-4 w-4 rounded-full bg-rose-600" />
-        <span className="whitespace-nowrap text-sm font-semibold">
-          Total Errors: <span className="font-normal">{totalErrors} per wizard</span>
-        </span>
-      </div>
-
-      <div className="flex items-center gap-x-2">
-        <span className="h-4 w-4 rounded-full bg-orange-500" />
-        <span className="whitespace-nowrap text-sm font-semibold">
-          Total Backs: <span className="font-normal">{totalBackSteps} per wizard</span>
         </span>
       </div>
     </div>
@@ -771,7 +771,7 @@ function ScoreCalculcationApproachDialog() {
 function Formula() {
   return (
     <code className="mt-3 block bg-navy bg-transparent px-3 py-2 font-normal tracking-[-0.07rem] text-white dark:bg-white dark:text-secondary">
-      wizardScore = max(0, 100 - 10*errors - 5*stepErrors - 3*backSteps - 2*cancels)
+      wizardScore = max(0, 100 - 10*errors - 8*stepErrors - 5*backSteps - 3*cancels)
     </code>
   );
 }

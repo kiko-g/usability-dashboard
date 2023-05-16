@@ -128,19 +128,19 @@ export const evaluateWizards = (groupedWizards: ITrackerEventGroup[]): IWizard[]
 
       // fail step penalty
       if (event.action.includes(WizardAction.FailStep)) {
-        score -= 5;
+        score -= 8;
         errorCount++;
       }
 
       // back to previous step penalty
       if (event.action.includes(WizardAction.BackStep)) {
-        score -= 3;
+        score -= 5;
         backStepCount++;
       }
 
       // cancel wizard penalty
       if (event.action.includes(WizardAction.Cancel)) {
-        score -= 2;
+        score -= 3;
       }
     }
 
