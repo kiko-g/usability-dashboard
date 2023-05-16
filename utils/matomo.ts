@@ -177,6 +177,8 @@ export const groupWizards = (wizards: IWizard[]): IWizardGroup[] => {
       group = {
         name: wizard.name,
         avgScore: 0,
+        scoreStdDev: 0,
+        scores: [],
         avgTimespan: 0,
         completed: 0,
         notCompleted: 0,
@@ -194,6 +196,7 @@ export const groupWizards = (wizards: IWizard[]): IWizardGroup[] => {
     group.totalErrors += wizard.errorCount;
     group.totalBackSteps += wizard.backStepCount;
     group.avgScore += wizard.score;
+    group.scores.push(wizard.score);
     group.avgTimespan += timespan;
     wizard.completed ? group.completed++ : group.notCompleted++;
     group.wizards.push(wizard);
@@ -207,7 +210,14 @@ export const groupWizards = (wizards: IWizard[]): IWizardGroup[] => {
     group.avgScore /= totalCount;
     group.avgTimespan /= totalCount;
     group.completedRatio = group.completed / totalCount;
+
+    // Calculate standard deviation
+    const scoresMean = group.avgScore;
+    const squaredDiffs = group.scores.map((score) => Math.pow(score - scoresMean, 2));
+    const meanSquaredDiff = squaredDiffs.reduce((a, b) => a + b, 0) / squaredDiffs.length;
+    group.scoreStdDev = Math.sqrt(meanSquaredDiff);
   }
 
   return groupedWizards.sort((a, b) => (a.avgScore < b.avgScore ? 1 : -1));
 };
+
