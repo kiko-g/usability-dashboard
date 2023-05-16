@@ -601,7 +601,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all dark:bg-navy">
+                <Dialog.Panel className="w-full max-w-3xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all dark:bg-navy">
                   <Dialog.Title
                     as="h3"
                     className="font-sans text-lg font-normal leading-6 text-slate-800 dark:text-white"
@@ -738,8 +738,8 @@ function ScoreCalculcationApproachDialog() {
 
 function Formula() {
   return (
-    <code className="mt-2 block bg-navy bg-transparent px-3 py-2 font-normal tracking-tighter text-white dark:bg-white dark:text-secondary">
-      wizardScore = max(0, 100 - 10*wizardErrors - 5*stepErrors - 3*backSteps - 2*cancels)
+    <code className="mt-3 block bg-navy bg-transparent px-3 py-2 font-normal tracking-[-0.07rem] text-white dark:bg-white dark:text-secondary">
+      wizardScore = max(0, 100 - 10*errors - 5*stepErrors - 3*backSteps - 2*cancels)
     </code>
   );
 }
