@@ -476,17 +476,23 @@ function WizardSortedList({ data }: { data: IWizardGroup[] }) {
         </div>
       </div>
       <ul className="flex flex-col gap-y-2 lg:gap-y-3">
-        <li className="flex items-center justify-between rounded bg-slate-200 px-2 py-2 text-xs font-normal tracking-tighter dark:bg-slate-500 lg:px-4 lg:py-2 lg:text-sm lg:font-medium">
+        <li className="flex items-center justify-between rounded bg-slate-200 px-2 py-2 text-xs font-normal tracking-tighter dark:bg-slate-500 lg:px-4 lg:py-2 lg:text-xs lg:font-medium">
           <span>Wizard Name</span>
-          <span className="flex items-center gap-1 lg:gap-2">
+          <span className="flex items-center gap-1 tracking-tighter lg:gap-3">
+            <span className="hidden sm:inline">Errors</span>
+            <span className="inline sm:hidden">Err</span>
+            <span>&middot;</span>
+            <span className="hidden sm:inline">Back</span>
+            <span className="inline sm:hidden">Back</span>
+            <span>&middot;</span>
             <span className="hidden sm:inline">Rate</span>
-            <span className="inline sm:hidden">CR</span>
+            <span className="inline sm:hidden">Rate</span>
             <span>&middot;</span>
             <span className="hidden sm:inline">UX</span>
             <span className="inline sm:hidden">UX</span>
             <span>&middot;</span>
-            <span className="hidden sm:inline">Freq</span>
-            <span className="inline sm:hidden">FQ</span>
+            <span className="hidden sm:inline">Total</span>
+            <span className="inline sm:hidden">Freq</span>
           </span>
         </li>
         {sortedData.map((wizardGroup, wizardGroupIdx) => (
@@ -501,6 +507,21 @@ function WizardSortedList({ data }: { data: IWizardGroup[] }) {
 
 function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
   const [isOpen, setIsOpen] = React.useState(false);
+  const { totalWizards, avgError, totalErrors, avgBack, totalBackSteps } = React.useMemo(() => {
+    const totalWizards = wizardGroup.wizards.length;
+    let totalErrors = 0;
+    let totalBackSteps = 0;
+
+    wizardGroup.wizards.forEach((wizard) => {
+      totalErrors += wizard.errorCount;
+      totalBackSteps += wizard.backStepCount;
+    });
+
+    const avgError = totalErrors > 0 ? totalErrors / totalWizards : 0;
+    const avgBack = totalBackSteps > 0 ? totalBackSteps / totalWizards : 0;
+
+    return { totalWizards, avgError, totalErrors, avgBack, totalBackSteps };
+  }, [wizardGroup]);
 
   function closeModal() {
     setIsOpen(false);
@@ -515,13 +536,25 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
       <button
         type="button"
         onClick={openModal}
-        className="group flex w-full items-center justify-between gap-2 rounded border border-primary bg-primary/40 px-2 py-2 text-white transition hover:bg-primary/80 dark:border-secondary dark:bg-secondary/20 dark:hover:bg-secondary/80 lg:px-4 lg:py-2.5"
+        className="group flex w-full flex-col items-center justify-between gap-2 rounded border border-primary bg-primary/40 px-2 py-2 text-white transition hover:bg-primary/80 dark:border-secondary dark:bg-secondary/20 dark:hover:bg-secondary/80 lg:flex-row lg:px-4 lg:py-2.5"
       >
         <span className="flex items-center justify-between gap-1.5 text-xs font-normal lg:text-sm lg:font-medium">
           <span className="text-left tracking-tighter lg:tracking-normal">{wizardGroup.name}</span>
           <MagnifyingGlassPlusIcon className="h-5 w-5" />
         </span>
         <span className="flex items-center gap-1 text-[0.60rem] font-normal lg:gap-2 lg:text-xs lg:font-medium">
+          <span
+            title="Average Number of Errors"
+            className="flex h-7 w-7 items-center justify-center rounded-full border border-rose-500 bg-rose-500/70 text-white group-hover:bg-rose-600 lg:h-10 lg:w-10"
+          >
+            {wizardGroup.avgErrors.toFixed(1)}
+          </span>
+          <span
+            title="Average Number of Back to Previous Step Clicks"
+            className="flex h-7 w-7 items-center justify-center rounded-full border border-orange-500 bg-orange-500/70 text-white group-hover:bg-orange-500 lg:h-10 lg:w-10"
+          >
+            {wizardGroup.avgBackSteps.toFixed(1)}
+          </span>
           <span
             title="Average Completed Ratio"
             className="flex h-7 w-7 items-center justify-center rounded-full border border-emerald-500 bg-emerald-500/70 text-white group-hover:bg-emerald-500 lg:h-10 lg:w-10"
@@ -590,13 +623,19 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                       </li>
 
                       <li>
+                        Data was collected for <strong>{totalWizards} wizard(s)</strong> of this category. There were a
+                        total of <strong>{totalErrors} error(s)</strong> across these, alongside a total of{' '}
+                        <strong>{wizardGroup.totalBackSteps} back to previous step click(s)</strong>. This means that on
+                        average, each wizard had <strong>{avgError.toFixed(1)} errors</strong> and{' '}
+                        <strong>{avgBack.toFixed(1)} back steps</strong>.
+                      </li>
+
+                      <li>
                         The average score was{' '}
                         <strong>{wizardGroup.avgScore.toFixed(2)} out of a possible 100 points</strong>. This score is
                         calculated based on the amount of wizard errors, step errors and back to previous step button
                         clicks, where we deduct point to a wizard based on negative actions.
-                        <code className="block bg-slate-700 bg-transparent py-3 tracking-tighter text-blue-500">
-                          wizardScore = max(0, 100 - 10*wizardErrors - 3*stepErrors - 2*backStepClicks)
-                        </code>
+                        <Formula />
                       </li>
                     </ul>
                   </div>
@@ -675,9 +714,7 @@ function ScoreCalculcationApproachDialog() {
                     <strong>wizard errors</strong>, <strong>step errors</strong> and{' '}
                     <strong>back to previous step </strong> button clicks, where we deduct points to a wizard based on
                     negative actions. The initial score is 100, and we subtract from there as follows:
-                    <code className="block bg-slate-700 bg-transparent py-3 tracking-tighter text-blue-500">
-                      wizardScore = max(0, 100 - 10*wizardErrors - 3*stepErrors - 2*backStepClicks)
-                    </code>
+                    <Formula />
                   </div>
 
                   <div className="mt-8 flex items-center justify-end">
@@ -696,5 +733,13 @@ function ScoreCalculcationApproachDialog() {
         </Dialog>
       </Transition>
     </>
+  );
+}
+
+function Formula() {
+  return (
+    <code className="mt-2 block bg-navy bg-transparent px-3 py-2 font-normal tracking-tighter text-white dark:bg-white dark:text-secondary">
+      wizardScore = max(0, 100 - 10*wizardErrors - 5*stepErrors - 3*backSteps - 2*cancels)
+    </code>
   );
 }
