@@ -3,6 +3,8 @@ import type { IWizardGroup } from '../@types';
 import { mockWizardData } from '../utils/mock';
 import { Layout } from '../components/layout';
 import { Loading, NotFound } from '../components/utils';
+import { Dialog, Listbox, Transition } from '@headlessui/react';
+import { WizardAction } from '../utils/matomo';
 import {
   ArrowPathIcon,
   CheckCircleIcon,
@@ -10,7 +12,6 @@ import {
   CircleStackIcon,
   MagnifyingGlassPlusIcon,
 } from '@heroicons/react/24/outline';
-import { Dialog, Listbox, Transition } from '@headlessui/react';
 
 export default function Wizards() {
   return (
@@ -92,32 +93,27 @@ function WizardKPIs() {
     return { avg: averageTime, min: minTime, max: maxTime };
   }, [data]);
 
-  // calculate average, minimum and maximum step time considering all wizards
-  const stepTimeStats = React.useMemo(() => {
-    let totalStepTime = 0;
-    let stepCount = 0;
-    let minStepTime = 0;
-    let maxStepTime = 0;
+  const stepCompletionStats = React.useMemo(() => {
+    let activatedStepsTotal = 0;
+    let successStepsTotal = 0;
+    let failedStepTotal = 0;
 
-    data.forEach((item) => {
-      item.wizards.forEach((wizard) => {
-        for (let i = 0; i < wizard.events.length - 1; i++) {
-          if (wizard.events[i].action === 'Activate' && wizard.events[i + 1].action === 'Success') {
-            const stepTime =
-              (new Date(wizard.events[i + 1].time).getTime() - new Date(wizard.events[i].time).getTime()) / 1000;
-            totalStepTime += stepTime;
-            stepCount++;
-
-            minStepTime = Math.min(minStepTime, stepTime);
-            maxStepTime = Math.max(maxStepTime, stepTime);
+    data.forEach((wizardGroup) => {
+      wizardGroup.wizards.forEach((wizard) => {
+        wizard.events.forEach((event) => {
+          const action = event.action;
+          if (action.includes(WizardAction.ActivateStep)) {
+            activatedStepsTotal++;
+          } else if (action.includes(WizardAction.SuccessStep)) {
+            successStepsTotal++;
+          } else if (action.includes(WizardAction.FailStep)) {
+            failedStepTotal++;
           }
-        }
+        });
       });
     });
 
-    const averageStepTime = stepCount > 0 ? totalStepTime / stepCount : 0;
-
-    return { avg: averageStepTime, min: minStepTime, max: maxStepTime };
+    return { activated: activatedStepsTotal, successful: successStepsTotal, failed: failedStepTotal };
   }, [data]);
 
   // calculate average, minimum and maximum error and back step considering all wizards
@@ -195,8 +191,8 @@ function WizardKPIs() {
         {completionRate === null ? null : <WizardCompletionRateCard completion={completionRate} />}
         {avgScore === null ? null : <WizardAverageUXScoreCard score={avgScore} />}
         <div className="flex flex-1 flex-col items-start justify-start gap-4 self-stretch">
-          <TimeStatsCard text="Wizard Time Stats" stats={wizardTimeStats} />
-          <TimeStatsCard text="Step Time Stats" stats={stepTimeStats} />
+          <TimeStatsCard stats={wizardTimeStats} />
+          <StepCompletionStatsCard stats={stepCompletionStats} />
           <ErrorStatsCard text="Negative Actions Stats" stats={errorAndBackStepStats} />
         </div>
       </div>
@@ -313,12 +309,12 @@ type AvgMinMax = {
   max: number;
 };
 
-const TimeStatsCard = ({ stats, text }: { text: string; stats: AvgMinMax }) => {
+const TimeStatsCard = ({ stats }: { stats: AvgMinMax }) => {
   const { avg, min, max } = stats;
 
   return (
     <div className="relative flex flex-1 flex-col self-stretch rounded bg-white/80 p-4 dark:bg-white/10">
-      <h2 className="mb-2 text-xl font-bold">{text}</h2>
+      <h2 className="mb-2 text-xl font-bold">Wizard Time Stats</h2>
       <div className="flex items-center gap-x-2">
         <span className="h-4 w-4 rounded-full bg-blue-500" />
         <span className="whitespace-nowrap text-sm font-semibold">
@@ -337,6 +333,42 @@ const TimeStatsCard = ({ stats, text }: { text: string; stats: AvgMinMax }) => {
         <span className="h-4 w-4 rounded-full bg-violet-500" />
         <span className="whitespace-nowrap text-sm font-semibold">
           Maximum: <span className="font-normal">{max.toFixed(2)}s</span>
+        </span>
+      </div>
+    </div>
+  );
+};
+
+type StepCompletionStats = {
+  activated: number;
+  successful: number;
+  failed: number;
+};
+
+const StepCompletionStatsCard = ({ stats }: { stats: StepCompletionStats }) => {
+  const { activated, successful, failed } = stats;
+
+  return (
+    <div className="relative flex flex-1 flex-col self-stretch rounded bg-white/80 p-4 dark:bg-white/10">
+      <h2 className="mb-2 text-xl font-bold">Step Completion Stats</h2>
+      <div className="flex items-center gap-x-2">
+        <span className="h-4 w-4 rounded-full bg-blue-500" />
+        <span className="whitespace-nowrap text-sm font-semibold">
+          All activated steps: <span className="font-normal">{activated}</span>
+        </span>
+      </div>
+
+      <div className="flex items-center gap-x-2">
+        <span className="h-4 w-4 rounded-full bg-pink-500" />
+        <span className="whitespace-nowrap text-sm font-semibold">
+          Successful steps: <span className="font-normal">{successful}</span>
+        </span>
+      </div>
+
+      <div className="flex items-center gap-x-2">
+        <span className="h-4 w-4 rounded-full bg-violet-500" />
+        <span className="whitespace-nowrap text-sm font-semibold">
+          Failed steps: <span className="font-normal">{failed}</span>
         </span>
       </div>
     </div>
