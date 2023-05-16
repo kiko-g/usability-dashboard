@@ -565,7 +565,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
             title="Average UX Score"
             className="flex h-7 w-7 items-center justify-center rounded-full border border-blue-600 bg-blue-600/70 text-white group-hover:bg-blue-600 lg:h-10 lg:w-10"
           >
-            {wizardGroup.avgScore}
+            {wizardGroup.avgScore.toFixed(1)}
           </span>
           <span
             title="Total Wizards Opened"
