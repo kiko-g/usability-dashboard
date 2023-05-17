@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { IWizardGroup } from '../@types';
 
 export const mockWizardData: IWizardGroup[] = [

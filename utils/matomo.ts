@@ -174,10 +174,10 @@ export const groupWizards = (wizards: IWizard[]): IWizardGroup[] => {
     let group = groupedWizards.find((g) => g.name === wizard.name);
 
     if (!group) {
-      console.log('new group?')
       group = {
         name: wizard.name,
-        avgScore: 0,
+        stats: {
+          avgScore: 0,
         avgTimespan: 0,
         completed: 0,
         notCompleted: 0,
@@ -187,28 +187,29 @@ export const groupWizards = (wizards: IWizard[]): IWizardGroup[] => {
         avgBackSteps: 0,
         completedRatio: 0,
         total: 0,
+        },
         wizards: [],
       };
       groupedWizards.push(group);
     }
 
-    group.totalErrors += wizard.errorCount;
-    group.totalBackSteps += wizard.backStepCount;
-    group.avgScore += wizard.score;
-    group.avgTimespan += wizard.timespan;
-    wizard.completed ? group.completed++ : group.notCompleted++;
+    group.stats.totalErrors += wizard.errorCount;
+    group.stats.totalBackSteps += wizard.backStepCount;
+    group.stats.avgScore += wizard.score;
+    group.stats.avgTimespan += wizard.timespan;
+    wizard.completed ? group.stats.completed++ : group.stats.notCompleted++;
     group.wizards.push(wizard);
   }
 
   for (const group of groupedWizards) {
     const totalCount = group.wizards.length;
-    group.total = totalCount;
-    group.avgErrors = group.totalErrors / totalCount;
-    group.avgBackSteps = group.totalBackSteps / totalCount;
-    group.avgScore /= totalCount;
-    group.avgTimespan /= totalCount;
-    group.completedRatio = group.completed / totalCount;
+    group.stats.total = totalCount;
+    group.stats.avgErrors = group.stats.totalErrors / totalCount;
+    group.stats.avgBackSteps = group.stats.totalBackSteps / totalCount;
+    group.stats.avgScore /= totalCount;
+    group.stats.avgTimespan /= totalCount;
+    group.stats.completedRatio = group.stats.completed / totalCount;
   }
 
-  return groupedWizards.sort((a, b) => (a.avgScore < b.avgScore ? 1 : -1));
+  return groupedWizards.sort((a, b) => (a.stats.avgScore < b.stats.avgScore ? 1 : -1));
 };

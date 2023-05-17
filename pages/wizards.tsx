@@ -64,7 +64,7 @@ function WizardKPIs() {
   const avgScore = React.useMemo<number | null>(() => {
     if (data.length === 0) return null;
 
-    const sum = data.reduce((acc, item) => acc + item.avgScore, 0);
+    const sum = data.reduce((acc, item) => acc + item.stats.avgScore, 0);
     return data.length > 0 ? sum / data.length : 0;
   }, [data]);
 
@@ -72,8 +72,8 @@ function WizardKPIs() {
   const completionRate = React.useMemo<CompletionRate | null>(() => {
     if (data.length === 0) return null;
 
-    const completed = data.reduce((acc, item) => acc + item.completed, 0);
-    const notCompleted = data.reduce((acc, item) => acc + item.notCompleted, 0);
+    const completed = data.reduce((acc, item) => acc + item.stats.completed, 0);
+    const notCompleted = data.reduce((acc, item) => acc + item.stats.notCompleted, 0);
     const total = completed + notCompleted;
 
     return {
@@ -85,8 +85,8 @@ function WizardKPIs() {
 
   // calculate average, minimum and maximum time considering all wizards
   const wizardTimeStats = React.useMemo(() => {
-    const totalTime = data.reduce((acc, item) => acc + item.avgTimespan * item.total, 0);
-    const totalCount = data.reduce((acc, item) => acc + item.total, 0);
+    const totalTime = data.reduce((acc, item) => acc + item.stats.avgTimespan * item.stats.total, 0);
+    const totalCount = data.reduce((acc, item) => acc + item.stats.total, 0);
 
     const timespans = data.flatMap((item) => item.wizards.map((wizard) => wizard.timespan));
     const minTime = Math.min(...timespans);
@@ -435,19 +435,19 @@ function WizardSortedList({ data }: { data: IWizardGroup[] }) {
   const getSortFunction = (picked: any) => {
     switch (picked) {
       case 'Low Score First':
-        return (a: IWizardGroup, b: IWizardGroup) => a.avgScore - b.avgScore;
+        return (a: IWizardGroup, b: IWizardGroup) => a.stats.avgScore - b.stats.avgScore;
       case 'High Score First':
-        return (a: IWizardGroup, b: IWizardGroup) => b.avgScore - a.avgScore;
+        return (a: IWizardGroup, b: IWizardGroup) => b.stats.avgScore - a.stats.avgScore;
       case 'Low Completion First':
-        return (a: IWizardGroup, b: IWizardGroup) => a.completedRatio - b.completedRatio;
+        return (a: IWizardGroup, b: IWizardGroup) => a.stats.completedRatio - b.stats.completedRatio;
       case 'High Completion First':
-        return (a: IWizardGroup, b: IWizardGroup) => b.completedRatio - a.completedRatio;
+        return (a: IWizardGroup, b: IWizardGroup) => b.stats.completedRatio - a.stats.completedRatio;
       case 'Low Frequency First':
-        return (a: IWizardGroup, b: IWizardGroup) => a.total - b.total;
+        return (a: IWizardGroup, b: IWizardGroup) => a.stats.total - b.stats.total;
       case 'High Frequency First':
-        return (a: IWizardGroup, b: IWizardGroup) => b.total - a.total;
+        return (a: IWizardGroup, b: IWizardGroup) => b.stats.total - a.stats.total;
       default:
-        return (a: IWizardGroup, b: IWizardGroup) => a.avgScore - b.avgScore;
+        return (a: IWizardGroup, b: IWizardGroup) => a.stats.avgScore - b.stats.avgScore;
     }
   };
 
@@ -563,8 +563,8 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
   const [isOpen, setIsOpen] = React.useState(false);
   const { avgError, avgBack } = React.useMemo(() => {
     const totalWizards = wizardGroup.wizards.length;
-    const totalErrors = wizardGroup.totalErrors;
-    const totalBackSteps = wizardGroup.totalBackSteps;
+    const totalErrors = wizardGroup.stats.totalErrors;
+    const totalBackSteps = wizardGroup.stats.totalBackSteps;
 
     const avgError = totalErrors > 0 ? totalErrors / totalWizards : 0;
     const avgBack = totalBackSteps > 0 ? totalBackSteps / totalWizards : 0;
@@ -596,31 +596,31 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
             title="Average Number of Errors"
             className="flex h-7 w-7 items-center justify-center rounded-full border border-rose-500 bg-rose-500/70 text-white group-hover:bg-rose-600 lg:h-10 lg:w-10"
           >
-            {wizardGroup.avgErrors.toFixed(1)}
+            {wizardGroup.stats.avgErrors.toFixed(1)}
           </span>
           <span
             title="Average Number of Back to Previous Step Clicks"
             className="flex h-7 w-7 items-center justify-center rounded-full border border-orange-500 bg-orange-500/70 text-white group-hover:bg-orange-500 lg:h-10 lg:w-10"
           >
-            {wizardGroup.avgBackSteps.toFixed(1)}
+            {wizardGroup.stats.avgBackSteps.toFixed(1)}
           </span>
           <span
             title="Average Completed Ratio"
             className="flex h-7 w-7 items-center justify-center rounded-full border border-emerald-500 bg-emerald-500/70 text-white group-hover:bg-emerald-500 lg:h-10 lg:w-10"
           >
-            {(wizardGroup.completedRatio * 100).toFixed(0)}%
+            {(wizardGroup.stats.completedRatio * 100).toFixed(0)}%
           </span>
           <span
             title="Average UX Score"
             className="flex h-7 w-7 items-center justify-center rounded-full border border-blue-600 bg-blue-600/70 text-white group-hover:bg-blue-600 lg:h-10 lg:w-10"
           >
-            {wizardGroup.avgScore.toFixed(1)}
+            {wizardGroup.stats.avgScore.toFixed(1)}
           </span>
           <span
             title="Total Wizards Opened"
             className="flex h-7 w-7 items-center justify-center rounded-full border border-slate-100 bg-slate-100/70 text-gray-800 group-hover:bg-slate-100 dark:border-slate-200 dark:bg-slate-200/70 dark:group-hover:bg-slate-200 lg:h-10 lg:w-10"
           >
-            {wizardGroup.total}
+            {wizardGroup.stats.total}
           </span>
         </span>
       </button>
@@ -674,30 +674,34 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                         <p>For this wizard category:</p>
                         <ul className="mt-1 flex list-inside list-disc flex-col gap-1 text-sm text-gray-600 dark:text-gray-200">
                           <li>
-                            The average time spent on this wizard type is <strong>{wizardGroup.avgTimespan}s</strong>.
+                            The average time spent on this wizard type is{' '}
+                            <strong>{wizardGroup.stats.avgTimespan}s</strong>.
                           </li>
 
                           <li>
-                            A total of <strong>{wizardGroup.total} wizards were initiated</strong>,{' '}
-                            {wizardGroup.completed} were completed, and {wizardGroup.notCompleted} were abandoned or
-                            cancelled, meaning that{' '}
-                            <strong>{(wizardGroup.completedRatio * 100).toFixed(2)}% of wizards were completed</strong>.
+                            A total of <strong>{wizardGroup.stats.total} wizards were initiated</strong>,{' '}
+                            {wizardGroup.stats.completed} were completed, and {wizardGroup.stats.notCompleted} were
+                            abandoned or cancelled, meaning that{' '}
+                            <strong>
+                              {(wizardGroup.stats.completedRatio * 100).toFixed(2)}% of wizards were completed
+                            </strong>
+                            .
                           </li>
 
                           <li>
                             Data was collected for <strong>{wizardGroup.wizards.length} wizard(s)</strong> of this
-                            category. There were a total of <strong>{wizardGroup.totalErrors} error(s)</strong> across
-                            these, alongside a total of{' '}
-                            <strong>{wizardGroup.totalBackSteps} back to previous step click(s)</strong>. This means
-                            that on average, each wizard had <strong>{avgError.toFixed(1)} errors</strong> and{' '}
+                            category. There were a total of <strong>{wizardGroup.stats.totalErrors} error(s)</strong>{' '}
+                            across these, alongside a total of{' '}
+                            <strong>{wizardGroup.stats.totalBackSteps} back to previous step click(s)</strong>. This
+                            means that on average, each wizard had <strong>{avgError.toFixed(1)} errors</strong> and{' '}
                             <strong>{avgBack.toFixed(1)} back steps</strong>.
                           </li>
 
                           <li>
                             The average score was{' '}
-                            <strong>{wizardGroup.avgScore.toFixed(2)} out of a possible 100 points</strong>. This score
-                            is calculated based on the amount of wizard errors, step errors and back to previous step
-                            button clicks, where we deduct point to a wizard based on negative actions.
+                            <strong>{wizardGroup.stats.avgScore.toFixed(2)} out of a possible 100 points</strong>. This
+                            score is calculated based on the amount of wizard errors, step errors and back to previous
+                            step button clicks, where we deduct point to a wizard based on negative actions.
                             <Formula />
                           </li>
                         </ul>

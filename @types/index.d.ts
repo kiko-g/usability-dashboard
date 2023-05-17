@@ -33,6 +33,11 @@ export interface IWizard extends ITrackerEventGroup {
 
 export interface IWizardGroup {
   name: string;
+  stats: WizardStats;
+  wizards: IWizard[];
+}
+
+export type WizardStats = {
   avgScore: number;
   avgTimespan: number;
   completed: number;
@@ -43,8 +48,7 @@ export interface IWizardGroup {
   totalBackSteps: number;
   avgErrors: number;
   avgBackSteps: number;
-  wizards: IWizard[];
-}
+};
 
 // Pages
 export type VisitedPage = {
