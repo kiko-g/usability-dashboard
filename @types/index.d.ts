@@ -27,8 +27,8 @@ export interface IWizard extends ITrackerEventGroup {
   score: number;
   timespan: number;
   completed: boolean;
-  backStepCount: number;
   errorCount: number;
+  backStepCount: number;
 }
 
 export interface IWizardGroup {
@@ -38,16 +38,20 @@ export interface IWizardGroup {
 }
 
 export type WizardStats = {
-  avgScore: number;
-  avgTimespan: number;
+  total: number;
   completed: number;
   notCompleted: number;
   completedRatio: number;
-  total: number;
-  totalErrors: number;
-  totalBackSteps: number;
+  avgScore: number;
+  stdDevScore: number | null;
+  scores: number[];
+  avgTimespan: number;
+  stdDevTimespan: number | null;
+  timespans: number[];
   avgErrors: number;
   avgBackSteps: number;
+  totalErrors: number;
+  totalBackSteps: number;
 };
 
 // Pages

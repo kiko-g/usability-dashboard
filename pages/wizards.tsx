@@ -652,10 +652,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
               >
                 <Dialog.Panel className="w-full max-w-3xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all dark:bg-navy">
                   <div className="flex items-center justify-between gap-2">
-                    <Dialog.Title
-                      as="h3"
-                      className="font-sans text-lg font-normal leading-6 text-slate-800 dark:text-white"
-                    >
+                    <Dialog.Title as="h3" className="mb-2 text-lg font-bold leading-6 text-slate-800 dark:text-white">
                       <strong>Wizard:</strong> <span className="underline">{wizardGroup.name}</span>
                     </Dialog.Title>
 
@@ -775,7 +772,7 @@ function ScoreCalculcationApproachDialog() {
                 <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all dark:bg-navy">
                   <Dialog.Title
                     as="h3"
-                    className="font-sans text-lg font-normal leading-6 text-slate-800 dark:text-white"
+                    className="mb-3 font-sans text-lg font-bold leading-6 text-slate-800 dark:text-white"
                   >
                     Wizard Scoring Approach
                   </Dialog.Title>
@@ -809,7 +806,7 @@ function ScoreCalculcationApproachDialog() {
 
 function Formula() {
   return (
-    <code className="mt-3 block bg-navy px-3 py-2 font-normal tracking-[-0.07rem] text-white dark:bg-slate-500 dark:text-white">
+    <code className="mt-4 block bg-navy px-3 py-2 font-normal tracking-[-0.07rem] text-white dark:bg-slate-500 dark:text-white">
       wizardScore = max(0, 100 - 10*errors - 8*stepErrors - 5*backSteps - 3*cancels)
     </code>
   );
