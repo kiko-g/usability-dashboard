@@ -77,6 +77,8 @@ export const parseEvents = (body: string | any[], filterBy?: string): ITrackerEv
   const events = Array.isArray(body) ? body : JSON.parse(body);
 
   for (const event of events) {
+    if (!isJson(event.Events_EventCategory)) continue;
+
     const category = JSON.parse(event.Events_EventCategory) as ITrackerEventRawCategory;
     const parsedEvent = { ...category, action: event.Events_EventAction } as ITrackerEventRawEvent;
     const component = parsedEvent.component;
