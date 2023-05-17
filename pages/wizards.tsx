@@ -511,8 +511,10 @@ function WizardSortedList({ data }: { data: IWizardGroup[] }) {
         </div>
       </div>
       <ul className="flex flex-col gap-y-2 lg:gap-y-3">
-        <li className="flex flex-col items-center justify-between gap-2 rounded bg-slate-300 px-2 py-2 text-xs font-normal tracking-tighter dark:bg-slate-500 lg:flex-row lg:px-4 lg:py-3 lg:text-xs lg:font-medium">
-          <span className="lg:left w-full rounded border text-center text-sm text-white lg:w-auto">Wizard Name</span>
+        <li className="flex flex-col items-center justify-between gap-2 rounded bg-slate-600 px-2 py-2 text-xs font-normal tracking-tighter dark:bg-slate-400 lg:flex-row lg:px-4 lg:py-3 lg:text-xs lg:font-medium">
+          <span className="lg:left w-full rounded text-center font-lexend text-sm font-medium text-white lg:w-auto">
+            Wizard Name
+          </span>
           <span className="flex items-center gap-2 text-center text-[0.65rem] font-normal lg:gap-2 lg:text-[0.65rem] lg:font-medium">
             <span
               title="Average Number of Errors"
