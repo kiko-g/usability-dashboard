@@ -93,7 +93,7 @@ export const parseEvents = (body: string | any[], filterBy?: string): ITrackerEv
   const groupedEvents = Array.from(eventsByComponent.values());
   const transformedGroupedEvents = transformGroupedEvents(groupedEvents);
 
-  return events;
+  return transformedGroupedEvents;
 };
 
 export const evaluateWizards = (groupedWizards: ITrackerEventGroup[]): IWizard[] => {

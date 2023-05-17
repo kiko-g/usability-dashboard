@@ -22,6 +22,6 @@ export default function getWizardEvents(req: NextApiRequest, res: NextApiRespons
     }
 
     const wizards = parseEvents(body, 'wizard');
-    return res.status(200).json(wizards);
+    return res.status(200).json(body);
   });
 }
