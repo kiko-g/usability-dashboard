@@ -8,9 +8,10 @@ type ResponseType = any | CustomAPIError;
 export default function getWizardEvents(req: NextApiRequest, res: NextApiResponse<ResponseType>) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method Not Allowed' });
 
+  const filterLimit = 10000;
   const period = 'range'; // day, week, month, year, range
   const date = `2023-04-29,today`; // YYYY-MM-DD
-  const apiUrl = `${config.matomoSiteUrl}/index.php?module=API&method=Events.getCategory&secondaryDimension=eventAction&flat=1&format=json&idSite=${config.matomoSiteId}&period=${period}&date=${date}&token_auth=${config.matomoToken}`;
+  const apiUrl = `${config.matomoSiteUrl}/index.php?module=API&method=Events.getCategory&secondaryDimension=eventAction&flat=1&format=json&idSite=${config.matomoSiteId}&period=${period}&date=${date}&token_auth=${config.matomoToken}&filterLimit=${filterLimit}`;
 
   request(apiUrl, { json: true }, (err, response, body) => {
     if (err) {
