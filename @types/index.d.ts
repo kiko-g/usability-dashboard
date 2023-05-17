@@ -34,8 +34,6 @@ export interface IWizard extends ITrackerEventGroup {
 export interface IWizardGroup {
   name: string;
   avgScore: number;
-  scoreStdDev: number;
-  scores: number[];
   avgTimespan: number;
   completed: number;
   notCompleted: number;
