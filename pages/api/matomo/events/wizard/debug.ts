@@ -1,0 +1,27 @@
+import request from 'request';
+import { config, parseEvents, evaluateWizards, groupWizards } from '../../../../../utils/matomo';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import type { CustomAPIError, IWizardGroup } from '../../../../../@types';
+
+type ResponseType = any | CustomAPIError;
+
+export default function getWizardEvents(req: NextApiRequest, res: NextApiResponse<ResponseType>) {
+  if (req.method !== 'GET') return res.status(405).json({ error: 'Method Not Allowed' });
+
+  const period = 'range'; // day, week, month, year, range
+  const date = `2023-04-29,today`; // YYYY-MM-DD
+  const apiUrl = `${config.matomoSiteUrl}/index.php?module=API&method=Events.getCategory&secondaryDimension=eventAction&flat=1&format=json&idSite=${config.matomoSiteId}&period=${period}&date=${date}&token_auth=${config.matomoToken}`;
+
+  request(apiUrl, { json: true }, (err, response, body) => {
+    if (err) {
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+
+    if (response.statusCode !== 200 || body.result === 'error') {
+      return res.status(response.statusCode).json({ error: 'Error from Matomo API', message: body.message });
+    }
+
+    const wizards = parseEvents(body, 'wizard');
+    return res.status(200).json(wizards);
+  });
+}
