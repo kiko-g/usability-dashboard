@@ -10,8 +10,6 @@ import {
   ChartPieIcon,
   CheckCircleIcon,
   ChevronDownIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
   ChevronUpDownIcon,
   ChevronUpIcon,
   CircleStackIcon,
