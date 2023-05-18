@@ -2,18 +2,23 @@ import React, { Fragment } from 'react';
 import type { IWizardGroup } from '../@types';
 import { mockWizardData } from '../utils/mock';
 import { Layout } from '../components/layout';
-import { Loading, NotFound } from '../components/utils';
-import { Dialog, Listbox, Switch, Transition } from '@headlessui/react';
+import { CircularProgressBadge, Loading, NotFound } from '../components/utils';
+import { Dialog, Listbox, Transition } from '@headlessui/react';
 import { WizardAction } from '../utils/matomo';
 import {
   ArrowPathIcon,
   ChartPieIcon,
   CheckCircleIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
   ChevronUpDownIcon,
   CircleStackIcon,
   DocumentTextIcon,
+  MagnifyingGlassMinusIcon,
   MagnifyingGlassPlusIcon,
+  XCircleIcon,
 } from '@heroicons/react/24/outline';
+import classNames from 'classnames';
 
 export default function Wizards() {
   return (
@@ -560,6 +565,9 @@ function WizardSortedList({ data }: { data: IWizardGroup[] }) {
 function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [textView, setTextView] = React.useState(false);
+  const [investigate, setInvestigate] = React.useState(false);
+  const [inspectIndex, setInspectIndex] = React.useState(0);
+  const selectedWizard = React.useMemo(() => wizardGroup.wizards[inspectIndex], [wizardGroup, inspectIndex]);
 
   const { avgError, avgBack } = React.useMemo(() => {
     const totalWizards = wizardGroup.wizards.length;
@@ -665,6 +673,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                     </button>
                   </div>
 
+                  {/* KPIs */}
                   <div className="mt-2 font-normal text-gray-700 dark:text-white">
                     {textView ? (
                       <>
@@ -842,10 +851,103 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                     )}
                   </div>
 
-                  <div className="mt-8 flex items-center justify-end">
+                  {/* Inspect wizards view */}
+                  {investigate ? (
+                    <div className="flex rounded shadow-xl">
+                      <button
+                        disabled={inspectIndex === 0}
+                        onClick={() => setInspectIndex((idx) => idx - 1)}
+                        className="group self-stretch rounded-l px-2 py-2 transition enabled:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-20 dark:disabled:text-white"
+                      >
+                        <ChevronLeftIcon className="h-5 w-5" />
+                      </button>
+
+                      <div className="flex-1 bg-slate-100 text-gray-700">
+                        <div className="flex items-center justify-between border-b px-4 py-4">
+                          <h4>{selectedWizard.component}</h4>
+                          <span
+                            className={classNames(
+                              'flex gap-1 rounded border p-1.5 text-sm text-white',
+                              selectedWizard.completed
+                                ? 'border-teal-600 bg-teal-600/80'
+                                : 'border-rose-600 bg-rose-600/80'
+                            )}
+                          >
+                            {selectedWizard.completed ? (
+                              <CheckCircleIcon className="h-5 w-5" />
+                            ) : (
+                              <XCircleIcon className="h-5 w-5" />
+                            )}
+                            <span>{selectedWizard.completed ? 'Completed' : 'Abandoned'}</span>
+                          </span>
+                        </div>
+
+                        <div className="flex items-center justify-between bg-slate-50 px-4 py-4">
+                          {/* Left */}
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-x-2">
+                              <span className="h-4 w-4 rounded-full bg-rose-600" />
+                              <span className="whitespace-nowrap text-sm font-semibold">
+                                Errors: <span className="font-normal">{selectedWizard.errorCount}</span>
+                              </span>
+                            </div>
+
+                            <div className="flex items-center gap-x-2">
+                              <span className="h-4 w-4 rounded-full bg-amber-600" />
+                              <span className="whitespace-nowrap text-sm font-semibold">
+                                Backs: <span className="font-normal">{selectedWizard.backStepCount}</span>
+                              </span>
+                            </div>
+
+                            <div className="flex items-center gap-x-2">
+                              <span className="h-4 w-4 rounded-full bg-blue-600" />
+                              <span className="whitespace-nowrap text-sm font-semibold">
+                                Timespan: <span className="font-normal">{selectedWizard.timespan.toFixed(1)}s</span>
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Right */}
+                          <div>
+                            <div className="flex flex-col items-center justify-center space-y-1">
+                              <CircularProgressBadge progress={selectedWizard.score} />
+                              <span className="text-center text-xs tracking-tighter">UX Score</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <button
+                        disabled={inspectIndex === wizardGroup.wizards.length - 1}
+                        onClick={() => setInspectIndex((idx) => idx + 1)}
+                        className="group self-stretch rounded-r px-2 py-2 transition enabled:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-20 dark:disabled:text-white"
+                      >
+                        <ChevronRightIcon className="h-5 w-5" />
+                      </button>
+                    </div>
+                  ) : null}
+
+                  {/* Footer buttons */}
+                  <div className="mt-8 flex items-center justify-end gap-3">
                     <button
                       type="button"
-                      className="flex items-center gap-2 rounded bg-teal-600 px-4 py-2 text-sm text-white transition hover:opacity-80"
+                      onClick={() => setInvestigate((prev) => !prev)}
+                      className={classNames(
+                        investigate ? 'bg-rose-600' : 'bg-teal-600',
+                        'flex items-center gap-2 rounded px-4 py-2 text-sm text-white transition hover:opacity-80'
+                      )}
+                    >
+                      {investigate ? <span>Hide</span> : <span>Inspect</span>}
+                      {investigate ? (
+                        <MagnifyingGlassMinusIcon className="h-5 w-5" />
+                      ) : (
+                        <MagnifyingGlassPlusIcon className="h-5 w-5" />
+                      )}
+                    </button>
+
+                    <button
+                      type="button"
+                      className="flex items-center gap-2 rounded bg-slate-500 px-4 py-2 text-sm text-white transition hover:opacity-80"
                       onClick={closeModal}
                     >
                       <span>Got it, thanks!</span>
