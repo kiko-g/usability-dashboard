@@ -9,9 +9,11 @@ import {
   ArrowPathIcon,
   ChartPieIcon,
   CheckCircleIcon,
+  ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronUpDownIcon,
+  ChevronUpIcon,
   CircleStackIcon,
   DocumentTextIcon,
   MagnifyingGlassMinusIcon,
@@ -853,17 +855,9 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
 
                   {/* Inspect wizards view */}
                   {investigate ? (
-                    <div className="flex rounded shadow-xl">
-                      <button
-                        disabled={inspectIndex === 0}
-                        onClick={() => setInspectIndex((idx) => idx - 1)}
-                        className="group self-stretch rounded-l px-2 py-2 transition enabled:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-20 dark:disabled:text-white"
-                      >
-                        <ChevronLeftIcon className="h-5 w-5" />
-                      </button>
-
-                      <div className="flex-1 bg-slate-100 text-gray-700">
-                        <div className="flex items-center justify-between border-b px-4 py-4">
+                    <div className="flex gap-2">
+                      <div className="flex-1 rounded bg-slate-100 text-gray-700">
+                        <div className="flex items-center justify-between rounded-t border-b px-4 py-4">
                           <h4>{selectedWizard.component}</h4>
                           <span
                             className={classNames(
@@ -882,7 +876,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                           </span>
                         </div>
 
-                        <div className="flex items-center justify-between bg-slate-50 px-4 py-4">
+                        <div className="flex items-center justify-between rounded-b bg-slate-50 px-4 py-4">
                           {/* Left */}
                           <div className="space-y-1">
                             <div className="flex items-center gap-x-2">
@@ -917,13 +911,27 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                         </div>
                       </div>
 
-                      <button
-                        disabled={inspectIndex === wizardGroup.wizards.length - 1}
-                        onClick={() => setInspectIndex((idx) => idx + 1)}
-                        className="group self-stretch rounded-r px-2 py-2 transition enabled:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-20 dark:disabled:text-white"
-                      >
-                        <ChevronRightIcon className="h-5 w-5" />
-                      </button>
+                      <div className="flex flex-col">
+                        <button
+                          disabled={inspectIndex === 0}
+                          onClick={() => setInspectIndex((idx) => idx - 1)}
+                          className="group self-stretch rounded-t px-2 py-2 transition enabled:bg-slate-100 enabled:hover:opacity-80 disabled:cursor-not-allowed disabled:bg-slate-100/10 dark:disabled:text-white"
+                        >
+                          <ChevronUpIcon className="h-5 w-5" />
+                        </button>
+
+                        <span className="flex flex-1 items-center justify-center self-stretch bg-slate-100 px-2 py-2">
+                          {inspectIndex}
+                        </span>
+
+                        <button
+                          disabled={inspectIndex === wizardGroup.wizards.length - 1}
+                          onClick={() => setInspectIndex((idx) => idx + 1)}
+                          className="group self-stretch rounded-b px-2 py-2 transition enabled:bg-slate-100 enabled:hover:opacity-80 disabled:cursor-not-allowed disabled:bg-slate-100/10 dark:disabled:text-white"
+                        >
+                          <ChevronDownIcon className="h-5 w-5" />
+                        </button>
+                      </div>
                     </div>
                   ) : null}
 
