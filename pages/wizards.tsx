@@ -23,27 +23,16 @@ import {
 } from '@heroicons/react/24/outline';
 
 export default function Wizards() {
-  return (
-    <Layout location="Wizards">
-      <main className="space-y-6">
-        <article className="flex flex-col justify-center gap-1">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Wizard Insights</h1>
-          <WizardKPIs />
-        </article>
-      </main>
-    </Layout>
-  );
-}
-
-function WizardKPIs() {
   const [data, setData] = React.useState<IWizardGroup[]>([]);
   const [error, setError] = React.useState<boolean>(false);
   const [loading, setLoading] = React.useState<boolean>(true);
   const [willFetch, setWillFetch] = React.useState<boolean>(true);
 
-  // fetch data from API
   React.useEffect(() => {
     if (!willFetch) return;
+
+    setError(false);
+    setLoading(true);
 
     fetch('/api/matomo/events/wizard')
       .then((res) => {
@@ -63,6 +52,59 @@ function WizardKPIs() {
       });
   }, [willFetch]);
 
+  return (
+    <Layout location="Wizards">
+      <article className="flex flex-col justify-center gap-1">
+        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Wizard Insights</h1>
+        <div className="mb-1 flex w-full items-center justify-between gap-2">
+          <p className="max-w-4xl grow text-lg font-normal">
+            Inspect how your users are using the <span className="font-bold underline">wizards</span> across the
+            platform.
+          </p>
+
+          <div className="flex items-center gap-2">
+            <button
+              title="Use mock data"
+              className="hover:opacity-80"
+              onClick={() => {
+                setError(false);
+                setData(mockWizardData);
+              }}
+            >
+              <CircleStackIcon className="h-6 w-6" />
+              <span className="text-sm">Use mock Data</span>
+            </button>
+
+            <Link
+              target="_blank"
+              title="Inspect JSON data"
+              href="/api/matomo/events/wizard"
+              className="hover:opacity-80"
+            >
+              <CodeBracketIcon className="h-6 w-6" />
+            </Link>
+
+            <button
+              title="Retry fetching data"
+              className="hover:opacity-80"
+              onClick={() => {
+                setWillFetch(true);
+              }}
+            >
+              <ArrowPathIcon className="h-6 w-6" />
+            </button>
+          </div>
+        </div>
+
+        <WizardKPIs data={data} />
+        {loading && <Loading />}
+        {error && <NotFound />}
+      </article>
+    </Layout>
+  );
+}
+
+function WizardKPIs({ data }: { data: IWizardGroup[] }) {
   // calculate average score considering all wizards
   const avgScore = React.useMemo<number | null>(() => {
     if (data.length === 0) return null;
@@ -152,75 +194,21 @@ function WizardKPIs() {
     return { avgError, totalErrors, avgBack, totalBackSteps };
   }, [data]);
 
-  // return early if loading
-  if (loading)
-    return (
-      <div className="space-y-3">
-        <Loading />
-      </div>
-    );
+  if (data.length === 0) return null;
 
-  // return early if error
-  if (error)
-    return (
-      <div className="space-y-3">
-        <NotFound />
-        <div className="flex gap-3">
-          <button
-            onClick={() => {
-              setError(false);
-              setData(mockWizardData);
-            }}
-            className="flex items-center gap-1 rounded bg-rose-600 px-3 py-2 text-white transition hover:opacity-80"
-          >
-            <CircleStackIcon className="h-5 w-5" />
-            <span className="text-sm">Use mock Data</span>
-          </button>
-          <button
-            onClick={() => {
-              setError(false);
-              setLoading(true);
-              setWillFetch(true);
-            }}
-            className="flex items-center gap-1 rounded bg-blue-600 px-3 py-2 text-white transition hover:opacity-80"
-          >
-            <ArrowPathIcon className="h-5 w-5" />
-            <span className="text-sm">Fetch again</span>
-          </button>
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-1 flex-col gap-4 self-stretch lg:flex-row">
+        {completionRate === null ? null : <WizardCompletionRateCard completion={completionRate} />}
+        {avgScore === null ? null : <WizardAverageUXScoreCard score={avgScore} />}
+        <div className="flex flex-1 flex-col items-start justify-start gap-4 self-stretch">
+          <TimeStatsCard stats={wizardTimeStats} />
+          <StepCompletionStatsCard stats={stepCompletionStats} />
+          <ErrorStatsCard text="Negative Actions Stats" stats={errorAndBackStepStats} />
         </div>
       </div>
-    );
-
-  return data.length === 0 ? null : (
-    <>
-      <div className="mb-1 flex w-full items-center justify-between gap-2">
-        <p className="max-w-4xl grow text-lg font-normal">
-          Inspect how your users are using the wizards across the platform.
-        </p>
-        <div className="flex items-center gap-2">
-          <Link href="/api/matomo/events/wizard" className="hover:opacity-80" target="_blank">
-            <CodeBracketIcon className="h-6 w-6" />
-          </Link>
-
-          <button onClick={() => setWillFetch(true)} className="hover:opacity-80">
-            <ArrowPathIcon className="h-6 w-6" />
-          </button>
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-1 flex-col gap-4 self-stretch lg:flex-row">
-          {completionRate === null ? null : <WizardCompletionRateCard completion={completionRate} />}
-          {avgScore === null ? null : <WizardAverageUXScoreCard score={avgScore} />}
-          <div className="flex flex-1 flex-col items-start justify-start gap-4 self-stretch">
-            <TimeStatsCard stats={wizardTimeStats} />
-            <StepCompletionStatsCard stats={stepCompletionStats} />
-            <ErrorStatsCard text="Negative Actions Stats" stats={errorAndBackStepStats} />
-          </div>
-        </div>
-        <WizardSortedList data={data} />
-      </div>
-    </>
+      <WizardSortedList data={data} />
+    </div>
   );
 }
 
