@@ -566,8 +566,8 @@ function WizardSortedList({ data }: { data: IWizardGroup[] }) {
 
 function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
   const [isOpen, setIsOpen] = React.useState(false);
+  const [inspect, setInspect] = React.useState(false);
   const [textView, setTextView] = React.useState(false);
-  const [investigate, setInvestigate] = React.useState(false);
   const [inspectIndex, setInspectIndex] = React.useState(0);
   const selectedWizard = React.useMemo(() => wizardGroup.wizards[inspectIndex], [wizardGroup, inspectIndex]);
 
@@ -854,7 +854,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                   </div>
 
                   {/* Inspect wizards view */}
-                  {investigate ? (
+                  {inspect ? (
                     <div className="flex gap-2">
                       <div className="flex-1 rounded bg-slate-100 text-gray-700">
                         <div className="flex items-center justify-between rounded-t border-b px-4 py-4">
@@ -939,14 +939,14 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                   <div className="mt-8 flex items-center justify-end gap-3">
                     <button
                       type="button"
-                      onClick={() => setInvestigate((prev) => !prev)}
+                      onClick={() => setInspect((prev) => !prev)}
                       className={classNames(
-                        investigate ? 'bg-rose-600' : 'bg-teal-600',
+                        inspect ? 'bg-rose-600' : 'bg-teal-600',
                         'flex items-center gap-2 rounded px-4 py-2 text-sm text-white transition hover:opacity-80'
                       )}
                     >
-                      {investigate ? <span>Hide</span> : <span>Inspect</span>}
-                      {investigate ? (
+                      {inspect ? <span>Hide</span> : <span>Inspect</span>}
+                      {inspect ? (
                         <MagnifyingGlassMinusIcon className="h-5 w-5" />
                       ) : (
                         <MagnifyingGlassPlusIcon className="h-5 w-5" />
