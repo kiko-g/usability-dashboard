@@ -1,4 +1,6 @@
 import React, { Fragment } from 'react';
+import Link from 'next/link';
+import classNames from 'classnames';
 import type { IWizardGroup } from '../@types';
 import { mockWizardData } from '../utils/mock';
 import { Layout } from '../components/layout';
@@ -13,12 +15,12 @@ import {
   ChevronUpDownIcon,
   ChevronUpIcon,
   CircleStackIcon,
+  CodeBracketIcon,
   DocumentTextIcon,
   MagnifyingGlassMinusIcon,
   MagnifyingGlassPlusIcon,
   XCircleIcon,
 } from '@heroicons/react/24/outline';
-import classNames from 'classnames';
 
 export default function Wizards() {
   return (
@@ -26,9 +28,6 @@ export default function Wizards() {
       <main className="space-y-6">
         <article className="flex flex-col justify-center gap-1">
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Wizard Insights</h1>
-          <p className="mb-2 max-w-4xl grow text-lg font-normal">
-            Inspect how your users are using the wizards across the platform.
-          </p>
           <WizardKPIs />
         </article>
       </main>
@@ -193,18 +192,35 @@ function WizardKPIs() {
     );
 
   return data.length === 0 ? null : (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-1 flex-col gap-4 self-stretch lg:flex-row">
-        {completionRate === null ? null : <WizardCompletionRateCard completion={completionRate} />}
-        {avgScore === null ? null : <WizardAverageUXScoreCard score={avgScore} />}
-        <div className="flex flex-1 flex-col items-start justify-start gap-4 self-stretch">
-          <TimeStatsCard stats={wizardTimeStats} />
-          <StepCompletionStatsCard stats={stepCompletionStats} />
-          <ErrorStatsCard text="Negative Actions Stats" stats={errorAndBackStepStats} />
+    <>
+      <div className="mb-1 flex w-full items-center justify-between gap-2">
+        <p className="max-w-4xl grow text-lg font-normal">
+          Inspect how your users are using the wizards across the platform.
+        </p>
+        <div className="flex items-center gap-2">
+          <Link href="/api/matomo/events/wizard" className="hover:opacity-80" target="_blank">
+            <CodeBracketIcon className="h-6 w-6" />
+          </Link>
+
+          <button onClick={() => setWillFetch(true)} className="hover:opacity-80">
+            <ArrowPathIcon className="h-6 w-6" />
+          </button>
         </div>
       </div>
-      <WizardSortedList data={data} />
-    </div>
+
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-1 flex-col gap-4 self-stretch lg:flex-row">
+          {completionRate === null ? null : <WizardCompletionRateCard completion={completionRate} />}
+          {avgScore === null ? null : <WizardAverageUXScoreCard score={avgScore} />}
+          <div className="flex flex-1 flex-col items-start justify-start gap-4 self-stretch">
+            <TimeStatsCard stats={wizardTimeStats} />
+            <StepCompletionStatsCard stats={stepCompletionStats} />
+            <ErrorStatsCard text="Negative Actions Stats" stats={errorAndBackStepStats} />
+          </div>
+        </div>
+        <WizardSortedList data={data} />
+      </div>
+    </>
   );
 }
 
