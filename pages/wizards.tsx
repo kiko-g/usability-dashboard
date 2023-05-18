@@ -877,7 +877,6 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                         </div>
 
                         <div className="flex items-center justify-between rounded-b bg-slate-50 px-4 py-4">
-                          {/* Left */}
                           <div className="space-y-1">
                             <div className="flex items-center gap-x-2">
                               <span className="h-4 w-4 rounded-full bg-rose-600" />
@@ -901,7 +900,6 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                             </div>
                           </div>
 
-                          {/* Right */}
                           <div>
                             <div className="flex flex-col items-center justify-center space-y-1">
                               <CircularProgressBadge progress={selectedWizard.score} />
@@ -911,11 +909,12 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                         </div>
                       </div>
 
+                      {/* Wizard Scroll Buttons */}
                       <div className="flex flex-col">
                         <button
                           disabled={inspectIndex === 0}
                           onClick={() => setInspectIndex((idx) => idx - 1)}
-                          className="group self-stretch rounded-t px-2 py-2 transition enabled:bg-slate-100 enabled:hover:opacity-80 disabled:cursor-not-allowed disabled:bg-slate-100/10 dark:disabled:text-white"
+                          className="group self-stretch rounded-t px-2 py-2 transition enabled:bg-slate-100 enabled:hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-20 dark:disabled:text-white"
                         >
                           <ChevronUpIcon className="h-5 w-5" />
                         </button>
@@ -927,7 +926,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                         <button
                           disabled={inspectIndex === wizardGroup.wizards.length - 1}
                           onClick={() => setInspectIndex((idx) => idx + 1)}
-                          className="group self-stretch rounded-b px-2 py-2 transition enabled:bg-slate-100 enabled:hover:opacity-80 disabled:cursor-not-allowed disabled:bg-slate-100/10 dark:disabled:text-white"
+                          className="group self-stretch rounded-b px-2 py-2 transition enabled:bg-slate-100 enabled:hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-20 dark:disabled:text-white"
                         >
                           <ChevronDownIcon className="h-5 w-5" />
                         </button>
