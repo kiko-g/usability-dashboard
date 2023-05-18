@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 *::selection {
-  @apply bg-rose-700/70 text-white dark:bg-teal-500/80;
+  @apply bg-rose-700/70 text-white dark:bg-rose-500/80;
 }
 
 li::marker {

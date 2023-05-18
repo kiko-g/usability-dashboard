@@ -1,4 +1,4 @@
-import { isJson } from './index';
+import { isJson, standardDeviation } from './index';
 import type {
   ITrackerEventRawCategory,
   ITrackerEventRawEvent,
@@ -170,6 +170,7 @@ export const evaluateWizards = (groupedWizards: ITrackerEventGroup[]): IWizard[]
 export const groupWizards = (wizards: IWizard[]): IWizardGroup[] => {
   const groupedWizards: IWizardGroup[] = [];
 
+  // group wizards by name
   for (const wizard of wizards) {
     let group = groupedWizards.find((g) => g.name === wizard.name);
 
@@ -177,38 +178,53 @@ export const groupWizards = (wizards: IWizard[]): IWizardGroup[] => {
       group = {
         name: wizard.name,
         stats: {
-          avgScore: 0,
-          avgTimespan: 0,
+          total: 0,
           completed: 0,
           notCompleted: 0,
-          totalErrors: 0,
-          totalBackSteps: 0,
+          completedRatio: 0,
+          avgScore: 0,
+          stdDevScore: 0,
+          scores: [],
+          avgTimespan: 0,
+          stdDevTimespan: 0,
+          timespans: [],
           avgErrors: 0,
           avgBackSteps: 0,
-          completedRatio: 0,
-          total: 0,
+          totalErrors: 0,
+          totalBackSteps: 0,
         },
         wizards: [],
       };
       groupedWizards.push(group);
     }
 
+    group.stats.avgScore += wizard.score;
+    group.stats.scores.push(wizard.score);
+
+    group.stats.avgTimespan += wizard.timespan;
+    group.stats.timespans.push(wizard.timespan);
+
     group.stats.totalErrors += wizard.errorCount;
     group.stats.totalBackSteps += wizard.backStepCount;
-    group.stats.avgScore += wizard.score;
-    group.stats.avgTimespan += wizard.timespan;
     wizard.completed ? group.stats.completed++ : group.stats.notCompleted++;
+
     group.wizards.push(wizard);
   }
 
+  // calculate stats after accumulating all wizards
   for (const group of groupedWizards) {
     const totalCount = group.wizards.length;
     group.stats.total = totalCount;
+    group.stats.completedRatio = group.stats.completed / totalCount;
+
     group.stats.avgErrors = group.stats.totalErrors / totalCount;
     group.stats.avgBackSteps = group.stats.totalBackSteps / totalCount;
+
     group.stats.avgScore /= totalCount;
+    group.stats.stdDevScore = standardDeviation(group.stats.scores);
+
     group.stats.avgTimespan /= totalCount;
-    group.stats.completedRatio = group.stats.completed / totalCount;
+    group.stats.stdDevTimespan = standardDeviation(group.stats.timespans);
   }
 
   return groupedWizards.sort((a, b) => (a.stats.avgScore < b.stats.avgScore ? 1 : -1));
