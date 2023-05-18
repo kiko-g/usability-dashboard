@@ -63,16 +63,18 @@ export default function Wizards() {
           </p>
 
           <div className="flex items-center gap-2">
-            <button
-              title="Use mock data"
-              className="hover:opacity-80"
-              onClick={() => {
-                setError(false);
-                setData(mockData);
-              }}
-            >
-              <CircleStackIcon className="h-6 w-6" />
-            </button>
+            {error === false ? null : (
+              <button
+                title="Use mock data"
+                className="hover:opacity-80"
+                onClick={() => {
+                  setError(false);
+                  setData(mockData);
+                }}
+              >
+                <CircleStackIcon className="h-6 w-6" />
+              </button>
+            )}
 
             <Link
               target="_blank"
@@ -228,7 +230,7 @@ function WizardCompletionRateCard({ completion }: { completion: CompletionRate }
   return (
     <div className="relative max-w-full overflow-hidden rounded bg-white/80 p-4 dark:bg-white/10 lg:max-w-xs">
       {/* Adjusted max-w value */}
-      <h3 className="font-medium text-slate-700 dark:text-slate-100">Wizard Completion Rate</h3>
+      <h3 className="font-medium text-gray-700 dark:text-gray-100">Wizard Completion Rate</h3>
       <p className="mt-1 min-h-[5rem] text-sm tracking-tight">
         Ratio of wizards that were submitted successfully vs. all the wizards started in the platform.
       </p>
@@ -276,7 +278,7 @@ function WizardAverageUXScoreCard({ score }: { score: number }) {
   return (
     <div className="relative max-w-full rounded bg-white/80 p-4 dark:bg-white/10 lg:max-w-xs">
       {/* Adjusted max-w value */}
-      <h3 className="font-medium text-slate-700 dark:text-slate-100">Wizard Average UX Score</h3>
+      <h3 className="font-medium text-gray-700 dark:text-gray-100">Wizard Average UX Score</h3>
       <p className="mt-1 min-h-[5rem] text-sm tracking-tight">
         Ratio of wizards that were submitted successfully vs. all the wizards started in the platform. Score is
         calculated based on <ScoreCalculcationApproachDialog />.
@@ -518,7 +520,7 @@ function WizardSortedList({ data }: { data: IWizardGroup[] }) {
         </div>
       </div>
       <ul className="flex flex-col gap-y-2 lg:gap-y-3">
-        <li className="flex flex-col items-center justify-between gap-2 rounded bg-slate-600 px-2 py-2 text-xs font-normal tracking-tighter dark:bg-slate-400 lg:flex-row lg:px-4 lg:py-3 lg:text-xs lg:font-medium">
+        <li className="flex flex-col items-center justify-between gap-2 rounded bg-gray-600 px-2 py-2 text-xs font-normal tracking-tighter dark:bg-gray-400 lg:flex-row lg:px-4 lg:py-3 lg:text-xs lg:font-medium">
           <span className="lg:left w-full rounded text-center font-lexend text-sm font-medium text-white lg:w-auto">
             Wizard Name
           </span>
@@ -549,7 +551,7 @@ function WizardSortedList({ data }: { data: IWizardGroup[] }) {
             </span>
             <span
               title="Total Wizards Opened"
-              className="flex h-auto w-auto items-center justify-center rounded border border-slate-100 bg-slate-100/70 p-1 text-gray-800 group-hover:bg-slate-100 dark:border-slate-200 dark:bg-slate-200/70 dark:group-hover:bg-slate-200 lg:h-12 lg:w-10"
+              className="flex h-auto w-auto items-center justify-center rounded border border-gray-100 bg-gray-100/70 p-1 text-gray-800 group-hover:bg-gray-100 dark:border-gray-200 dark:bg-gray-200/70 dark:group-hover:bg-gray-200 lg:h-12 lg:w-10"
             >
               Total Wizards
             </span>
@@ -629,7 +631,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
           </span>
           <span
             title="Total Wizards Opened"
-            className="flex h-7 w-7 items-center justify-center rounded-full border border-slate-100 bg-slate-100/70 text-gray-800 group-hover:bg-slate-100 dark:border-slate-200 dark:bg-slate-200/70 dark:group-hover:bg-slate-200 lg:h-10 lg:w-10"
+            className="flex h-7 w-7 items-center justify-center rounded-full border border-gray-100 bg-gray-100/70 text-gray-800 group-hover:bg-gray-100 dark:border-gray-200 dark:bg-gray-200/70 dark:group-hover:bg-gray-200 lg:h-10 lg:w-10"
           >
             {wizardGroup.stats.total}
           </span>
@@ -663,17 +665,26 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
               >
                 <Dialog.Panel className="w-full max-w-3xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all dark:bg-navy">
                   <div className="flex items-center justify-between gap-2">
-                    <Dialog.Title as="h3" className="mb-2 text-lg font-bold leading-6 text-slate-800 dark:text-white">
+                    <Dialog.Title as="h3" className="text-lg font-bold leading-6 text-gray-800 dark:text-white">
                       <strong>Wizard:</strong> <span className="underline">{wizardGroup.name}</span>
                     </Dialog.Title>
 
-                    <button
-                      onClick={() => setTextView((prev) => !prev)}
-                      className="text-primary transition hover:scale-125 hover:opacity-50 dark:text-secondary"
-                    >
-                      <span className="sr-only">Toggle view mode</span>
-                      {textView ? <ChartPieIcon className="h-6 w-6" /> : <DocumentTextIcon className="h-6 w-6" />}
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setTextView((prev) => !prev)}
+                        className="text-primary transition hover:scale-125 hover:opacity-50 dark:text-secondary"
+                      >
+                        <span className="sr-only">Toggle view mode</span>
+                        {textView ? <ChartPieIcon className="h-6 w-6" /> : <DocumentTextIcon className="h-6 w-6" />}
+                      </button>
+                      <button
+                        onClick={closeModal}
+                        className="text-rose-600 transition hover:scale-125 hover:opacity-50"
+                      >
+                        <span className="sr-only">Close modal</span>
+                        <XCircleIcon className="h-6 w-6" />
+                      </button>
+                    </div>
                   </div>
 
                   {/* KPIs */}
@@ -764,7 +775,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                             </span>
                           </div>
 
-                          <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-slate-600 bg-slate-600/60 text-center text-white dark:border-slate-500 dark:bg-slate-500/40">
+                          <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-gray-600 bg-gray-600/60 text-center text-white dark:border-gray-500 dark:bg-gray-500/40">
                             <span className="w-full border-b px-2 py-2 font-mono text-xl font-bold">
                               {wizardGroup.stats.total}
                             </span>
@@ -811,7 +822,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                             </span>
                           </div>
 
-                          <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-slate-600 bg-slate-600/60 text-center text-white dark:border-slate-500 dark:bg-slate-500/40">
+                          <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-gray-600 bg-gray-600/60 text-center text-white dark:border-gray-500 dark:bg-gray-500/40">
                             <span className="w-full border-b px-2 py-2 font-mono text-xl font-bold">
                               {(wizardGroup.stats.completedRatio * 100).toFixed(1)}%
                             </span>
@@ -856,13 +867,14 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
 
                   {/* Inspect wizards view */}
                   {inspect ? (
-                    <div className="flex gap-2">
-                      <div className="flex-1 rounded bg-slate-100 text-gray-700">
-                        <div className="flex items-center justify-between rounded-t border-b px-4 py-4">
-                          <h4>{selectedWizard.component}</h4>
+                    <div className="flex gap-4">
+                      {/* Wizard Inspect Card */}
+                      <div className="flex-1 rounded-xl bg-navy text-white dark:bg-white/10">
+                        <div className="flex items-center justify-between rounded-t border-b px-3 py-3 lg:px-4 lg:py-4">
+                          <h4 className="tracking-[-0.08rem] lg:tracking-normal">{selectedWizard.component}</h4>
                           <span
                             className={classNames(
-                              'flex gap-1 rounded border p-1.5 text-sm text-white',
+                              'flex gap-1 rounded-full border p-1 text-sm text-white lg:rounded lg:p-1.5',
                               selectedWizard.completed
                                 ? 'border-teal-600 bg-teal-600/80'
                                 : 'border-rose-600 bg-rose-600/80'
@@ -873,29 +885,31 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                             ) : (
                               <XCircleIcon className="h-5 w-5" />
                             )}
-                            <span>{selectedWizard.completed ? 'Completed' : 'Abandoned'}</span>
+                            <span className="hidden lg:flex">
+                              {selectedWizard.completed ? 'Completed' : 'Abandoned'}
+                            </span>
                           </span>
                         </div>
 
-                        <div className="flex items-center justify-between rounded-b bg-slate-50 px-4 py-4">
-                          <div className="space-y-1">
+                        <div className="flex items-center justify-between rounded-b px-3 py-3 lg:px-4 lg:py-4">
+                          <div className="space-y-0.5 lg:space-y-1">
                             <div className="flex items-center gap-x-2">
                               <span className="h-4 w-4 rounded-full bg-rose-600" />
-                              <span className="whitespace-nowrap text-sm font-semibold">
+                              <span className="whitespace-nowrap text-sm tracking-tighter lg:tracking-normal">
                                 Errors: <span className="font-normal">{selectedWizard.errorCount}</span>
                               </span>
                             </div>
 
                             <div className="flex items-center gap-x-2">
                               <span className="h-4 w-4 rounded-full bg-amber-600" />
-                              <span className="whitespace-nowrap text-sm font-semibold">
+                              <span className="whitespace-nowrap text-sm tracking-tighter lg:tracking-normal">
                                 Backs: <span className="font-normal">{selectedWizard.backStepCount}</span>
                               </span>
                             </div>
 
                             <div className="flex items-center gap-x-2">
                               <span className="h-4 w-4 rounded-full bg-blue-600" />
-                              <span className="whitespace-nowrap text-sm font-semibold">
+                              <span className="whitespace-nowrap text-sm tracking-tighter lg:tracking-normal">
                                 Timespan: <span className="font-normal">{selectedWizard.timespan.toFixed(1)}s</span>
                               </span>
                             </div>
@@ -911,23 +925,23 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                       </div>
 
                       {/* Wizard Scroll Buttons */}
-                      <div className="flex flex-col">
+                      <div className="flex flex-col rounded-xl bg-navy text-white dark:bg-white/10">
                         <button
                           disabled={inspectIndex === 0}
                           onClick={() => setInspectIndex((idx) => idx - 1)}
-                          className="group self-stretch rounded-t px-2 py-2 transition enabled:bg-slate-100 enabled:hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-20 dark:disabled:text-white"
+                          className="group self-stretch rounded-t-xl px-2 py-2 transition enabled:hover:bg-sky-600/50 disabled:cursor-not-allowed disabled:opacity-20 dark:disabled:text-white"
                         >
                           <ChevronUpIcon className="h-5 w-5" />
                         </button>
 
-                        <span className="flex flex-1 items-center justify-center self-stretch bg-slate-100 px-2 py-2">
+                        <span className="flex flex-1 items-center justify-center self-stretch px-2 py-2">
                           {inspectIndex}
                         </span>
 
                         <button
                           disabled={inspectIndex === wizardGroup.wizards.length - 1}
                           onClick={() => setInspectIndex((idx) => idx + 1)}
-                          className="group self-stretch rounded-b px-2 py-2 transition enabled:bg-slate-100 enabled:hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-20 dark:disabled:text-white"
+                          className="group self-stretch rounded-b-xl px-2 py-2 transition enabled:hover:bg-sky-600/50 disabled:cursor-not-allowed disabled:opacity-20 dark:disabled:text-white"
                         >
                           <ChevronDownIcon className="h-5 w-5" />
                         </button>
@@ -936,7 +950,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                   ) : null}
 
                   {/* Footer buttons */}
-                  <div className="mt-8 flex items-center justify-end gap-3">
+                  <div className="mt-8 flex flex-wrap items-center justify-end gap-3">
                     <button
                       type="button"
                       onClick={() => setInspect((prev) => !prev)}
@@ -955,10 +969,10 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
 
                     <button
                       type="button"
-                      className="flex items-center gap-2 rounded bg-slate-500 px-4 py-2 text-sm text-white transition hover:opacity-80"
+                      className="flex items-center gap-2 rounded bg-gray-500 px-4 py-2 text-sm text-white transition hover:opacity-80"
                       onClick={closeModal}
                     >
-                      <span>Got it, thanks!</span>
+                      <span>Got it!</span>
                       <span>
                         <CheckCircleIcon className="h-5 w-5" />
                       </span>
@@ -1019,7 +1033,7 @@ function ScoreCalculcationApproachDialog() {
                 <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all dark:bg-navy">
                   <Dialog.Title
                     as="h3"
-                    className="mb-3 font-sans text-lg font-bold leading-6 text-slate-800 dark:text-white"
+                    className="mb-3 font-sans text-lg font-bold leading-6 text-gray-800 dark:text-white"
                   >
                     Wizard Scoring Approach
                   </Dialog.Title>
@@ -1053,7 +1067,7 @@ function ScoreCalculcationApproachDialog() {
 
 function Formula() {
   return (
-    <code className="my-3 block bg-navy px-3 py-2 text-sm font-normal tracking-[-0.07rem] text-white dark:bg-slate-500 dark:text-white">
+    <code className="my-4 block bg-navy px-3 py-2 text-sm font-normal tracking-[-0.07rem] text-white dark:bg-white/10 dark:text-white">
       wizardScore = max(0, 100 - 10*errors - 8*stepErrors - 5*backSteps - 3*cancels)
     </code>
   );

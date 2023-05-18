@@ -1,21 +1,88 @@
 import React from 'react';
+import Link from 'next/link';
 import type { PageViewsAPI, PageVisitsVizTypeFilter, PieData } from '../@types';
-import { ArrowPathIcon } from '@heroicons/react/24/outline';
+import { ArrowPathIcon, CircleStackIcon, CodeBracketIcon } from '@heroicons/react/24/outline';
+import { mockVisitsData as mockData } from '../utils/mock';
 import { Layout } from '../components/layout';
 import { Loading, NotFound, PieChart } from '../components/utils';
 import { PageVisitsTable, SelectPageVisitsType } from '../components/dashboard';
 
 export default function Visits() {
+  const [data, setData] = React.useState<any>([]);
+  const [error, setError] = React.useState<boolean>(false);
+  const [loading, setLoading] = React.useState<boolean>(true);
+  const [willFetch, setWillFetch] = React.useState<boolean>(true);
+
+  React.useEffect(() => {
+    if (!willFetch) return;
+
+    setError(false);
+    setLoading(true);
+
+    fetch('/api/matomo/events/wizard')
+      .then((res) => {
+        if (!res.ok) {
+          setError(true);
+          setLoading(false);
+          setWillFetch(false);
+          return null;
+        } else {
+          return res.json();
+        }
+      })
+      .then((data: any) => {
+        setLoading(false);
+        setWillFetch(false);
+        setData(data === null ? [] : data);
+      });
+  }, [willFetch]);
+
   return (
     <Layout location="Visits">
       <article className="flex flex-col justify-center gap-1">
         <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Site visits</h1>
-        <p className="mb-2 max-w-4xl grow text-lg font-normal">
-          Delve into how your users are behaving and inspect the data collected from the page visits and its linked data
-          from the sessions.
-        </p>
+        <div className="mb-2 flex w-full items-center justify-between gap-2">
+          <p className="max-w-4xl grow text-lg font-normal">
+            Delve into how your users are behaving and inspect the data collected from the page visits and its linked
+            data from the sessions.
+          </p>
+
+          <div className="flex items-center gap-2">
+            {error === false ? null : (
+              <button
+                title="Use mock data"
+                className="hover:opacity-80"
+                onClick={() => {
+                  setError(false);
+                  setData(mockData);
+                }}
+              >
+                <CircleStackIcon className="h-6 w-6" />
+              </button>
+            )}
+
+            <Link
+              target="_blank"
+              title="Inspect JSON data"
+              href="/api/matomo/events/wizard"
+              className="hover:opacity-80"
+            >
+              <CodeBracketIcon className="h-6 w-6" />
+            </Link>
+
+            <button
+              title="Retry fetching data"
+              className="hover:opacity-80"
+              onClick={() => {
+                setWillFetch(true);
+              }}
+            >
+              <ArrowPathIcon className="h-6 w-6" />
+            </button>
+          </div>
+        </div>
+        <PageVisitsViz />
       </article>
-      <PageVisitsViz />
     </Layout>
   );
 }
@@ -106,30 +173,11 @@ function PageVisitsViz() {
   }, [willFetch]);
 
   if (loading) return <Loading />;
+  if (error) return <NotFound />;
+  if (data.length === 0)
+    return <div className="mt-2 rounded border bg-black/20 p-4 dark:bg-white/20">No Page Visits Data Found.</div>;
 
-  if (error)
-    return (
-      <div className="space-y-3">
-        <NotFound />
-        <div className="flex gap-3">
-          <button
-            onClick={() => {
-              setError(false);
-              setLoading(true);
-              setWillFetch(true);
-            }}
-            className="flex items-center gap-1 rounded bg-blue-600 px-3 py-2 text-white transition hover:opacity-80"
-          >
-            <ArrowPathIcon className="h-5 w-5" />
-            <span className="text-sm">Fetch again</span>
-          </button>
-        </div>
-      </div>
-    );
-
-  return data.length === 0 ? (
-    <div className="mt-2 rounded border bg-black/20 p-4 dark:bg-white/20">No Page Visits Data Found.</div>
-  ) : (
+  return (
     <section className="mt-2 flex flex-col space-y-4">
       <div className="flex flex-col items-end justify-end gap-2 md:flex-row">
         <SelectPageVisitsType pickedHook={[vizType, setVizType]} />

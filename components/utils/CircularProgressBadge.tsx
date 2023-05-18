@@ -33,7 +33,7 @@ export default function CircularProgressBadge({ progress }: Props) {
         />
       </svg>
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform text-center">
-        <span className="text-sm">{`${progress.toFixed(0)}`}</span>
+        <span className="text-xs lg:text-sm">{`${progress.toFixed(0)}`}</span>
       </div>
     </div>
   );

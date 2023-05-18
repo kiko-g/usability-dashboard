@@ -80,7 +80,7 @@ export default function Hub() {
                 actionIdx === 1 ? 'sm:rounded-tr-lg' : '',
                 actionIdx === actions.length - 2 ? 'sm:rounded-bl-lg' : '',
                 actionIdx === actions.length - 1 ? 'rounded-bl-lg rounded-br-lg sm:rounded-bl-none' : '',
-                'group relative bg-white p-6 transition focus-within:ring-2 focus-within:ring-inset focus-within:ring-primary hover:bg-slate-100 dark:bg-darkest'
+                'group relative bg-white p-6 transition focus-within:ring-2 focus-within:ring-inset focus-within:ring-primary hover:bg-slate-100 dark:bg-darkest dark:hover:opacity-90'
               )}
             >
               <div>
@@ -99,7 +99,7 @@ export default function Hub() {
                 <p className="mt-2 text-sm text-gray-500 dark:text-gray-200">{action.text}</p>
               </div>
               <span
-                className="pointer-events-none absolute right-6 top-6 text-gray-300 group-hover:text-gray-500"
+                className="pointer-events-none absolute right-6 top-6 text-gray-300 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-white"
                 aria-hidden="true"
               >
                 <ArrowLongRightIcon className="h-5 w-5 transition group-hover:-rotate-45 md:h-6 md:w-6" />
