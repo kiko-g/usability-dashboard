@@ -28,16 +28,20 @@ services:
       - .env
     depends_on:
       - db
-  grafana:
+
+  nextjs:
     build:
       context: .
-      dockerfile: Dockerfile.grafana
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+      - /app/node_modules
     ports:
       - '3000:3000'
-    volumes:
-      - grafana_data:/var/lib/grafana
+    env_file:
+      - .env
+    command: npm run dev
 
 volumes:
   matomo_data:
   db_data:
-  grafana_data:
