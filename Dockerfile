@@ -1,28 +1,23 @@
-# Install dependencies only when needed
-FROM node:alpine AS deps
-WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm install --only=production
+# Set the base image to Node.js LTS
+FROM node:lts-alpine
 
-# Rebuild the source code only when needed
-FROM node:alpine AS builder
+# Set the working directory in the container
 WORKDIR /app
-COPY . .
-COPY --from=deps /app/node_modules ./node_modules
+
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of your app's source code
+COPY . ./
+
+# Build the Next.js app
 RUN npm run build
 
-# Production image, copy all the files and run next
-FROM node:alpine AS runner
-WORKDIR /app
-
-ENV NODE_ENV production
-
-COPY --from=builder /app/next.config.js ./
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
-
+# Expose port 3000 in the container
 EXPOSE 3000
 
-CMD ["npm", "start"]
+# Run the app
+CMD [ "npm", "start" ]
