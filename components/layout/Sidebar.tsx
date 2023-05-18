@@ -10,6 +10,8 @@ import {
   XMarkIcon,
   Bars3Icon,
   MapIcon,
+  FingerPrintIcon,
+  RectangleGroupIcon,
 } from '@heroicons/react/24/outline';
 
 const navigations = [
@@ -27,11 +29,22 @@ const navigations = [
     name: 'Mouse',
     href: '/mouse',
     icon: CursorArrowRippleIcon,
+    shown: false,
+  },
+  {
+    name: 'Buttons',
+    href: '/buttons',
+    icon: FingerPrintIcon,
   },
   {
     name: 'Wizards',
     href: '/wizards',
     icon: MapIcon,
+  },
+  {
+    name: 'Execution Views',
+    href: '/executions',
+    icon: RectangleGroupIcon,
   },
 ];
 
@@ -59,25 +72,27 @@ export function Sidebar({ location }: SidebarProps) {
       </div>
       <hr />
       <ul className="flex w-full flex-1 flex-col space-y-2">
-        {navigations.map((item, itemIdx) => {
-          const isActive = location.toLowerCase() === item.name.toLowerCase();
-          return (
-            <li key={`nav-${itemIdx}`}>
-              <Link
-                href={item.href}
-                className={classNames(
-                  isActive
-                    ? 'bg-primary text-white hover:opacity-80 dark:bg-secondary/80'
-                    : 'hover:bg-primary/10 dark:hover:bg-secondary/30',
-                  `flex cursor-pointer items-center gap-2 rounded px-3 py-3 text-sm transition ease-in-out`
-                )}
-              >
-                <item.icon className="h-5 w-5" />
-                <span>{item.name}</span>
-              </Link>
-            </li>
-          );
-        })}
+        {navigations
+          .filter((item) => item.shown !== false)
+          .map((item, itemIdx) => {
+            const isActive = location.toLowerCase() === item.name.toLowerCase();
+            return (
+              <li key={`nav-${itemIdx}`}>
+                <Link
+                  href={item.href}
+                  className={classNames(
+                    isActive
+                      ? 'bg-primary text-white hover:opacity-80 dark:bg-secondary/80'
+                      : 'hover:bg-primary/10 dark:hover:bg-secondary/30',
+                    `flex cursor-pointer items-center gap-2 rounded px-3 py-3 text-sm transition ease-in-out`
+                  )}
+                >
+                  <item.icon className="h-5 w-5" />
+                  <span>{item.name}</span>
+                </Link>
+              </li>
+            );
+          })}
       </ul>
       <hr />
       <div className="flex items-center justify-between gap-3">
@@ -158,23 +173,25 @@ export function MobileNav({ title, location }: MobileNavProps) {
               </div>
             </div>
             <Disclosure.Panel className="flex flex-col gap-y-3 py-2 lg:hidden">
-              {navigations.map((link, index) => (
-                <Link href={link.name} className="relative h-auto" key={`mobile-nav-${index}`}>
-                  <button
-                    type="button"
-                    className={`flex h-auto items-center justify-center lowercase transition ${
-                      location === link.name
-                        ? 'font-bold text-primary dark:text-white'
-                        : 'font-normal text-gray-800/50 hover:text-gray-800 dark:text-white/40 dark:hover:text-white'
-                    }`}
-                  >
-                    <span className="flex items-center justify-center gap-x-3">
-                      <link.icon className="h-5 w-5" />
-                      <span>{link.name}</span>
-                    </span>
-                  </button>
-                </Link>
-              ))}
+              {navigations
+                .filter((item) => item.shown !== false)
+                .map((link, index) => (
+                  <Link href={link.name} className="relative h-auto" key={`mobile-nav-${index}`}>
+                    <button
+                      type="button"
+                      className={`flex h-auto items-center justify-center lowercase transition ${
+                        location === link.name
+                          ? 'font-bold text-primary dark:text-white'
+                          : 'font-normal text-gray-800/50 hover:text-gray-800 dark:text-white/40 dark:hover:text-white'
+                      }`}
+                    >
+                      <span className="flex items-center justify-center gap-x-3">
+                        <link.icon className="h-5 w-5" />
+                        <span>{link.name}</span>
+                      </span>
+                    </button>
+                  </Link>
+                ))}
               <div className="relative flex h-auto items-center justify-end gap-x-4 border-t border-gray-300 pt-4 dark:border-gray-300/25">
                 {socials.map((social, socialIdx) => (
                   <Link
