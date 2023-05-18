@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import Link from 'next/link';
 import classNames from 'classnames';
 import type { IWizardGroup } from '../@types';
-import { mockWizardData } from '../utils/mock';
+import { mockWizardData as mockData } from '../utils/mock';
 import { Layout } from '../components/layout';
 import { CircularProgressBadge, Loading, NotFound } from '../components/utils';
 import { Dialog, Listbox, Transition } from '@headlessui/react';
@@ -56,7 +56,7 @@ export default function Wizards() {
     <Layout location="Wizards">
       <article className="flex flex-col justify-center gap-1">
         <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Wizard Insights</h1>
-        <div className="mb-1 flex w-full items-center justify-between gap-2">
+        <div className="mb-2 flex w-full items-center justify-between gap-2">
           <p className="max-w-4xl grow text-lg font-normal">
             Inspect how your users are using the <span className="font-bold underline">wizards</span> across the
             platform.
@@ -68,11 +68,10 @@ export default function Wizards() {
               className="hover:opacity-80"
               onClick={() => {
                 setError(false);
-                setData(mockWizardData);
+                setData(mockData);
               }}
             >
               <CircleStackIcon className="h-6 w-6" />
-              <span className="text-sm">Use mock Data</span>
             </button>
 
             <Link
