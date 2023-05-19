@@ -1,5 +1,4 @@
-// @ts-nocheck
-import type { IWizardGroup } from '../@types';
+import type { IExecutionViewGroup, IWizardGroup } from '../@types';
 
 export const mockVisitsData: any = [
   {
@@ -1802,6 +1801,137 @@ export const mockWizardData: IWizardGroup[] = [
         completed: false,
         errorCount: 5,
         backStepCount: 3,
+      },
+    ],
+  },
+];
+
+export const mockExecutionViewData: IExecutionViewGroup[] = [
+  {
+    name: 'Edit SetupMatrix',
+    stats: {
+      total: 2,
+      completed: 0,
+      notCompleted: 2,
+      completedRatio: 0,
+      avgScore: 100,
+      stdDevScore: 0,
+      scores: [100, 100],
+      avgTimespan: 0,
+      stdDevTimespan: 0,
+      timespans: [0, 0],
+      avgErrors: 0,
+      avgTabChanges: 0,
+      totalErrors: 0,
+      totalTabChanges: 0,
+    },
+    executionViews: [
+      {
+        component: 'execution-view-16842092686741550',
+        name: 'Edit SetupMatrix',
+        events: [
+          {
+            time: '2023-05-16T03:54:31.794Z',
+            path: '/Entity/SetupMatrix/2305160621190000002/View/Details',
+            action: 'Cancel',
+          },
+        ],
+        score: 100,
+        timespan: 0,
+        completed: false,
+        errorCount: 0,
+        tabChangeCount: 0,
+      },
+      {
+        component: 'execution-view-16842308100741565',
+        name: 'Edit SetupMatrix',
+        events: [
+          {
+            time: '2023-05-16T09:53:36.269Z',
+            path: '/Entity/SetupMatrix/2305160621190000002/View/Details',
+            action: 'Cancel',
+          },
+        ],
+        score: 100,
+        timespan: 0,
+        completed: false,
+        errorCount: 0,
+        tabChangeCount: 0,
+      },
+    ],
+  },
+  {
+    name: 'Edit Team',
+    stats: {
+      total: 1,
+      completed: 0,
+      notCompleted: 1,
+      completedRatio: 0,
+      avgScore: 100,
+      stdDevScore: null,
+      scores: [100],
+      avgTimespan: 0,
+      stdDevTimespan: null,
+      timespans: [0],
+      avgErrors: 0,
+      avgTabChanges: 0,
+      totalErrors: 0,
+      totalTabChanges: 0,
+    },
+    executionViews: [
+      {
+        component: 'execution-view-1684208805088802',
+        name: 'Edit Team',
+        events: [
+          { time: '2023-05-16T03:46:47.035Z', path: '/Entity/Team/2305160621190000001/View/Details', action: 'Cancel' },
+        ],
+        score: 100,
+        timespan: 0,
+        completed: false,
+        errorCount: 0,
+        tabChangeCount: 0,
+      },
+    ],
+  },
+  {
+    name: 'Edit Employee',
+    stats: {
+      total: 1,
+      completed: 0,
+      notCompleted: 1,
+      completedRatio: 0,
+      avgScore: 100,
+      stdDevScore: null,
+      scores: [100],
+      avgTimespan: 0.021,
+      stdDevTimespan: null,
+      timespans: [0.021],
+      avgErrors: 0,
+      avgTabChanges: 0,
+      totalErrors: 0,
+      totalTabChanges: 0,
+    },
+    executionViews: [
+      {
+        component: 'execution-view-1684208422113150',
+        name: 'Edit Employee',
+        events: [
+          {
+            time: '2023-05-16T03:40:26.475Z',
+            path: '/Entity/Employee/2305160621190000001/View/Details',
+            action: 'Success',
+          },
+          {
+            time: '2023-05-16T03:40:26.496Z',
+            path: '/Entity/Employee/2305160621190000001/View/Details',
+            action: 'Close',
+          },
+        ],
+        score: 100,
+        timespan: 0.021,
+        completed: false,
+        errorCount: 0,
+        tabChangeCount: 0,
       },
     ],
   },

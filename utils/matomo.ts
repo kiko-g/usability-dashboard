@@ -1,4 +1,3 @@
-import request from 'request';
 import { isJson, standardDeviation } from './index';
 import type {
   ITrackerEventRawCategory,
@@ -21,6 +20,14 @@ export enum WizardAction {
   FailStep = 'Fail Step',
   NextStep = 'Next Step',
   BackStep = 'Back Step',
+}
+
+export enum ExecutionViewAction {
+  Start = 'Start',
+  Complete = 'Complete',
+  Cancel = 'Cancel',
+  Error = 'Error',
+  TabChange = 'Tab Change',
 }
 
 export const osMapping: { [key: string]: string } = {
@@ -261,6 +268,8 @@ export const evaluateExecutionViews = (executionViews: ITrackerEventGroup[]): IE
     let errorCount = 0;
     let tabChangeCount = 0;
     let timespan = findComponentTimespan(executionView.events);
+
+    // TODO: evaluate execution view events and type actions
 
     const lastEvent = executionView.events[executionView.events.length - 1];
     if (lastEvent.action.includes(WizardAction.Complete)) {

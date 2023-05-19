@@ -202,6 +202,7 @@ function WizardKPIs({ data }: { data: IWizardGroup[] }) {
       <div className="flex flex-1 flex-col gap-4 self-stretch lg:flex-row">
         {completionRate === null ? null : <WizardCompletionRateCard completion={completionRate} />}
         {avgScore === null ? null : <WizardAverageUXScoreCard score={avgScore} />}
+
         <div className="flex flex-1 flex-col items-start justify-start gap-4 self-stretch">
           <TimeStatsCard stats={wizardTimeStats} />
           <StepCompletionStatsCard stats={stepCompletionStats} />
