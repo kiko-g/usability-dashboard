@@ -13,7 +13,6 @@ const requestAndReturn = async (apiUrl: string) => {
     }
 
     return response.data;
-
   } catch (err: any) {
     throw { error: 'Internal server error', ...err };
   }
@@ -25,11 +24,11 @@ export default async function getAllEvents(req: NextApiRequest, res: NextApiResp
   const period = 'range'; // day, week, month, year, range
   const date = `2023-04-29,today`; // YYYY-MM-DD
   const pagesApiUrl = `${config.matomoSiteUrl}/index.php?module=API&format=JSON&idSite=${config.matomoSiteId}&period=${period}&date=${date}&method=Actions.getPageUrls&expanded=1&token_auth=${config.matomoToken}&filter_limit=-1`;
-  const osApiUrl = `${config.matomoSiteUrl}/index.php?module=API&method=DevicesDetection.getOsFamilies&format=json&idSite=${config.matomoSiteId}&period=${period}&date=${date}&token_auth=${config.matomoToken}`;
-  const browsersApiUrl = `${config.matomoSiteUrl}/index.php?module=API&method=DevicesDetection.getBrowsers&format=json&idSite=${config.matomoSiteId}&period=${period}&date=${date}&token_auth=${config.matomoToken}`;
-  const devicesApiUrl = `${config.matomoSiteUrl}/index.php?module=API&method=DevicesDetection.getType&format=json&idSite=${config.matomoSiteId}&period=${period}&date=${date}&token_auth=${config.matomoToken}`;
-  const screensApiUrl = `${config.matomoSiteUrl}/index.php?module=API&method=Resolution.getResolution&idSite=${config.matomoSiteId}&period=${period}&date=${date}&format=json&token_auth=${config.matomoToken}`;
-  const pageUrlsViewsApiUrl = `${config.matomoSiteUrl}/index.php?module=API&method=Actions.getPageUrls&flat=1&format=json&idSite=${config.matomoSiteId}&period=${period}&date=${date}&token_auth=${config.matomoToken}`;
+  const osApiUrl = `${config.matomoSiteUrl}/index.php?module=API&method=DevicesDetection.getOsFamilies&format=json&idSite=${config.matomoSiteId}&period=${period}&date=${date}&token_auth=${config.matomoToken}&filter_limit=-1`;
+  const browsersApiUrl = `${config.matomoSiteUrl}/index.php?module=API&method=DevicesDetection.getBrowsers&format=json&idSite=${config.matomoSiteId}&period=${period}&date=${date}&token_auth=${config.matomoToken}&filter_limit=-1`;
+  const devicesApiUrl = `${config.matomoSiteUrl}/index.php?module=API&method=DevicesDetection.getType&format=json&idSite=${config.matomoSiteId}&period=${period}&date=${date}&token_auth=${config.matomoToken}&filter_limit=-1`;
+  const screensApiUrl = `${config.matomoSiteUrl}/index.php?module=API&method=Resolution.getResolution&idSite=${config.matomoSiteId}&period=${period}&date=${date}&format=json&token_auth=${config.matomoToken}&filter_limit=-1`;
+  const pageUrlsViewsApiUrl = `${config.matomoSiteUrl}/index.php?module=API&method=Actions.getPageUrls&flat=1&format=json&idSite=${config.matomoSiteId}&period=${period}&date=${date}&token_auth=${config.matomoToken}&filter_limit=-1`;
 
   try {
     const os = await requestAndReturn(osApiUrl);
