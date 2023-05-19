@@ -27,17 +27,18 @@ export const config = {
   matomoSiteUrl: process.env.NEXT_PUBLIC_MATOMO_SITE_URL,
 };
 
-export const requestAndReturn = async (apiUrl: string) => {
-  request(apiUrl, { json: true }, (err, response, body) => {
-    if (err) {
-      return { error: 'Internal server error' };
-    }
-
-    if (response.statusCode !== 200 || body.result === 'error') {
-      return { error: 'Error from Matomo API', message: body.message };
-    }
-
-    return body;
+export const requestAndReturn = (apiUrl: string) => {
+  return new Promise((resolve, reject) => {
+    request(apiUrl, { json: true }, (err, response, body) => {
+      if (err) {
+        reject({ error: 'Internal server error' });
+      } else if (response.statusCode !== 200 || body.result === 'error') {
+        reject({ error: 'Error from Matomo API', message: body.message });
+      } else {
+        console.log(body);
+        resolve(body);
+      }
+    });
   });
 };
 
