@@ -70,16 +70,18 @@ export default function Executions() {
           </p>
 
           <div className="flex items-center gap-2">
-            <button
-              title="Use mock data"
-              className="hover:opacity-80"
-              onClick={() => {
-                setError(false);
-                setData(mockData);
-              }}
-            >
-              <CircleStackIcon className="h-6 w-6" />
-            </button>
+            {error === false ? null : (
+              <button
+                title="Use mock data"
+                className="hover:opacity-80"
+                onClick={() => {
+                  setError(false);
+                  setData(mockData);
+                }}
+              >
+                <CircleStackIcon className="h-6 w-6" />
+              </button>
+            )}
 
             <Link
               target="_blank"

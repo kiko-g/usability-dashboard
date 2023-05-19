@@ -89,13 +89,13 @@ export default function Hub() {
                 </span>
               </span>
               <span className="mt-8">
-                <h3 className="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+                <span className="font-lexend text-base font-semibold leading-6 text-gray-900 dark:text-white">
                   <a href={action.href} className="focus:outline-none">
                     {/* Extend touch target to entire panel */}
                     <span className="absolute inset-0" aria-hidden="true" />
                     {action.title}
                   </a>
-                </h3>
+                </span>
                 <p className="mt-2 text-sm text-gray-500 dark:text-gray-200">{action.text}</p>
               </span>
               <span
