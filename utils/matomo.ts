@@ -360,7 +360,7 @@ export const groupExecutionViews = (executionViews: IExecutionView[]): IExecutio
 };
 
 export const parseButtons = (body: string): Button[] => {
-  const eventsByComponent = new Map();
+  const buttons: Button[] = [];
   const events = Array.isArray(body) ? body : JSON.parse(body);
 
   for (const event of events) {
@@ -372,42 +372,25 @@ export const parseButtons = (body: string): Button[] => {
 
     if (!component?.includes('base-action-button')) continue;
 
-    if (eventsByComponent.has(component)) {
-      eventsByComponent.get(component).push(parsedEvent);
-    } else {
-      eventsByComponent.set(component, [parsedEvent]);
-    }
-  }
-
-  const buttons: Button[] = [];
-
-  // Convert the map into an array of [component, events]
-  const entries = Array.from(eventsByComponent.entries());
-
-  // Iterate over each entry in the array
-  for (const [component, events] of entries) {
-    // Find or create the button in the output list
-    let button = buttons.find(b => b.name === component);
+    let button = buttons.find(b => b.name === parsedEvent.name);
 
     if (!button) {
       button = {
-        name: component,
+        name: parsedEvent.name,
         clickCount: 0,
         buttonClicks: [],
       };
       buttons.push(button);
     }
 
-    // Add all events for this button
-    for (const event of events) {
-      button.clickCount++;
-      button.buttonClicks.push({
-        component: event.component,
-        path: event.path,
-        time: event.time,
-      });
-    }
+    button.clickCount += 1;
+    button.buttonClicks.push({
+      component: component,
+      path: parsedEvent.path,
+      time: parsedEvent.time,
+    });
   }
 
   return buttons;
 };
+
