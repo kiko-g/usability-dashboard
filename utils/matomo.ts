@@ -359,30 +359,55 @@ export const groupExecutionViews = (executionViews: IExecutionView[]): IExecutio
   return groupedExecutionViews.sort((a, b) => (a.stats.avgScore < b.stats.avgScore ? 1 : -1));
 };
 
-
-
 export const parseButtons = (body: string): Button[] => {
-  const data: ITrackerEventRawEvent[] = JSON.parse(body);
-  const buttonMap = new Map<string, Button>();
+  const eventsByComponent = new Map();
+  const events = Array.isArray(body) ? body : JSON.parse(body);
 
-  data.forEach(event => {
-    const existingButton = buttonMap.get(event.name);
-    const buttonClick = {
-      component: event.component,
-      path: event.path,
-      time: event.time
-    };
-    if (existingButton) {
-      existingButton.clickCount++;
-      existingButton.buttonClicks.push(buttonClick);
+  for (const event of events) {
+    if (!isJson(event.Events_EventCategory)) continue;
+
+    const category = JSON.parse(event.Events_EventCategory) as ITrackerEventRawCategory;
+    const parsedEvent = { ...category, action: event.Events_EventAction } as ITrackerEventRawEvent;
+    const component = parsedEvent.component;
+
+    if (!component?.includes('base-action-button')) continue;
+
+    if (eventsByComponent.has(component)) {
+      eventsByComponent.get(component).push(parsedEvent);
     } else {
-      buttonMap.set(event.name, { 
-        name: event.name, 
-        clickCount: 1, 
-        buttonClicks: [buttonClick] 
+      eventsByComponent.set(component, [parsedEvent]);
+    }
+  }
+
+  const buttons: Button[] = [];
+
+  // Convert the map into an array of [component, events]
+  const entries = Array.from(eventsByComponent.entries());
+
+  // Iterate over each entry in the array
+  for (const [component, events] of entries) {
+    // Find or create the button in the output list
+    let button = buttons.find(b => b.name === component);
+
+    if (!button) {
+      button = {
+        name: component,
+        clickCount: 0,
+        buttonClicks: [],
+      };
+      buttons.push(button);
+    }
+
+    // Add all events for this button
+    for (const event of events) {
+      button.clickCount++;
+      button.buttonClicks.push({
+        component: event.component,
+        path: event.path,
+        time: event.time,
       });
     }
-  });
+  }
 
-  return Array.from(buttonMap.values());
+  return buttons;
 };
