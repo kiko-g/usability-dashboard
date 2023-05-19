@@ -1,23 +1,22 @@
-import request from 'request';
+import axios from 'axios';
 import { config } from '../../../utils/matomo';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { CustomAPIError } from '../../../@types';
 
 type ResponseType = any | CustomAPIError;
 
-const requestAndReturn = (apiUrl: string) => {
-  return new Promise((resolve, reject) => {
-    request(apiUrl, { json: true }, (err, response, body) => {
-      if (err) {
-        reject({ error: 'Internal server error' });
-      } else if (response.statusCode !== 200 || body.result === 'error') {
-        reject({ error: 'Error from Matomo API', message: body.message });
-      } else {
-        console.log(body);
-        resolve(body);
-      }
-    });
-  });
+const requestAndReturn = async (apiUrl: string) => {
+  try {
+    const response = await axios.get(apiUrl);
+    if (response.status !== 200 || response.data.result === 'error') {
+      throw { error: 'Error from Matomo API', message: response.data.message };
+    }
+
+    return response.data;
+
+  } catch (err: any) {
+    throw { error: 'Internal server error', ...err };
+  }
 };
 
 export default async function getAllEvents(req: NextApiRequest, res: NextApiResponse<ResponseType>) {
