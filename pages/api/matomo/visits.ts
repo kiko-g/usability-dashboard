@@ -29,7 +29,6 @@ export default async function getAllEvents(req: NextApiRequest, res: NextApiResp
   const devicesApiUrl = `${config.matomoSiteUrl}/index.php?module=API&method=DevicesDetection.getType&format=json&idSite=${config.matomoSiteId}&period=${period}&date=${date}&token_auth=${config.matomoToken}&filter_limit=-1`;
   const screensApiUrl = `${config.matomoSiteUrl}/index.php?module=API&method=Resolution.getResolution&idSite=${config.matomoSiteId}&period=${period}&date=${date}&format=json&token_auth=${config.matomoToken}&filter_limit=-1`;
   const pageUrlsViewsApiUrl = `${config.matomoSiteUrl}/index.php?module=API&method=Actions.getPageUrls&flat=1&format=json&idSite=${config.matomoSiteId}&period=${period}&date=${date}&token_auth=${config.matomoToken}&filter_limit=-1`;
-  const visitsSummaryApiUrl = `${config.matomoSiteUrl}/index.php?module=API&method=VisitsSummary.get&format=json&idSite=${config.matomoSiteId}&period=${period}&date=${date}&token_auth=${config.matomoToken}&filter_limit=-1`;
 
   try {
     const os = await requestAndReturn(osApiUrl);
@@ -39,7 +38,7 @@ export default async function getAllEvents(req: NextApiRequest, res: NextApiResp
     const browsers = await requestAndReturn(browsersApiUrl);
     const pageUrlsViews = await requestAndReturn(pageUrlsViewsApiUrl);
 
-    return res.status(200).json({ os, pages, screens, devices, browsers, pageUrlsViews, visitsSummaryApiUrl });
+    return res.status(200).json({ os, pages, screens, devices, browsers, pageUrlsViews });
   } catch (error) {
     return res.status(500).json(error);
   }
