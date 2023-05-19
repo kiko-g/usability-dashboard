@@ -54,35 +54,36 @@ export type WizardStats = {
   totalBackSteps: number;
 };
 
-// Pages
-export type VisitedPage = {
-  page: string;
-  visitCount: number;
-};
+// Execution Views
+export interface IExecutionView extends ITrackerEventGroup {
+  score: number;
+  timespan: number;
+  completed: boolean;
+  errorCount: number;
+  tabChangeCount: number;
+}
 
-// Screens
-export type ScreenSize = {
-  x: number;
-  y: number;
-  visitCount: number;
-};
-
-// Devices
-export type Device = {
+export interface IExecutionViewGroup {
   name: string;
-  visitCount: number;
-};
+  stats: ExecutionViewStats;
+  executionViews: IExecutionView[];
+}
 
-// Browsers
-export type Browser = {
-  name: string;
-  visitCount: number;
-};
-
-// Operating Systems
-export type OperatingSystem = {
-  name: string;
-  visitCount: number;
+export type ExecutionViewStats = {
+  total: number;
+  completed: number;
+  notCompleted: number;
+  completedRatio: number;
+  avgScore: number;
+  stdDevScore: number | null;
+  scores: number[];
+  avgTimespan: number;
+  stdDevTimespan: number | null;
+  timespans: number[];
+  avgErrors: number;
+  avgTabChanges: number;
+  totalErrors: number;
+  totalTabChanges: number;
 };
 
 // API Error

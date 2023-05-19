@@ -7,6 +7,8 @@ import type {
   IWizard,
   ITrackerEvent,
   IWizardGroup,
+  IExecutionView,
+  IExecutionViewGroup,
 } from '../@types';
 
 export enum WizardAction {
@@ -107,10 +109,10 @@ export const parseEvents = (body: string | any[], filterBy?: string): ITrackerEv
   return transformedGroupedEvents;
 };
 
-export const evaluateWizards = (groupedWizards: ITrackerEventGroup[]): IWizard[] => {
+export const evaluateWizards = (wizards: ITrackerEventGroup[]): IWizard[] => {
   const result: IWizard[] = [];
 
-  for (const wizard of groupedWizards) {
+  for (const wizard of wizards) {
     if (wizard.events.length === 0) {
       result.push({
         ...wizard,
@@ -237,4 +239,111 @@ export const groupWizards = (wizards: IWizard[]): IWizardGroup[] => {
   }
 
   return groupedWizards.sort((a, b) => (a.stats.avgScore < b.stats.avgScore ? 1 : -1));
+};
+
+export const evaluateExecutionViews = (executionViews: ITrackerEventGroup[]): IExecutionView[] => {
+  const result: IExecutionView[] = [];
+
+  for (const executionView of executionViews) {
+    if (executionView.events.length === 0) {
+      result.push({
+        ...executionView,
+        score: 0,
+        timespan: 0,
+        errorCount: 0,
+        tabChangeCount: 0,
+        completed: false,
+      });
+    }
+
+    let score = 100;
+    let completed = false;
+    let errorCount = 0;
+    let tabChangeCount = 0;
+    let timespan = findComponentTimespan(executionView.events);
+
+    const lastEvent = executionView.events[executionView.events.length - 1];
+    if (lastEvent.action.includes(WizardAction.Complete)) {
+      completed = true;
+    }
+
+    if (score < 20 && completed) score = 20;
+    else if (score < 0) score = 0;
+
+    const evaluatedExecutionView: IExecutionView = {
+      ...executionView,
+      score,
+      timespan,
+      completed,
+      errorCount,
+      tabChangeCount,
+    };
+
+    result.push(evaluatedExecutionView);
+  }
+
+  return result;
+};
+
+export const groupExecutionViews = (executionViews: IExecutionView[]): IExecutionViewGroup[] => {
+  const groupedExecutionViews: IExecutionViewGroup[] = [];
+
+  // group execution views by name
+  for (const executionView of executionViews) {
+    let group = groupedExecutionViews.find((g) => g.name === executionView.name);
+
+    if (!group) {
+      group = {
+        name: executionView.name,
+        stats: {
+          total: 0,
+          completed: 0,
+          notCompleted: 0,
+          completedRatio: 0,
+          avgScore: 0,
+          stdDevScore: 0,
+          scores: [],
+          avgTimespan: 0,
+          stdDevTimespan: 0,
+          timespans: [],
+          avgErrors: 0,
+          avgTabChanges: 0,
+          totalErrors: 0,
+          totalTabChanges: 0,
+        },
+        executionViews: [],
+      };
+      groupedExecutionViews.push(group);
+    }
+
+    group.stats.avgScore += executionView.score;
+    group.stats.scores.push(executionView.score);
+
+    group.stats.avgTimespan += executionView.timespan;
+    group.stats.timespans.push(executionView.timespan);
+
+    group.stats.totalErrors += executionView.errorCount;
+    group.stats.total += executionView.tabChangeCount;
+    executionView.completed ? group.stats.completed++ : group.stats.notCompleted++;
+
+    group.executionViews.push(executionView);
+  }
+
+  // calculate stats after accumulating all execution views
+  for (const group of groupedExecutionViews) {
+    const totalCount = group.executionViews.length;
+    group.stats.total = totalCount;
+    group.stats.completedRatio = group.stats.completed / totalCount;
+
+    group.stats.avgErrors = group.stats.totalErrors / totalCount;
+    group.stats.avgTabChanges = group.stats.totalTabChanges / totalCount;
+
+    group.stats.avgScore /= totalCount;
+    group.stats.stdDevScore = standardDeviation(group.stats.scores);
+
+    group.stats.avgTimespan /= totalCount;
+    group.stats.stdDevTimespan = standardDeviation(group.stats.timespans);
+  }
+
+  return groupedExecutionViews.sort((a, b) => (a.stats.avgScore < b.stats.avgScore ? 1 : -1));
 };

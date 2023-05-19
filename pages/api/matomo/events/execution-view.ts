@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { config, parseEvents } from '../../../../utils/matomo';
+import { config, evaluateExecutionViews, groupExecutionViews, parseEvents } from '../../../../utils/matomo';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { CustomAPIError } from '../../../../@types';
 
@@ -20,7 +20,9 @@ export default async function getWizardEvents(req: NextApiRequest, res: NextApiR
     }
 
     const executionViews = parseEvents(response.data, 'execution-view');
-    return res.status(200).json(executionViews);
+    const evaluatedExecutionViews = evaluateExecutionViews(executionViews);
+    const groupedExecutionViews = groupExecutionViews(evaluatedExecutionViews);
+    return res.status(200).json(groupedExecutionViews);
   } catch (err) {
     return res.status(500).json({ error: 'Internal server error' });
   }
