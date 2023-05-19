@@ -19,7 +19,7 @@ export default async function getWizardEvents(req: NextApiRequest, res: NextApiR
       return res.status(response.status).json({ error: 'Error from Matomo API', message: response.data.message });
     }
 
-    const buttons = parseEvents(response.data, 'execution-view');
+    const buttons = parseEvents(response.data, 'base-action-button');
     return res.status(200).json(buttons);
   } catch (err) {
     return res.status(500).json({ error: 'Internal server error' });
