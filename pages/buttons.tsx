@@ -1,11 +1,11 @@
 import React, { Fragment } from 'react';
 import Link from 'next/link';
 import classNames from 'classnames';
-import type { Button as ButtonType } from '../@types';
+import type { ButtonType } from '../@types';
 import { mockButtonData as mockData } from '../utils/mock';
 import { Layout } from '../components/layout';
 import { CircularProgressBadge, Loading, NotFound } from '../components/utils';
-import { Dialog, Listbox, Transition } from '@headlessui/react';
+import { Dialog, Disclosure, Listbox, Transition } from '@headlessui/react';
 import { WizardAction } from '../utils/matomo';
 import {
   ArrowPathIcon,
@@ -105,12 +105,51 @@ export default function Buttons() {
 }
 
 // TODO: replace any with correct type
-function ButtonKPIs({ data }: { data: any }) {
+function ButtonKPIs({ data }: { data: ButtonType[] }) {
   if (data.length === 0) return null;
 
   return (
-    <div>
-      <div></div>
+    <div className="w-full space-y-3 rounded-xl bg-white p-3 dark:bg-darker">
+      {data
+        .sort((a, b) => (a.buttonClicks > b.buttonClicks ? -1 : 1))
+        .map((button, buttonIdx) => (
+          <Disclosure key={`button-${buttonIdx}`}>
+            {({ open }) => (
+              <>
+                <Disclosure.Button
+                  className={classNames(
+                    open
+                      ? 'dark:bg-secondary/80 bg-teal-700/80 text-white hover:opacity-90'
+                      : 'bg-slate-100 text-slate-900 hover:bg-slate-200 dark:text-white',
+                    'dark:bg-secondary/20 dark:hover:bg-secondary/60 group flex w-full items-center justify-between rounded-lg px-4 py-2 text-left text-sm font-medium tracking-tighter shadow transition'
+                  )}
+                >
+                  <span>{button.name}</span>
+                  <span className="flex items-center gap-2">
+                    <span
+                      className={classNames(
+                        open ? 'border-slate-600 bg-slate-600' : 'border-slate-600 bg-slate-600/60',
+                        'inline-flex min-h-[2rem] min-w-[2rem] items-center justify-center rounded-full border  px-2 py-1 text-xs font-medium text-white shadow'
+                      )}
+                    >
+                      {button.clickCount}
+                    </span>
+                  </span>
+                </Disclosure.Button>
+                <Disclosure.Panel className="dark:bg-white/10 rounded-lg bg-slate-100 px-3 py-3">
+                  {button.buttonClicks.map((click, clickIdx) => (
+                    <p
+                      key={`click-${clickIdx}`}
+                      className="font-mono text-xs tracking-tighter text-slate-700 dark:text-white"
+                    >
+                      {click.path} &middot; {click.time}
+                    </p>
+                  ))}
+                </Disclosure.Panel>
+              </>
+            )}
+          </Disclosure>
+        ))}
     </div>
   );
 }

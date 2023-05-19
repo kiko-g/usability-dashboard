@@ -1,4 +1,4 @@
-import type { Button, IExecutionViewGroup, IWizardGroup } from '../@types';
+import type { ButtonType, IExecutionViewGroup, IWizardGroup } from '../@types';
 
 export const mockVisitsData: any = [
   {
@@ -1937,4 +1937,247 @@ export const mockExecutionViewData: IExecutionViewGroup[] = [
   },
 ];
 
-export const mockButtonData: Button[] = [];
+export const mockButtonData: ButtonType[] = [
+  {
+    name: 'Generic.Refresh',
+    clickCount: 3,
+    buttonClicks: [
+      {
+        component: 'base-action-button-168357090867432',
+        path: '/Administration/Apps',
+        time: '2023-05-08T18:35:10.699Z',
+      },
+      {
+        component: 'base-action-button-168417673091728',
+        path: '/Administration/Apps',
+        time: '2023-05-15T18:52:13.504Z',
+      },
+      {
+        component: 'base-action-button-16842092666011528',
+        path: '/Entity/SetupMatrix/2305160621190000002/View/Details',
+        time: '2023-05-16T09:53:39.485Z',
+      },
+    ],
+  },
+  {
+    name: 'Admin.AugmentedReality.Create',
+    clickCount: 3,
+    buttonClicks: [
+      {
+        component: 'base-action-button-168357091488260',
+        path: '/Administration/AugmentedReality',
+        time: '2023-05-08T18:35:16.355Z',
+      },
+      {
+        component: 'base-action-button-168373539558832',
+        path: '/Administration/AugmentedReality',
+        time: '2023-05-10T16:19:43.610Z',
+      },
+      {
+        component: 'base-action-button-168373539558832',
+        path: '/Administration/AugmentedReality',
+        time: '2023-05-10T16:25:58.621Z',
+      },
+    ],
+  },
+  {
+    name: 'Generic.Delete',
+    clickCount: 1,
+    buttonClicks: [
+      {
+        component: 'base-action-button-168373539559035',
+        path: '/Administration/AugmentedReality',
+        time: '2023-05-10T16:19:29.512Z',
+      },
+    ],
+  },
+  {
+    name: 'Generic.EntityCreate',
+    clickCount: 13,
+    buttonClicks: [
+      { component: 'base-action-button-168420836954979', path: '/Entity/Employee', time: '2023-05-16T03:39:31.377Z' },
+      { component: 'base-action-button-168423247565081', path: '/Entity/Area', time: '2023-05-16T10:21:16.485Z' },
+      { component: 'base-action-button-1684176741952106', path: '/Entity/Area', time: '2023-05-15T18:52:23.483Z' },
+      { component: 'base-action-button-1684176741952106', path: '/Entity/Area', time: '2023-05-15T18:53:37.107Z' },
+      { component: 'base-action-button-1684192741621553', path: '/Entity/Container', time: '2023-05-15T23:19:03.384Z' },
+      {
+        component: 'base-action-button-1684192818197725',
+        path: '/Entity/MaintenancePlan',
+        time: '2023-05-15T23:20:25.041Z',
+      },
+      { component: 'base-action-button-1684208751570505', path: '/Entity/Schedule', time: '2023-05-16T03:45:52.692Z' },
+      { component: 'base-action-button-1684208751570505', path: '/Entity/Schedule', time: '2023-05-16T03:46:10.577Z' },
+      { component: 'base-action-button-1684208779968749', path: '/Entity/Team', time: '2023-05-16T03:46:21.395Z' },
+      {
+        component: 'base-action-button-1684208972424955',
+        path: '/Administration/UIPage',
+        time: '2023-05-16T03:49:36.063Z',
+      },
+      {
+        component: 'base-action-button-16842091520401089',
+        path: '/Entity/DataCollectionLimitSet',
+        time: '2023-05-16T03:52:33.271Z',
+      },
+      {
+        component: 'base-action-button-16842092536971505',
+        path: '/Entity/SetupMatrix',
+        time: '2023-05-16T03:54:15.707Z',
+      },
+      {
+        component: 'base-action-button-16842308204811588',
+        path: '/Entity/SetupMatrix',
+        time: '2023-05-16T09:53:41.244Z',
+      },
+    ],
+  },
+  {
+    name: 'Camera.Scan.Code',
+    clickCount: 1,
+    buttonClicks: [
+      {
+        component: 'base-action-button-1683736095993132',
+        path: '/Administration/AugmentedReality',
+        time: '2023-05-10T16:29:02.832Z',
+      },
+    ],
+  },
+  {
+    name: 'System.Import',
+    clickCount: 2,
+    buttonClicks: [
+      {
+        component: 'base-action-button-1684192818191721',
+        path: '/Entity/MaintenancePlan',
+        time: '2023-05-15T23:25:17.591Z',
+      },
+      { component: 'base-action-button-1684208452199224', path: '/Entity/Employee', time: '2023-05-16T03:44:54.345Z' },
+    ],
+  },
+  {
+    name: 'Generic.XMLExport',
+    clickCount: 1,
+    buttonClicks: [
+      {
+        component: 'base-action-button-1684192818198726',
+        path: '/Entity/MaintenancePlan',
+        time: '2023-05-15T23:26:16.822Z',
+      },
+    ],
+  },
+  {
+    name: 'Generic.Edit',
+    clickCount: 4,
+    buttonClicks: [
+      {
+        component: 'base-action-button-1684208418302131',
+        path: '/Entity/Employee/2305160621190000001/View/Details',
+        time: '2023-05-16T03:40:22.087Z',
+      },
+      {
+        component: 'base-action-button-1684208790418783',
+        path: '/Entity/Team/2305160621190000001/View/Details',
+        time: '2023-05-16T03:46:45.063Z',
+      },
+      {
+        component: 'base-action-button-16842092666111531',
+        path: '/Entity/SetupMatrix/2305160621190000002/View/Details',
+        time: '2023-05-16T03:54:28.644Z',
+      },
+      {
+        component: 'base-action-button-16842092666111531',
+        path: '/Entity/SetupMatrix/2305160621190000002/View/Details',
+        time: '2023-05-16T09:53:30.022Z',
+      },
+    ],
+  },
+  {
+    name: 'Generic.Comment',
+    clickCount: 1,
+    buttonClicks: [
+      {
+        component: 'base-action-button-1684208418305134',
+        path: '/Entity/Employee/2305160621190000001/View/Details',
+        time: '2023-05-16T03:40:31.962Z',
+      },
+    ],
+  },
+  {
+    name: 'Generic.LayoutPersonalization.Save',
+    clickCount: 3,
+    buttonClicks: [
+      {
+        component: 'base-action-button-1684208418312141',
+        path: '/Entity/Employee/2305160621190000001/View/Details',
+        time: '2023-05-16T03:40:44.052Z',
+      },
+      {
+        component: 'base-action-button-16841932391791242',
+        path: '/Quality/Documents',
+        time: '2023-05-15T23:27:22.175Z',
+      },
+      {
+        component: 'base-action-button-16841932507951277',
+        path: '/Quality/ChangeSets',
+        time: '2023-05-15T23:27:34.459Z',
+      },
+    ],
+  },
+  {
+    name: 'Generic.MassUpdate',
+    clickCount: 1,
+    buttonClicks: [
+      { component: 'base-action-button-1684208452200225', path: '/Entity/Employee', time: '2023-05-16T03:45:00.229Z' },
+    ],
+  },
+  {
+    name: 'Generic.Export',
+    clickCount: 1,
+    buttonClicks: [
+      { component: 'base-action-button-1684208452206231', path: '/Entity/Employee', time: '2023-05-16T03:41:05.085Z' },
+    ],
+  },
+  {
+    name: 'System.Tables.Create',
+    clickCount: 1,
+    buttonClicks: [
+      {
+        component: 'base-action-button-1684208590038296',
+        path: '/Administration/Tables',
+        time: '2023-05-16T03:43:12.882Z',
+      },
+    ],
+  },
+  {
+    name: 'System.Tables.GenerateSchema',
+    clickCount: 1,
+    buttonClicks: [
+      {
+        component: 'base-action-button-1684208666253341',
+        path: '/Administration/Table/GenericTable/2305160621190000001',
+        time: '2023-05-16T03:44:34.400Z',
+      },
+    ],
+  },
+  {
+    name: 'OData.GenerateURL',
+    clickCount: 1,
+    buttonClicks: [
+      {
+        component: 'base-action-button-16841933239771547',
+        path: '/Administration/Queries',
+        time: '2023-05-15T23:28:46.666Z',
+      },
+    ],
+  },
+  {
+    name: 'Admin.Queries.Create',
+    clickCount: 1,
+    buttonClicks: [
+      {
+        component: 'base-action-button-16841933239881548',
+        path: '/Administration/Queries',
+        time: '2023-05-15T23:28:52.055Z',
+      },
+    ],
+  },
+];

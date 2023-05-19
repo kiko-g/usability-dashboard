@@ -8,8 +8,7 @@ import type {
   IWizardGroup,
   IExecutionView,
   IExecutionViewGroup,
-  Button,
-  ButtonClick,
+  ButtonType,
 } from '../@types';
 
 export enum WizardAction {
@@ -359,8 +358,8 @@ export const groupExecutionViews = (executionViews: IExecutionView[]): IExecutio
   return groupedExecutionViews.sort((a, b) => (a.stats.avgScore < b.stats.avgScore ? 1 : -1));
 };
 
-export const parseButtons = (body: string): Button[] => {
-  const buttons: Button[] = [];
+export const parseButtons = (body: string): ButtonType[] => {
+  const buttons: ButtonType[] = [];
   const events = Array.isArray(body) ? body : JSON.parse(body);
 
   for (const event of events) {
@@ -372,7 +371,7 @@ export const parseButtons = (body: string): Button[] => {
 
     if (!component?.includes('base-action-button')) continue;
 
-    let button = buttons.find(b => b.name === parsedEvent.name);
+    let button = buttons.find((b) => b.name === parsedEvent.name);
 
     if (!button) {
       button = {
@@ -393,4 +392,3 @@ export const parseButtons = (body: string): Button[] => {
 
   return buttons;
 };
-

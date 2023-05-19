@@ -205,7 +205,7 @@ function ExecutionViewCompletionRateCard({ completion }: { completion: Completio
   const offset = circumference - (progress / 100) * circumference;
 
   return (
-    <div className="dark:bg-white/10 relative max-w-full overflow-hidden rounded bg-white/80 p-4 lg:max-w-xs">
+    <div className="relative max-w-full overflow-hidden rounded bg-white/80 p-4 dark:bg-white/10 lg:max-w-xs">
       {/* Adjusted max-w value */}
       <h3 className="font-medium text-gray-700 dark:text-gray-100">Execution View Completion Rate</h3>
       <p className="mt-1 min-h-[5rem] text-sm tracking-tight">
@@ -253,7 +253,7 @@ function ExecutionViewAverageUXScoreCard({ score }: { score: number }) {
   const offset = circumference - (score / 100) * circumference;
 
   return (
-    <div className="dark:bg-white/10 relative max-w-full rounded bg-white/80 p-4 lg:max-w-xs">
+    <div className="relative max-w-full rounded bg-white/80 p-4 dark:bg-white/10 lg:max-w-xs">
       {/* Adjusted max-w value */}
       <h3 className="font-medium text-gray-700 dark:text-gray-100">Execution Views Average UX Score</h3>
       <p className="mt-1 min-h-[5rem] text-sm tracking-tight">
@@ -302,7 +302,7 @@ function TimeStatsCard({ stats }: { stats: AvgMinMax }) {
   const { avg, min, max } = stats;
 
   return (
-    <div className="dark:bg-white/10 relative flex flex-1 flex-col self-stretch rounded bg-white/80 p-4">
+    <div className="relative flex flex-1 flex-col self-stretch rounded bg-white/80 p-4 dark:bg-white/10">
       <h2 className="mb-2 text-xl font-bold">Execution View Time Stats</h2>
       <div className="flex items-center gap-x-2">
         <span className="h-4 w-4 rounded-full bg-blue-500" />
@@ -339,7 +339,7 @@ function ErrorStatsCard({ text, stats }: { text: string; stats: ErrorStatsCard }
   const { avgError, totalErrors, avgTabChange, totalTabChanges } = stats;
 
   return (
-    <div className="dark:bg-white/10 relative flex flex-1 flex-col self-stretch rounded bg-white/80 p-4">
+    <div className="relative flex flex-1 flex-col self-stretch rounded bg-white/80 p-4 dark:bg-white/10">
       <h2 className="mb-2 text-xl font-bold">{text}</h2>
       <div className="flex items-center gap-x-2">
         <span className="h-4 w-4 rounded-full bg-rose-600" />
@@ -513,7 +513,10 @@ function ExecutionViewGroupFocus({ executionViewGroup }: { executionViewGroup: I
   const [inspect, setInspect] = React.useState(false);
   const [textView, setTextView] = React.useState(false);
   const [inspectIndex, setInspectIndex] = React.useState(0);
-  const selectedExecutionView = React.useMemo(() => executionViewGroup.executionViews[inspectIndex], [executionViewGroup, inspectIndex]);
+  const selectedExecutionView = React.useMemo(
+    () => executionViewGroup.executionViews[inspectIndex],
+    [executionViewGroup, inspectIndex]
+  );
 
   const { avgError, avgTabChanges } = React.useMemo(() => {
     const totalExecutionViews = executionViewGroup.executionViews.length;
@@ -652,21 +655,23 @@ function ExecutionViewGroupFocus({ executionViewGroup }: { executionViewGroup: I
 
                           <li>
                             A total of <strong>{executionViewGroup.stats.total} executionViews were initiated</strong>,{' '}
-                            {executionViewGroup.stats.completed} were completed, and {executionViewGroup.stats.notCompleted} were
-                            abandoned or cancelled, meaning that{' '}
+                            {executionViewGroup.stats.completed} were completed, and{' '}
+                            {executionViewGroup.stats.notCompleted} were abandoned or cancelled, meaning that{' '}
                             <strong>
-                              {(executionViewGroup.stats.completedRatio * 100).toFixed(2)}% of executionViews were completed
+                              {(executionViewGroup.stats.completedRatio * 100).toFixed(2)}% of executionViews were
+                              completed
                             </strong>
                             .
                           </li>
 
                           <li>
-                            Data was collected for <strong>{executionViewGroup.executionViews.length} executionView(s)</strong> of this
-                            category. There were a total of <strong>{executionViewGroup.stats.totalErrors} error(s)</strong>{' '}
-                            across these, alongside a total of{' '}
-                            <strong>{executionViewGroup.stats.totalTabChanges} tab change(s)</strong>. This
-                            means that on average, each executionView had <strong>{avgError.toFixed(1)} errors</strong> and{' '}
-                            <strong>{avgTabChanges.toFixed(1)} tab changes</strong>.{' '}
+                            Data was collected for{' '}
+                            <strong>{executionViewGroup.executionViews.length} executionView(s)</strong> of this
+                            category. There were a total of{' '}
+                            <strong>{executionViewGroup.stats.totalErrors} error(s)</strong> across these, alongside a
+                            total of <strong>{executionViewGroup.stats.totalTabChanges} tab change(s)</strong>. This
+                            means that on average, each executionView had <strong>{avgError.toFixed(1)} errors</strong>{' '}
+                            and <strong>{avgTabChanges.toFixed(1)} tab changes</strong>.{' '}
                             {executionViewGroup.stats.stdDevScore === null ? (
                               <>
                                 <span className="underline">Standard deviation analysis</span> for UX Score is not
@@ -682,8 +687,9 @@ function ExecutionViewGroupFocus({ executionViewGroup }: { executionViewGroup: I
 
                           <li>
                             The average score was{' '}
-                            <strong>{executionViewGroup.stats.avgScore.toFixed(2)} out of a possible 100 points</strong>. This
-                            score is calculated based on the amount of executionView errors, step errors and tab changes, where we deduct point to a executionView based on negative actions.
+                            <strong>{executionViewGroup.stats.avgScore.toFixed(2)} out of a possible 100 points</strong>
+                            . This score is calculated based on the amount of executionView errors, step errors and tab
+                            changes, where we deduct point to a executionView based on negative actions.
                             <Formula />
                           </li>
                         </ul>
@@ -796,7 +802,8 @@ function ExecutionViewGroupFocus({ executionViewGroup }: { executionViewGroup: I
 
                         <div className="mt-4">
                           <p className="text-sm">
-                            This score is calculated based on the amount of executionView errors, step errors and tab changes, where we deduct point to a executionView based on negative actions.
+                            This score is calculated based on the amount of executionView errors, step errors and tab
+                            changes, where we deduct point to a executionView based on negative actions.
                           </p>
                           <Formula />
                         </div>
@@ -849,7 +856,8 @@ function ExecutionViewGroupFocus({ executionViewGroup }: { executionViewGroup: I
                             <div className="flex items-center gap-x-2">
                               <span className="h-4 w-4 rounded-full bg-blue-600" />
                               <span className="whitespace-nowrap text-sm tracking-tighter lg:tracking-normal">
-                                Timespan: <span className="font-normal">{selectedExecutionView.timespan.toFixed(1)}s</span>
+                                Timespan:{' '}
+                                <span className="font-normal">{selectedExecutionView.timespan.toFixed(1)}s</span>
                               </span>
                             </div>
                           </div>
@@ -955,7 +963,7 @@ function ScoreCalculcationApproachDialog() {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="dark:bg-black/40 fixed inset-0 bg-black/50 backdrop-blur-sm" />
+            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm dark:bg-black/40" />
           </Transition.Child>
 
           <div className="fixed inset-0 overflow-y-auto">
@@ -1006,7 +1014,7 @@ function ScoreCalculcationApproachDialog() {
 
 function Formula() {
   return (
-    <code className="dark:bg-white/10 my-4 block bg-navy px-3 py-2 text-sm font-normal tracking-[-0.07rem] text-white dark:text-white">
+    <code className="my-4 block bg-navy px-3 py-2 text-sm font-normal tracking-[-0.07rem] text-white dark:bg-white/10 dark:text-white">
       score = max(0, 100 - 10*errors - 8*stepErrors - 5*tabChanges - 3*cancels)
     </code>
   );

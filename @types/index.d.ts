@@ -93,7 +93,7 @@ export type ButtonClick = {
   time: string;
 };
 
-export type Button = {
+export type ButtonType = {
   name: string;
   clickCount: number;
   buttonClicks: ButtonClick[];
