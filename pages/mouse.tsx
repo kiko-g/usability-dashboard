@@ -48,7 +48,7 @@ function MouseClicksViz() {
   React.useEffect(() => {
     if (!willFetch) return;
 
-    fetch('/api/matomo/mouse')
+    fetch('/api/matomo/sql/mouse')
       .then((res) => (res.ok ? res.json() : null))
       .then((data: MouseClicksAPI[]) => {
         if (data === null) {

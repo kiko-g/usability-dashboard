@@ -1,3 +1,4 @@
+import request from 'request';
 import { isJson, standardDeviation } from './index';
 import type {
   ITrackerEventRawCategory,
@@ -24,6 +25,20 @@ export const config = {
   matomoToken: process.env.NEXT_PUBLIC_MATOMO_TOKEN,
   matomoSiteId: process.env.NEXT_PUBLIC_MATOMO_SITE_ID,
   matomoSiteUrl: process.env.NEXT_PUBLIC_MATOMO_SITE_URL,
+};
+
+export const requestAndReturn = async (apiUrl: string) => {
+  request(apiUrl, { json: true }, (err, response, body) => {
+    if (err) {
+      return { error: 'Internal server error' };
+    }
+
+    if (response.statusCode !== 200 || body.result === 'error') {
+      return { error: 'Error from Matomo API', message: body.message };
+    }
+
+    return body;
+  });
 };
 
 function findComponentName(group: ITrackerEventRawEvent[]): string {

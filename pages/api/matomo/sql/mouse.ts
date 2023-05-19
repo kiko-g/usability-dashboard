@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import type { MouseClicksAPI, MouseClicksSQL } from '../../../@types';
-import { estabilishMySQLConnection, clicksQuery as query } from '../../../utils/sql';
+import type { MouseClicksAPI, MouseClicksSQL } from '../../../../@types';
+import { estabilishMySQLConnection, clicksQuery as query } from '../../../../utils/sql';
 
 export default function getMouseClicksSQL(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method Not Allowed' });
