@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import Link from 'next/link';
 import classNames from 'classnames';
-import type { IButton } from '../@types';
+import type { Button as ButtonType } from '../@types';
 import { mockButtonData as mockData } from '../utils/mock';
 import { Layout } from '../components/layout';
 import { CircularProgressBadge, Loading, NotFound } from '../components/utils';
@@ -23,7 +23,7 @@ import {
 } from '@heroicons/react/24/outline';
 
 export default function Buttons() {
-  const [data, setData] = React.useState<IButton[]>([]); // TODO: replace any with correct type
+  const [data, setData] = React.useState<ButtonType[]>([]); // TODO: replace any with correct type
   const [error, setError] = React.useState<boolean>(false);
   const [loading, setLoading] = React.useState<boolean>(true);
   const [willFetch, setWillFetch] = React.useState<boolean>(true);

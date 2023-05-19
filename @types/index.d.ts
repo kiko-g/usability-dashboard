@@ -87,10 +87,17 @@ export type ExecutionViewStats = {
 };
 
 // Buttons
-export interface IButton {
+export type ButtonClick = {
+  component: string;
+  path: string;
+  time: string;
+};
+
+export type Button = {
   name: string;
   clickCount: number;
-}
+  buttonClicks: ButtonClick[];
+};
 
 // API Error
 export type CustomAPIError = {
