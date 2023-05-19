@@ -1,4 +1,4 @@
-import type { IExecutionViewGroup, IWizardGroup } from '../@types';
+import type { IButton, IExecutionViewGroup, IWizardGroup } from '../@types';
 
 export const mockVisitsData: any = [
   {
@@ -1936,3 +1936,5 @@ export const mockExecutionViewData: IExecutionViewGroup[] = [
     ],
   },
 ];
+
+export const mockButtonData: IButton[] = [];

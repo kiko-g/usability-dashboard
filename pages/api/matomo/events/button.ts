@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { config, parseEvents } from '../../../../utils/matomo';
+import { config, parseButtons, parseEvents } from '../../../../utils/matomo';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { CustomAPIError } from '../../../../@types';
 
@@ -19,7 +19,7 @@ export default async function getWizardEvents(req: NextApiRequest, res: NextApiR
       return res.status(response.status).json({ error: 'Error from Matomo API', message: response.data.message });
     }
 
-    const buttons = parseEvents(response.data, 'base-action-button');
+    const buttons = parseButtons(response.data);
     return res.status(200).json(buttons);
   } catch (err) {
     return res.status(500).json({ error: 'Internal server error' });

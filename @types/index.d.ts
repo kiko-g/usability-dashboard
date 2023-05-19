@@ -86,6 +86,12 @@ export type ExecutionViewStats = {
   totalTabChanges: number;
 };
 
+// Buttons
+export interface IButton {
+  name: string;
+  clickCount: number;
+}
+
 // API Error
 export type CustomAPIError = {
   error: string;
