@@ -21,7 +21,6 @@ export default async function getAllEvents(req: NextApiRequest, res: NextApiResp
 
     const groupedEvents = parseEvents(response.data);
     return res.status(200).json(groupedEvents);
-    
   } catch (err) {
     return res.status(500).json({ error: 'Internal server error' });
   }

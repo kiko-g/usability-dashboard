@@ -1,4 +1,4 @@
-import request from 'request';
+import axios from 'axios';
 import { isJson } from '../../../../utils';
 import { config } from '../../../../utils/matomo';
 import type { NextApiRequest, NextApiResponse } from 'next';
@@ -6,24 +6,22 @@ import type { ITrackerEventRawCategory, ITrackerEvent, CustomAPIError } from '..
 
 type ResponseType = any | CustomAPIError;
 
-export default function getRawMatomoApiEvents(req: NextApiRequest, res: NextApiResponse<ResponseType>) {
+export default async function getRawMatomoApiEvents(req: NextApiRequest, res: NextApiResponse<ResponseType>) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method Not Allowed' });
 
   const period = 'range'; // day, week, month, year, range
   const date = `2023-04-29,today`; // YYYY-MM-DD
   const apiUrl = `${config.matomoSiteUrl}/index.php?module=API&method=Events.getCategory&secondaryDimension=eventAction&flat=1&format=json&idSite=${config.matomoSiteId}&period=${period}&date=${date}&token_auth=${config.matomoToken}`;
 
-  request(apiUrl, { json: true }, (err, response, body) => {
-    if (err) {
-      return res.status(500).json({ error: 'Internal server error' });
-    }
+  try {
+    const response = await axios.get(apiUrl);
 
-    if (response.statusCode !== 200 || body.result === 'error') {
-      return res.status(response.statusCode).json({ error: 'Error from Matomo API', message: body.message });
+    if (response.status !== 200 || response.data.result === 'error') {
+      return res.status(response.status).json({ error: 'Error from Matomo API', message: response.data.message });
     }
 
     const parsedEvents = [];
-    const events = Array.isArray(body) ? body : JSON.parse(body);
+    const events = Array.isArray(response.data) ? response.data : JSON.parse(response.data);
 
     for (const event of events) {
       let parsedEvent;
@@ -37,5 +35,7 @@ export default function getRawMatomoApiEvents(req: NextApiRequest, res: NextApiR
     }
 
     return res.status(200).json(parsedEvents);
-  });
+  } catch (err) {
+    return res.status(500).json({ error: 'Internal server error' });
+  }
 }
