@@ -30,32 +30,28 @@ export default function Hub() {
       text: 'Take a look at how your users are using your software: page views, time spent on pages, frequent page pathways, devices used, and more.',
       href: '/visits',
       icon: ViewfinderCircleIcon,
-      iconClasses:
-        'bg-teal-50 ring-teal-50 group-hover:ring-teal-700 group-hover:bg-teal-700 group-hover:text-white text-teal-700',
+      iconClasses: 'bg-teal-50 group-hover:bg-teal-700 group-hover:text-white text-teal-700',
     },
     {
       title: 'Wizard Interactions',
       text: 'Take a look at how your users are using the wizards: grouped wizards insights with time spent on wizards, errors, previous step clicks, completion rates, individual wizard inspection, and more.',
       href: '/wizards',
       icon: MapIcon,
-      iconClasses:
-        'bg-orange-50 ring-orange-50 group-hover:ring-orange-700 group-hover:bg-orange-700 group-hover:text-white text-orange-700',
+      iconClasses: 'bg-orange-50 group-hover:bg-orange-700 group-hover:text-white text-orange-700',
     },
     {
       title: 'Execution Views Interactions',
       text: 'Take a look at how your users are using the execution views: grouped execution views insights with time spent on execution views, errors, previous step clicks, completion rates, individual execution view inspection, and more.',
       href: '/executions',
       icon: ViewColumnsIcon,
-      iconClasses:
-        'bg-sky-50 ring-sky-50 group-hover:ring-sky-700 group-hover:bg-sky-700 group-hover:text-white text-sky-700',
+      iconClasses: 'bg-sky-50 group-hover:bg-sky-700 group-hover:text-white text-sky-700',
     },
     {
       title: 'Button Clicks',
       text: 'Inspect the button clicks and see which buttons are clicked the most and which are clicked the least among other insights.',
       href: '/buttons',
       icon: CursorArrowRaysIcon,
-      iconClasses:
-        'bg-rose-50 ring-rose-50 group-hover:ring-rose-700 group-hover:bg-rose-700 group-hover:text-white text-rose-700',
+      iconClasses: 'bg-rose-50 group-hover:bg-rose-700 group-hover:text-white text-rose-700',
     },
   ];
 
@@ -83,18 +79,13 @@ export default function Hub() {
                 'group relative bg-white p-6 transition focus-within:ring-2 focus-within:ring-inset focus-within:ring-primary hover:bg-slate-100 dark:bg-darkest dark:hover:opacity-90'
               )}
             >
-              <span className={classNames(action.iconClasses, 'inline-flex rounded-lg p-3 ring-4 transition')}>
+              <span className={classNames(action.iconClasses, 'inline-flex rounded-lg p-4 transition')}>
                 <action.icon className="h-6 w-6" aria-hidden="true" />
               </span>
-              <span className="mt-8">
-                <span className="font-lexend text-base font-semibold leading-6 text-gray-900 dark:text-white">
-                  <span className="focus:outline-none">
-                    <span className="absolute inset-0" aria-hidden="true" />
-                    {action.title}
-                  </span>
-                </span>
-                <p className="mt-2 text-sm text-gray-500 dark:text-gray-200">{action.text}</p>
+              <span className="mt-6 block font-lexend text-base font-semibold leading-6 text-gray-900 dark:text-white">
+                {action.title}
               </span>
+              <span className="mt-3 text-sm text-gray-500 dark:text-gray-200">{action.text}</span>
               <span
                 className="pointer-events-none absolute right-6 top-6 text-gray-300 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-white"
                 aria-hidden="true"
