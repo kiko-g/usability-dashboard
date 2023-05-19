@@ -21,6 +21,14 @@ export enum WizardAction {
   BackStep = 'Back Step',
 }
 
+export const osMapping: { [key: string]: string } = {
+  WIN: 'Windows',
+  MAC: 'macOS',
+  LIN: 'Linux',
+  AND: 'Android',
+  IOS: 'iOS',
+};
+
 export const config = {
   matomoToken: process.env.NEXT_PUBLIC_MATOMO_TOKEN,
   matomoSiteId: process.env.NEXT_PUBLIC_MATOMO_SITE_ID,
