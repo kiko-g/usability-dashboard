@@ -1,9 +1,24 @@
 import request from 'request';
-import { config, requestAndReturn } from '../../../utils/matomo';
+import { config } from '../../../utils/matomo';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { CustomAPIError } from '../../../@types';
 
 type ResponseType = any | CustomAPIError;
+
+const requestAndReturn = (apiUrl: string) => {
+  return new Promise((resolve, reject) => {
+    request(apiUrl, { json: true }, (err, response, body) => {
+      if (err) {
+        reject({ error: 'Internal server error' });
+      } else if (response.statusCode !== 200 || body.result === 'error') {
+        reject({ error: 'Error from Matomo API', message: body.message });
+      } else {
+        console.log(body);
+        resolve(body);
+      }
+    });
+  });
+};
 
 export default async function getAllEvents(req: NextApiRequest, res: NextApiResponse<ResponseType>) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method Not Allowed' });
