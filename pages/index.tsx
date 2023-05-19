@@ -83,18 +83,15 @@ export default function Hub() {
                 'group relative bg-white p-6 transition focus-within:ring-2 focus-within:ring-inset focus-within:ring-primary hover:bg-slate-100 dark:bg-darkest dark:hover:opacity-90'
               )}
             >
-              <span>
-                <span className={classNames(action.iconClasses, 'inline-flex rounded-lg p-3 ring-4 transition')}>
-                  <action.icon className="h-6 w-6" aria-hidden="true" />
-                </span>
+              <span className={classNames(action.iconClasses, 'inline-flex rounded-lg p-3 ring-4 transition')}>
+                <action.icon className="h-6 w-6" aria-hidden="true" />
               </span>
               <span className="mt-8">
                 <span className="font-lexend text-base font-semibold leading-6 text-gray-900 dark:text-white">
-                  <a href={action.href} className="focus:outline-none">
-                    {/* Extend touch target to entire panel */}
+                  <span className="focus:outline-none">
                     <span className="absolute inset-0" aria-hidden="true" />
                     {action.title}
-                  </a>
+                  </span>
                 </span>
                 <p className="mt-2 text-sm text-gray-500 dark:text-gray-200">{action.text}</p>
               </span>
