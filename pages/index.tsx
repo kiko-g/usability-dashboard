@@ -83,12 +83,12 @@ export default function Hub() {
                 'group relative bg-white p-6 transition focus-within:ring-2 focus-within:ring-inset focus-within:ring-primary hover:bg-slate-100 dark:bg-darkest dark:hover:opacity-90'
               )}
             >
-              <div>
+              <span>
                 <span className={classNames(action.iconClasses, 'inline-flex rounded-lg p-3 ring-4 transition')}>
                   <action.icon className="h-6 w-6" aria-hidden="true" />
                 </span>
-              </div>
-              <div className="mt-8">
+              </span>
+              <span className="mt-8">
                 <h3 className="text-base font-semibold leading-6 text-gray-900 dark:text-white">
                   <a href={action.href} className="focus:outline-none">
                     {/* Extend touch target to entire panel */}
@@ -97,7 +97,7 @@ export default function Hub() {
                   </a>
                 </h3>
                 <p className="mt-2 text-sm text-gray-500 dark:text-gray-200">{action.text}</p>
-              </div>
+              </span>
               <span
                 className="pointer-events-none absolute right-6 top-6 text-gray-300 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-white"
                 aria-hidden="true"
