@@ -1,14 +1,13 @@
 import React from 'react';
 import Link from 'next/link';
-import type { PageViewsAPI, PageVisitsVizTypeFilter, PieData } from '../@types';
+import type { Frequency, PageViewsAPI, PageVisitsVizTypeFilter, PieData, Visits } from '../@types';
 import { ArrowPathIcon, CircleStackIcon, CodeBracketIcon } from '@heroicons/react/24/outline';
 import { mockVisitsData as mockData } from '../utils/mock';
 import { Layout } from '../components/layout';
-import { Loading, NotFound, PieChart } from '../components/utils';
-import { PageVisitsTable, SelectPageVisitsType } from '../components/dashboard';
+import { Loading, NotFound } from '../components/utils';
 
 export default function Visits() {
-  const [data, setData] = React.useState<PageViewsAPI[]>([]);
+  const [data, setData] = React.useState<Visits | null>(null);
   const [error, setError] = React.useState<boolean>(false);
   const [loading, setLoading] = React.useState<boolean>(true);
   const [willFetch, setWillFetch] = React.useState<boolean>(true);
@@ -83,16 +82,33 @@ export default function Visits() {
         </div>
 
         {loading && <Loading />}
-        {error ? <NotFound /> : <VisitsInsights data={data} />}
+        {error && <NotFound />}
+        {data !== null && <VisitsInsights data={data} />}
       </article>
     </Layout>
   );
 }
 
-function VisitsInsights({ data }: { data: PageViewsAPI[] }) {
+function FrequencyTable({ title, freq }: { title: string; freq: Frequency[] }) {
+  return (
+    <div className="rounded">
+      <h2 className="text-2xl font-bold">{title}</h2>
+      <ul>
+        {freq.map((item, itemIdx) => (
+          <li key={`frequency-${item.name}-${itemIdx}`}>
+            <span>{item.name}</span>
+            <span>{item.value}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function VisitsInsights({ data }: { data: Visits }) {
   return (
     <div>
-      <div></div>
+      <FrequencyTable title="Operating System" freq={data.os} />
     </div>
   );
 }

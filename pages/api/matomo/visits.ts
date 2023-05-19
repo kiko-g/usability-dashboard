@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { config } from '../../../utils/matomo';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import type { CustomAPIError } from '../../../@types';
+import type { CustomAPIError, Visits } from '../../../@types';
 
-type ResponseType = any | CustomAPIError;
+type ResponseType = Visits | CustomAPIError;
 
 export default async function getAllEvents(req: NextApiRequest, res: NextApiResponse<ResponseType>) {
   if (req.method !== 'GET') {
@@ -31,11 +31,26 @@ export default async function getAllEvents(req: NextApiRequest, res: NextApiResp
     const [pagesResponse, osResponse, browsersResponse, devicesResponse, screensResponse, pageUrlsViewsResponse] =
       await axios.all(urls.map((url) => axios.get(url)));
 
-    const pages = pagesResponse.data;
-    const os = osResponse.data;
-    const browsers = browsersResponse.data;
-    const devices = devicesResponse.data;
-    const screens = screensResponse.data;
+    const pages = pagesResponse.data.map((os: any) => ({
+      name: os.label,
+      value: os.nb_visits,
+    }));
+    const os = osResponse.data.map((os: any) => ({
+      name: os.label,
+      value: os.nb_visits,
+    }));
+    const browsers = browsersResponse.data.map((os: any) => ({
+      name: os.label,
+      value: os.nb_visits,
+    }));
+    const devices = devicesResponse.data.map((os: any) => ({
+      name: os.label,
+      value: os.nb_visits,
+    }));
+    const screens = screensResponse.data.map((os: any) => ({
+      name: os.label,
+      value: os.nb_visits,
+    }));
     const pageUrlsViews = pageUrlsViewsResponse.data;
 
     if ([pages, os, browsers, devices, screens, pageUrlsViews].some((response) => response.result === 'error')) {

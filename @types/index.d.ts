@@ -1,3 +1,8 @@
+export type Frequency = {
+  name: string;
+  value: number;
+};
+
 // Event typing
 export interface ITrackerEventRawCategory {
   component: string;
@@ -99,11 +104,24 @@ export type ButtonType = {
   buttonClicks: ButtonClick[];
 };
 
+// Visits
+export type Visits = {
+  os: Frequency[];
+  browsers: Frequency[];
+  devices: Frequency[];
+  screens: Frequency[];
+  pages: Frequency[];
+  pageUrlsViews: any;
+};
+
 // API Error
 export type CustomAPIError = {
   error: string;
   message?: string;
+  details?: any;
 };
+
+//////////////////////////////////////////////////////////////
 
 // Mouse Clicks
 export type MouseClicksSQL = {
