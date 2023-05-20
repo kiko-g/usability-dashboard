@@ -38,33 +38,33 @@ export default async function getAllEvents(req: NextApiRequest, res: NextApiResp
     ] = await axios.all(urls.map((url) => axios.get(url)));
 
     const os = osResponse.data.map((item: any) => ({
-      name: os.label,
-      value: os.nb_visits,
+      name: item.label,
+      value: item.nb_visits,
     }));
 
     const browsers = browsersResponse.data.map((item: any) => ({
-      name: os.label,
-      value: os.nb_visits,
+      name: item.label,
+      value: item.nb_visits,
     }));
 
     const devices = devicesResponse.data.map((item: any) => ({
-      name: os.label,
-      value: os.nb_visits,
+      name: item.label,
+      value: item.nb_visits,
     }));
 
     const screens = screensResponse.data.map((item: any) => ({
-      name: os.label,
-      value: os.nb_visits,
+      name: item.label,
+      value: item.nb_visits,
     }));
 
     const pagesExpanded = pagesExpandedResponse.data.map((item: any) => ({
-      name: os.label.startsWith('/') ? os.label.slice(1) : os.label,
-      value: os.nb_visits,
+      name: item.label.startsWith('/') ? item.label.slice(1) : item.label,
+      value: item.nb_visits,
     }));
 
     const pagesFlat = pageViewsFlatResponse.data.map((item: any) => ({
-      name: os.label.startsWith('/') ? os.label.slice(1) : os.label,
-      value: os.nb_visits,
+      name: item.label.startsWith('/') ? item.label.slice(1) : item.label,
+      value: item.nb_visits,
     }));
 
     if ([os, browsers, devices, screens, pagesExpanded, pagesFlat].some((response) => response.result === 'error')) {
@@ -76,11 +76,17 @@ export default async function getAllEvents(req: NextApiRequest, res: NextApiResp
       };
     }
 
-    const allPageUrls = pageViewsFlatResponse.data.map((item: any) => os.label);
+    const allPageUrls = pageViewsFlatResponse.data.map((item: any) => item.label);
     const pageUrlApiUrls: string[] = allPageUrls.map(
       (page: string) =>
-      `${config.matomoSiteUrl}/index.php?module=API&method=Transitions.getTransitionsForPageUrl&format=json&idSite=${config.matomoSiteId}&period=${period}&date=${date}&token_auth=${config.matomoToken}&filter_limit=-1&pageUrl=${encodeURIComponent(page)}`
+        `${config.matomoSiteUrl}/index.php?module=API&method=Transitions.getTransitionsForPageUrl&format=json&idSite=${
+          config.matomoSiteId
+        }&period=${period}&date=${date}&token_auth=${config.matomoToken}&filter_limit=-1&pageUrl=${encodeURIComponent(
+          page
+        )}`
     );
+
+    console.log(pageUrlApiUrls);
 
     const transitions = await axios.all(pageUrlApiUrls.map((url) => axios.get(url)));
 
