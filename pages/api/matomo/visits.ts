@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { config } from '../../../utils/matomo';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import type { CustomAPIError, Visits } from '../../../@types';
+import type { CustomAPIError, Frequency, Visits } from '../../../@types';
 
 type ResponseType = Visits | CustomAPIError;
 
@@ -36,12 +36,6 @@ export default async function getAllEvents(req: NextApiRequest, res: NextApiResp
       pagesExpandedResponse,
       pageViewsFlatResponse,
     ] = await axios.all(urls.map((url) => axios.get(url)));
-
-    const transitionsResponse = await axios.get(
-      `${config.matomoSiteUrl}/index.php?module=API&method=Transitions.getTransitionsForPageUrl&format=json&idSite=${config.matomoSiteId}&period=${period}&date=${date}&token_auth=${config.matomoToken}&filter_limit=-1`
-    );
-
-    const transitions = transitionsResponse.data;
 
     const os = osResponse.data.map((os: any) => ({
       name: os.label,
@@ -81,6 +75,13 @@ export default async function getAllEvents(req: NextApiRequest, res: NextApiResp
         )?.message,
       };
     }
+
+    const pageUrlApiUrls: string[] = pagesFlat.map(
+      (page: Frequency) =>
+      `${config.matomoSiteUrl}/index.php?module=API&method=Transitions.getTransitionsForPageUrl&format=json&idSite=${config.matomoSiteId}&period=${period}&date=${date}&token_auth=${config.matomoToken}&filter_limit=-1&page_url=${page.name}`
+    );
+
+    const transitions = await axios.all(pageUrlApiUrls.map((url) => axios.get(url)));
 
     return res.status(200).json({ os, screens, devices, browsers, pagesExpanded, pagesFlat, transitions });
   } catch (error) {
