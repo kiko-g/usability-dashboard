@@ -78,7 +78,7 @@ export default async function getAllEvents(req: NextApiRequest, res: NextApiResp
 
     const pageUrlApiUrls: string[] = pagesFlat.map(
       (page: Frequency) =>
-      `${config.matomoSiteUrl}/index.php?module=API&method=Transitions.getTransitionsForPageUrl&format=json&idSite=${config.matomoSiteId}&period=${period}&date=${date}&token_auth=${config.matomoToken}&filter_limit=-1&page_url=${page.name}`
+      `${config.matomoSiteUrl}/index.php?module=API&method=Transitions.getTransitionsForPageUrl&format=json&idSite=${config.matomoSiteId}&period=${period}&date=${date}&token_auth=${config.matomoToken}&filter_limit=-1&page_url=${encodeURIComponent(page.name)}`
     );
 
     const transitions = await axios.all(pageUrlApiUrls.map((url) => axios.get(url)));
