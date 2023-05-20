@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
-import type { Frequency, PageViewsAPI, PageVisitsVizTypeFilter, PieData, Visits } from '../@types';
+import classNames from 'classnames';
+import type { Frequency, Visits } from '../@types';
 import { ArrowPathIcon, CircleStackIcon, CodeBracketIcon } from '@heroicons/react/24/outline';
 import { mockVisitsData as mockData } from '../utils/mock';
 import { Layout } from '../components/layout';
@@ -83,23 +84,57 @@ export default function Visits() {
 
         {loading && <Loading />}
         {error && <NotFound />}
-        {data !== null && <VisitsInsights data={data} />}
+        {data === null ? null : <VisitsInsights data={data} />}
       </article>
     </Layout>
   );
 }
 
-function FrequencyTable({ title, freq }: { title: string; freq: Frequency[] }) {
+function FrequencyTable({ twClasses, title, freq }: { twClasses?: string; title: string; freq: Frequency[] }) {
   return (
-    <div className="rounded">
-      <h2 className="text-2xl font-bold">{title}</h2>
-      <ul>
-        {freq.map((item, itemIdx) => (
-          <li key={`frequency-${item.name}-${itemIdx}`}>
-            <span>{item.name}</span>
-            <span>{item.value}</span>
-          </li>
-        ))}
+    <div className={classNames(twClasses, 'flex-1 self-stretch rounded bg-white p-4 dark:bg-darker')}>
+      <h2 className="text-xl font-bold tracking-tighter">{title}</h2>
+      <ul className="mt-2 flex flex-col space-y-2">
+        {freq
+          .filter((item) => item.value > 0)
+          .map((item, itemIdx) => (
+            <li
+              key={`frequency-${item.name}-${itemIdx}`}
+              className="flex items-center justify-between gap-3 rounded bg-slate-100 px-2 py-2 text-sm dark:bg-white/10"
+            >
+              <span className="font-medium tracking-tighter">{item.name}</span>
+              <span className="font-mono">{item.value}</span>
+            </li>
+          ))}
+      </ul>
+    </div>
+  );
+}
+
+function PagesFrequencies({ twClasses, data }: { twClasses?: string; data: Visits }) {
+  const [isFlat, setIsFlat] = React.useState<boolean>(true);
+  const pages = React.useMemo(() => (isFlat ? data.pagesFlat : data.pagesExpanded), [data, isFlat]);
+
+  if (!pages) return null;
+
+  return (
+    <div className={classNames(twClasses, 'flex-1 self-stretch rounded bg-white p-4 dark:bg-darker')}>
+      <div className="flex items-center justify-between gap-2">
+        <h2 className="text-xl font-bold tracking-tighter">Pages</h2>
+        <button onClick={() => setIsFlat((x) => !x)}></button>
+      </div>
+      <ul className="mt-2 flex flex-col space-y-2">
+        {pages
+          .filter((item) => item.value > 0)
+          .map((item, itemIdx) => (
+            <li
+              key={`frequency-${item.name}-${itemIdx}`}
+              className="flex items-center justify-between gap-3 rounded bg-slate-100 px-2 py-2 text-sm dark:bg-white/10"
+            >
+              <span className="font-medium tracking-tighter">{item.name}</span>
+              <span className="font-mono">{item.value}</span>
+            </li>
+          ))}
       </ul>
     </div>
   );
@@ -107,8 +142,12 @@ function FrequencyTable({ title, freq }: { title: string; freq: Frequency[] }) {
 
 function VisitsInsights({ data }: { data: Visits }) {
   return (
-    <div>
-      <FrequencyTable title="Operating System" freq={data.os} />
+    <div className="grid grid-cols-4 gap-4">
+      {data.devices && <FrequencyTable title="Devices" freq={data.devices} />}
+      {data.os && <FrequencyTable title="Operating System" freq={data.os} />}
+      {data.browsers && <FrequencyTable title="Browsers" freq={data.browsers} />}
+      {data.screens && <FrequencyTable title="Screen Sizes" freq={data.screens} />}
+      <PagesFrequencies data={data} twClasses="col-span-2" />
     </div>
   );
 }

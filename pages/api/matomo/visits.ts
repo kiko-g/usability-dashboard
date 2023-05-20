@@ -14,11 +14,11 @@ export default async function getAllEvents(req: NextApiRequest, res: NextApiResp
   const date = `2023-04-29,today`; // YYYY-MM-DD
 
   const methods = [
-    'Actions.getPageUrls&expanded=1',
     'DevicesDetection.getOsFamilies',
     'DevicesDetection.getBrowsers',
     'DevicesDetection.getType',
     'Resolution.getResolution',
+    'Actions.getPageUrls&expanded=1',
     'Actions.getPageUrls&flat=1',
   ];
 
@@ -28,40 +28,55 @@ export default async function getAllEvents(req: NextApiRequest, res: NextApiResp
   );
 
   try {
-    const [pagesResponse, osResponse, browsersResponse, devicesResponse, screensResponse, pageUrlsViewsResponse] =
-      await axios.all(urls.map((url) => axios.get(url)));
+    const [
+      osResponse,
+      browsersResponse,
+      devicesResponse,
+      screensResponse,
+      pagesExpandedResponse,
+      pageViewsFlatResponse,
+    ] = await axios.all(urls.map((url) => axios.get(url)));
 
-    const pages = pagesResponse.data.map((os: any) => ({
-      name: os.label,
-      value: os.nb_visits,
-    }));
     const os = osResponse.data.map((os: any) => ({
       name: os.label,
       value: os.nb_visits,
     }));
+
     const browsers = browsersResponse.data.map((os: any) => ({
       name: os.label,
       value: os.nb_visits,
     }));
+
     const devices = devicesResponse.data.map((os: any) => ({
       name: os.label,
       value: os.nb_visits,
     }));
+
     const screens = screensResponse.data.map((os: any) => ({
       name: os.label,
       value: os.nb_visits,
     }));
-    const pageUrlsViews = pageUrlsViewsResponse.data;
 
-    if ([pages, os, browsers, devices, screens, pageUrlsViews].some((response) => response.result === 'error')) {
+    const pagesExpanded = pagesExpandedResponse.data.map((os: any) => ({
+      name: os.label,
+      value: os.nb_visits,
+    }));
+
+    const pagesFlat = pageViewsFlatResponse.data.map((os: any) => ({
+      name: os.label,
+      value: os.nb_visits,
+    }));
+
+    if ([os, browsers, devices, screens, pagesExpanded, pagesFlat].some((response) => response.result === 'error')) {
       throw {
         error: 'Error from Matomo API',
-        message: [pages, os, browsers, devices, screens, pageUrlsViews].find((response) => response.result === 'error')
-          ?.message,
+        message: [pagesExpanded, os, browsers, devices, screens, pagesFlat].find(
+          (response) => response.result === 'error'
+        )?.message,
       };
     }
 
-    return res.status(200).json({ os, pages, screens, devices, browsers, pageUrlsViews });
+    return res.status(200).json({ os, screens, devices, browsers, pagesExpanded, pagesFlat });
   } catch (error) {
     return res.status(500).json({
       error: 'Internal server error',

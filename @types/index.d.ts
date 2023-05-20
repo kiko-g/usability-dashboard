@@ -1,4 +1,4 @@
-export type Frequency = {
+export interface Frequency {
   name: string;
   value: number;
 };
@@ -110,8 +110,8 @@ export type Visits = {
   browsers: Frequency[];
   devices: Frequency[];
   screens: Frequency[];
-  pages: Frequency[];
-  pageUrlsViews: any;
+  pagesExpanded: Frequency[];
+  pagesFlat: Frequency[];
 };
 
 // API Error
