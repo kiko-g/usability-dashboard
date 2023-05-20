@@ -92,12 +92,9 @@ export default async function getAllEvents(req: NextApiRequest, res: NextApiResp
     const overviewApiUrl = `${config.matomoSiteUrl}/index.php?module=API&method=API.get&expanded=1&format=json&idSite=${config.matomoSiteId}&period=${period}&date=${date}&token_auth=${config.matomoToken}&filter_limit=-1&format_metrics=1`;
     const overview = (await axios.get(overviewApiUrl)).data;
 
-    const summaryApiUrl = `${config.matomoSiteUrl}/index.php?module=API&method=VisitsSummary.get&format=json&idSite=${config.matomoSiteId}&period=${period}&date=${date}&token_auth=${config.matomoToken}&filter_limit=-1&format_metrics=1`;
-    const summary = (await axios.get(summaryApiUrl)).data;
-
     return res
       .status(200)
-      .json({ os, screens, devices, browsers, pagesExpanded, pagesFlat, transitions, overview, summary });
+      .json({ os, screens, devices, browsers, pagesExpanded, pagesFlat, transitions, overview });
   } catch (error) {
     return res.status(500).json({
       error: 'Internal server error',
