@@ -37,6 +37,12 @@ export default async function getAllEvents(req: NextApiRequest, res: NextApiResp
       pageViewsFlatResponse,
     ] = await axios.all(urls.map((url) => axios.get(url)));
 
+    const transitionsResponse = await axios.get(
+      `${config.matomoSiteUrl}/index.php?module=API&method=Transitions.getTransitionsForPageUrl&format=json&idSite=${config.matomoSiteId}&period=${period}&date=${date}&token_auth=${config.matomoToken}&filter_limit=-1`
+    );
+
+    const transitions = transitionsResponse.data;
+
     const os = osResponse.data.map((os: any) => ({
       name: os.label,
       value: os.nb_visits,
@@ -76,7 +82,7 @@ export default async function getAllEvents(req: NextApiRequest, res: NextApiResp
       };
     }
 
-    return res.status(200).json({ os, screens, devices, browsers, pagesExpanded, pagesFlat });
+    return res.status(200).json({ os, screens, devices, browsers, pagesExpanded, pagesFlat, transitions });
   } catch (error) {
     return res.status(500).json({
       error: 'Internal server error',

@@ -112,6 +112,7 @@ export type Visits = {
   screens: Frequency[];
   pagesExpanded: Frequency[];
   pagesFlat: Frequency[];
+  transitions: any
 };
 
 // API Error
