@@ -1,7 +1,7 @@
 export interface Frequency {
   name: string;
   value: number;
-};
+}
 
 // Event typing
 export interface ITrackerEventRawCategory {

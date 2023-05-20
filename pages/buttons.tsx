@@ -119,9 +119,9 @@ function ButtonKPIs({ data }: { data: ButtonType[] }) {
                 <Disclosure.Button
                   className={classNames(
                     open
-                      ? 'dark:bg-secondary/80 bg-teal-700/80 text-white hover:opacity-90'
+                      ? 'bg-teal-700/80 text-white hover:opacity-90 dark:bg-secondary/80'
                       : 'bg-slate-100 text-slate-900 hover:bg-slate-200 dark:text-white',
-                    'dark:bg-secondary/20 dark:hover:bg-secondary/60 group flex w-full items-center justify-between rounded-lg px-4 py-2 text-left text-sm font-medium tracking-tighter shadow transition'
+                    'group flex w-full items-center justify-between rounded-lg px-4 py-2 text-left text-sm font-medium tracking-tighter shadow transition dark:bg-secondary/20 dark:hover:bg-secondary/60'
                   )}
                 >
                   <span>{button.name}</span>
@@ -136,7 +136,7 @@ function ButtonKPIs({ data }: { data: ButtonType[] }) {
                     </span>
                   </span>
                 </Disclosure.Button>
-                <Disclosure.Panel className="dark:bg-white/10 rounded-lg bg-slate-100 px-3 py-3">
+                <Disclosure.Panel className="rounded-lg bg-slate-100 px-3 py-3 dark:bg-white/10">
                   {button.buttonClicks.map((click, clickIdx) => (
                     <p
                       key={`click-${clickIdx}`}

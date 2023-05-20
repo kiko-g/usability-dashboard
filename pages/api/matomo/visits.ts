@@ -58,12 +58,12 @@ export default async function getAllEvents(req: NextApiRequest, res: NextApiResp
     }));
 
     const pagesExpanded = pagesExpandedResponse.data.map((os: any) => ({
-      name: os.label,
+      name: os.label.startsWith('/') ? os.label.slice(1) : os.label,
       value: os.nb_visits,
     }));
 
     const pagesFlat = pageViewsFlatResponse.data.map((os: any) => ({
-      name: os.label,
+      name: os.label.startsWith('/') ? os.label.slice(1) : os.label,
       value: os.nb_visits,
     }));
 
