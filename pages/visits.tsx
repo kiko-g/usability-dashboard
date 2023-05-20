@@ -19,6 +19,7 @@ import { Layout } from '../components/layout';
 import { Loading, NotFound } from '../components/utils';
 import { Dialog, Disclosure, Transition } from '@headlessui/react';
 import { strIncludes } from '../utils';
+import { OverviewMatomoResponse } from '../@types/matomo';
 
 export default function Visits() {
   const [data, setData] = React.useState<Visits | null>(null);
@@ -99,12 +100,17 @@ export default function Visits() {
         {loading && <Loading />}
         {error && <NotFound />}
         {data === null ? null : (
-          <div className="grid grid-cols-4 gap-4">
-            {data.devices && <FrequencyTable title="Devices" freq={data.devices} />}
-            {data.os && <FrequencyTable title="Operating System" freq={data.os} />}
-            {data.browsers && <FrequencyTable title="Browsers" freq={data.browsers} />}
-            {data.screens && <FrequencyTable title="Screen Sizes" freq={data.screens} />}
-            <PagesFrequencies data={data} twClasses="col-span-2" />
+          <div className="flex flex-col gap-4">
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+              <PagesFrequencies data={data} twClasses="col-span-1 lg:col-span-2" />
+              <VisitsSummary overview={data.overview} twClasses="col-span-1 lg:col-span-1" />
+            </div>
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+              {data.devices && <FrequencyTable title="Devices" freq={data.devices} />}
+              {data.os && <FrequencyTable title="Operating System" freq={data.os} />}
+              {data.browsers && <FrequencyTable title="Browsers" freq={data.browsers} />}
+              {data.screens && <FrequencyTable title="Screen Sizes" freq={data.screens} />}
+            </div>
           </div>
         )}
       </article>
@@ -116,7 +122,7 @@ function FrequencyTable({ twClasses, title, freq }: { twClasses?: string; title:
   return (
     <div className={classNames(twClasses, 'flex-1 self-stretch rounded bg-white p-4 dark:bg-darker')}>
       <h2 className="text-xl font-bold tracking-tighter">{title}</h2>
-      <ul className="mt-2 flex flex-col space-y-2">
+      <ul className="mt-2 flex max-h-40 flex-col space-y-2 overflow-scroll">
         {freq
           .filter((item) => item.value > 0)
           .map((item, itemIdx) => (
@@ -125,7 +131,7 @@ function FrequencyTable({ twClasses, title, freq }: { twClasses?: string; title:
               className="flex items-center justify-between gap-3 rounded bg-slate-100 px-2 py-2 text-sm dark:bg-white/10"
             >
               <span className="font-medium tracking-tighter">{item.name}</span>
-              <span className="font-mono">{item.value}</span>
+              <span className="font-mono tracking-tighter">{item.value}</span>
             </li>
           ))}
       </ul>
@@ -160,7 +166,7 @@ function PagesFrequencies({ twClasses, data }: { twClasses?: string; data: Visit
     <div
       className={classNames(
         twClasses,
-        'relative flex flex-1 flex-col items-start justify-center self-stretch rounded bg-white p-4 dark:bg-darker'
+        'relative flex flex-1 flex-col items-start justify-start self-stretch rounded bg-white p-4 dark:bg-darker'
       )}
     >
       {/* Header */}
@@ -202,17 +208,21 @@ function PagesFrequencies({ twClasses, data }: { twClasses?: string; data: Visit
 
       {/* List */}
       <ul className="mt-2 flex max-h-72 flex-1 flex-col space-y-2 self-stretch overflow-scroll">
-        {pagesFiltered
-          .filter((item) => item.value > 0)
-          .map((item, itemIdx) => (
-            <li
-              key={`frequency-${item.name}-${itemIdx}`}
-              className="flex items-center justify-between gap-3 rounded bg-slate-100 px-4 py-2.5 text-sm dark:bg-white/10"
-            >
-              <span className="font-medium tracking-tighter">{item.name}</span>
-              <span className="font-mono">{item.value}</span>
-            </li>
-          ))}
+        {pagesFiltered.length === 0 ? (
+          <li className="text-sm">No match.</li>
+        ) : (
+          pagesFiltered
+            .filter((item) => item.value > 0)
+            .map((item, itemIdx) => (
+              <li
+                key={`frequency-${item.name}-${itemIdx}`}
+                className="flex items-center justify-between gap-3 rounded bg-slate-100 px-4 py-2.5 text-sm dark:bg-white/10"
+              >
+                <span className="wrap truncate font-medium tracking-tighter">{item.name}</span>
+                <span className="font-mono">{item.value}</span>
+              </li>
+            ))
+        )}
       </ul>
 
       {/* Expand Pages */}
@@ -322,6 +332,58 @@ function PagesFrequencies({ twClasses, data }: { twClasses?: string; data: Visit
           </div>
         </Dialog>
       </Transition>
+    </div>
+  );
+}
+
+function VisitsSummary({ twClasses, overview }: { twClasses?: string; overview: OverviewMatomoResponse }) {
+  const {
+    nb_visits: visitCount,
+    nb_uniq_pageviews: uniquePageviews,
+    avg_time_on_site: avgVisitTime,
+    nb_actions_per_visit: actionsPerVisit,
+    nb_pageviews: pageviewsCount,
+    max_actions: maxActions,
+    bounce_rate: bounceRate,
+  } = overview;
+
+  const summary = [
+    { text: 'Total Visits', value: visitCount },
+    { text: 'Total Pageviews', value: pageviewsCount },
+    { text: 'Bounce Visit Rate', value: bounceRate },
+    { text: 'Unique Pageviews', value: uniquePageviews },
+    { text: 'Avg Visit Duration', value: avgVisitTime.toString().replace(/\s/g, '') },
+    { text: 'Avg Actions Per Visit', value: actionsPerVisit },
+    { text: 'Total Pageviews', value: pageviewsCount },
+  ];
+
+  return (
+    <div
+      className={classNames(
+        twClasses,
+        'relative flex flex-1 flex-col items-start justify-start self-stretch rounded bg-white p-4 dark:bg-darker'
+      )}
+    >
+      <div className="flex items-center justify-between gap-2 self-stretch">
+        <h2 className="text-xl font-bold tracking-tighter">Visits Summary</h2>
+        <div className="flex items-center gap-2"></div>
+      </div>
+
+      <ul className="mt-2 flex flex-1 flex-col space-y-2 self-stretch overflow-scroll">
+        {summary.map((item, itemIdx) => (
+          <li
+            key={`summary-${itemIdx}`}
+            className="flex items-center justify-between gap-2 rounded bg-slate-200 px-3 py-2 dark:bg-white/10"
+          >
+            <span className="trac flex items-center gap-1.5 text-sm tracking-tighter">
+              <span className="block h-3.5 w-3.5 rounded-full bg-slate-700 dark:bg-slate-400" />
+              <span>{item.text}</span>
+            </span>
+
+            <span className="font-mono text-sm font-medium tracking-tighter">{item.value}</span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
