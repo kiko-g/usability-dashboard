@@ -89,7 +89,15 @@ export default async function getAllEvents(req: NextApiRequest, res: NextApiResp
     const transitionsResponses = await axios.all(pageUrlApiUrls.map((url) => axios.get(url)));
     const transitions = transitionsResponses.map((response) => response.data);
 
-    return res.status(200).json({ os, screens, devices, browsers, pagesExpanded, pagesFlat, transitions });
+    const overviewApiUrl = `${config.matomoSiteUrl}/index.php?module=API&method=API.get&expanded=1&format=json&idSite=${config.matomoSiteId}&period=${period}&date=${date}&token_auth=${config.matomoToken}&filter_limit=-1&format_metrics=1`;
+    const overview = (await axios.get(overviewApiUrl)).data;
+
+    const summaryApiUrl = `${config.matomoSiteUrl}/index.php?module=API&method=VisitsSummary.get&format=json&idSite=${config.matomoSiteId}&period=${period}&date=${date}&token_auth=${config.matomoToken}&filter_limit=-1&format_metrics=1`;
+    const summary = (await axios.get(summaryApiUrl)).data;
+
+    return res
+      .status(200)
+      .json({ os, screens, devices, browsers, pagesExpanded, pagesFlat, transitions, overview, summary });
   } catch (error) {
     return res.status(500).json({
       error: 'Internal server error',
