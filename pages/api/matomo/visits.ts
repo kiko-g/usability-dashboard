@@ -86,9 +86,8 @@ export default async function getAllEvents(req: NextApiRequest, res: NextApiResp
         )}`
     );
 
-    console.log(pageUrlApiUrls);
-
-    const transitions = await axios.all(pageUrlApiUrls.map((url) => axios.get(url)));
+    const transitionsResponses = await axios.all(pageUrlApiUrls.map((url) => axios.get(url)));
+    const transitions = transitionsResponses.map((response) => response.data);
 
     return res.status(200).json({ os, screens, devices, browsers, pagesExpanded, pagesFlat, transitions });
   } catch (error) {
