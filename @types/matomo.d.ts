@@ -1,3 +1,5 @@
+import { CustomAPIError } from '.';
+
 export interface OverviewMatomoResponse {
   nb_visits: number;
   nb_actions: number;
@@ -80,21 +82,23 @@ export interface OverviewMatomoResponse {
 
 export interface TransitionMatomo {
   pageUrl: string;
-  info: {
-    date: string;
-    previousPages: { label: string; referrals: number }[];
-    previousSiteSearches: string[];
-    pageMetrics: {
-      loops: number;
-      pageviews: number;
-      entries: number;
-      exits: number;
-    };
-    followingPages: { label: string; referrals: number }[];
-    followingSiteSearches: string[];
-    outlinks: string[];
-    downloads: string[];
-    referrers: { label: string; shortName: string; visits: number }[];
-  };
+  info:
+    | {
+        date: string;
+        previousPages: { label: string; referrals: number }[];
+        previousSiteSearches: string[];
+        pageMetrics: {
+          loops: number;
+          pageviews: number;
+          entries: number;
+          exits: number;
+        };
+        followingPages: { label: string; referrals: number }[];
+        followingSiteSearches: string[];
+        outlinks: string[];
+        downloads: string[];
+        referrers: { label: string; shortName: string; visits: number; details?: any }[];
+      }
+    | { result: string; message?: string };
   apiUrl?: string;
 }
