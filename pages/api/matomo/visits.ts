@@ -77,15 +77,19 @@ export default async function getAllEvents(req: NextApiRequest, res: NextApiResp
       };
     }
 
-    const allPageUrls = pageViewsFlatResponse.data.map((item: any) => item.label);
+    const allPageUrls: string[] = pageViewsFlatResponse.data.map((item: any) => item.url);
     const pageUrlApiUrls: string[] = allPageUrls.map(
       (page: string) =>
-        `${config.matomoSiteUrl}/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=${encodeURIComponent(
+        `${
+          config.matomoSiteUrl
+        }/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=${encodeURIComponent(
           page
-        )}&format=JSON&idSite=${
-          config.matomoSiteId
-        }&period=${period}&date=${date}&token_auth=${config.matomoToken}&filter_limit=-1`
+        )}&idSite=${config.matomoSiteId}&period=${period}&date=${date}&format=JSON&token_auth=${
+          config.matomoToken
+        }&force_api_session=1` //&filter_limit=-1
     );
+
+    pageUrlApiUrls.forEach((url) => console.log(url));
 
     const transitionsResponses = await axios.all(pageUrlApiUrls.map((url) => axios.get(url)));
     const transitions: TransitionMatomo[] = transitionsResponses.map((response, responseIdx) => ({
