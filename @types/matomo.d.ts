@@ -82,23 +82,21 @@ export interface OverviewMatomoResponse {
 
 export interface TransitionMatomo {
   pageUrl: string;
-  info:
-    | {
-        date: string;
-        previousPages: { label: string; referrals: number }[];
-        previousSiteSearches: string[];
-        pageMetrics: {
-          loops: number;
-          pageviews: number;
-          entries: number;
-          exits: number;
-        };
-        followingPages: { label: string; referrals: number }[];
-        followingSiteSearches: string[];
-        outlinks: string[];
-        downloads: string[];
-        referrers: { label: string; shortName: string; visits: number; details?: any }[];
-      }
-    | { result: string; message?: string };
+  info: {
+    date: string;
+    previousPages: { label: string; referrals: number }[];
+    previousSiteSearches: string[];
+    pageMetrics: {
+      loops: number;
+      pageviews: number;
+      entries: number;
+      exits: number;
+    };
+    followingPages: { label: string; referrals: number }[];
+    followingSiteSearches: string[];
+    outlinks: string[];
+    downloads: string[];
+    referrers: { label: string; shortName: string; visits: number; details?: any }[];
+  } | null;
   apiUrl?: string;
 }

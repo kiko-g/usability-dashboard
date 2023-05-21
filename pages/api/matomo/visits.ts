@@ -92,7 +92,7 @@ export default async function getAllEvents(req: NextApiRequest, res: NextApiResp
     const transitionsResponses = await axios.all(pageUrlApiUrls.map((url) => axios.get(url)));
     const transitions: TransitionMatomo[] = transitionsResponses.map((response, responseIdx) => ({
       pageUrl: allPageUrls[responseIdx],
-      info: response.data,
+      info:  response.data?.result === 'error' ? null : response.data,
       apiUrl: pageUrlApiUrls[responseIdx],
     }));
 
