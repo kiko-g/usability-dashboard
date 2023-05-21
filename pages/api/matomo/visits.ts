@@ -80,11 +80,11 @@ export default async function getAllEvents(req: NextApiRequest, res: NextApiResp
     const allPageUrls = pageViewsFlatResponse.data.map((item: any) => item.label);
     const pageUrlApiUrls: string[] = allPageUrls.map(
       (page: string) =>
-        `${config.matomoSiteUrl}/index.php?module=API&method=Transitions.getTransitionsForPageUrl&format=json&idSite=${
-          config.matomoSiteId
-        }&period=${period}&date=${date}&token_auth=${config.matomoToken}&filter_limit=-1&pageUrl=${encodeURIComponent(
+        `${config.matomoSiteUrl}/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=${encodeURIComponent(
           page
-        )}`
+        )}&format=JSON&idSite=${
+          config.matomoSiteId
+        }&period=${period}&date=${date}&token_auth=${config.matomoToken}&filter_limit=-1`
     );
 
     const transitionsResponses = await axios.all(pageUrlApiUrls.map((url) => axios.get(url)));
