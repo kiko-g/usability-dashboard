@@ -96,4 +96,5 @@ export interface TransitionMatomo {
     downloads: string[];
     referrers: { label: string; shortName: string; visits: number }[];
   };
+  apiUrl?: string;
 }

@@ -91,6 +91,7 @@ export default async function getAllEvents(req: NextApiRequest, res: NextApiResp
     const transitions: TransitionMatomo[] = transitionsResponses.map((response, responseIdx) => ({
       pageUrl: allPageUrls[responseIdx],
       info: response.data,
+      apiUrl: pageUrlApiUrls[responseIdx],
     }));
 
     const overviewApiUrl = `${config.matomoSiteUrl}/index.php?module=API&method=API.get&expanded=1&format=json&idSite=${config.matomoSiteId}&period=${period}&date=${date}&token_auth=${config.matomoToken}&filter_limit=-1&format_metrics=1`;
