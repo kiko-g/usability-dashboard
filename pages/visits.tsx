@@ -19,7 +19,7 @@ import { Layout } from '../components/layout';
 import { Loading, NotFound } from '../components/utils';
 import { Dialog, Disclosure, Transition } from '@headlessui/react';
 import { strIncludes } from '../utils';
-import { OverviewMatomoResponse } from '../@types/matomo';
+import { OverviewMatomoResponse, TransitionMatomo } from '../@types/matomo';
 
 export default function Visits() {
   const [data, setData] = React.useState<Visits | null>(null);
@@ -111,6 +111,7 @@ export default function Visits() {
               {data.browsers && <FrequencyTable title="Browsers" freq={data.browsers} />}
               {data.screens && <FrequencyTable title="Screen Sizes" freq={data.screens} />}
             </div>
+            <PageTransitionSummary transitions={data?.transitions} />
           </div>
         )}
       </article>
@@ -184,7 +185,7 @@ function PagesFrequencies({ twClasses, data }: { twClasses?: string; data: Visit
       </div>
 
       {/* Search */}
-      <div className="mb-1 w-full">
+      <div className="w-full">
         <label htmlFor="email" className="sr-only">
           Search pages
         </label>
@@ -207,7 +208,7 @@ function PagesFrequencies({ twClasses, data }: { twClasses?: string; data: Visit
       </div>
 
       {/* List */}
-      <ul className="mt-2 flex max-h-72 flex-1 flex-col space-y-2 self-stretch overflow-scroll">
+      <ul className="mt-2 flex max-h-[300px] flex-1 flex-col space-y-2 self-stretch overflow-scroll">
         {pagesFiltered.length === 0 ? (
           <li className="text-sm">No match.</li>
         ) : (
@@ -354,6 +355,7 @@ function VisitsSummary({ twClasses, overview }: { twClasses?: string; overview: 
     { text: 'Unique Pageviews', value: uniquePageviews },
     { text: 'Avg Visit Duration', value: avgVisitTime.toString().replace(/\s/g, '') },
     { text: 'Avg Actions Per Visit', value: actionsPerVisit },
+    { text: 'Max Actions Per Visit', value: maxActions },
     { text: 'Total Pageviews', value: pageviewsCount },
   ];
 
@@ -381,6 +383,33 @@ function VisitsSummary({ twClasses, overview }: { twClasses?: string; overview: 
             </span>
 
             <span className="font-mono text-sm font-medium tracking-tighter">{item.value}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function PageTransitionSummary({ twClasses, transitions }: { twClasses?: string; transitions: TransitionMatomo[] }) {
+  return (
+    <div className="relative flex flex-1 flex-col items-start justify-start self-stretch rounded bg-white p-4 dark:bg-darker">
+      <div className="flex items-center justify-between gap-2 self-stretch">
+        <h2 className="text-xl font-bold tracking-tighter">Visits Summary</h2>
+        <div className="flex items-center gap-2"></div>
+      </div>
+      <ul className="mt-2 flex flex-1 flex-col space-y-2 self-stretch overflow-scroll">
+        {transitions.map((item, itemIdx) => (
+          <li
+            key={`transition-${itemIdx}`}
+            className="flex flex-col truncate text-xs font-normal tracking-tighter dark:bg-white/10"
+          >
+            {item.info.previousPages.map((page, pageIdx) => (
+              <span key={`transition-prev-${itemIdx}-page-${pageIdx}`}>{page.label}</span>
+            ))}
+            &middot;
+            {item.info.followingPages.map((page, pageIdx) => (
+              <span key={`transition-next-${itemIdx}-page-${pageIdx}`}>{page.label}</span>
+            ))}
           </li>
         ))}
       </ul>

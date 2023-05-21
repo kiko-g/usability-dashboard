@@ -77,3 +77,23 @@ export interface OverviewMatomoResponse {
   nb_actions_per_visit: number;
   avg_time_on_site: string;
 }
+
+export interface TransitionMatomo {
+  pageUrl: string;
+  info: {
+    date: string;
+    previousPages: { label: string; referrals: number }[];
+    previousSiteSearches: string[];
+    pageMetrics: {
+      loops: number;
+      pageviews: number;
+      entries: number;
+      exits: number;
+    };
+    followingPages: { label: string; referrals: number }[];
+    followingSiteSearches: string[];
+    outlinks: string[];
+    downloads: string[];
+    referrers: { label: string; shortName: string; visits: number }[];
+  };
+}

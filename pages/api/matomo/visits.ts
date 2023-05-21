@@ -2,6 +2,7 @@ import axios from 'axios';
 import { config } from '../../../utils/matomo';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { CustomAPIError, Frequency, Visits } from '../../../@types';
+import { TransitionMatomo } from '../../../@types/matomo';
 
 type ResponseType = Visits | CustomAPIError;
 
@@ -87,14 +88,15 @@ export default async function getAllEvents(req: NextApiRequest, res: NextApiResp
     );
 
     const transitionsResponses = await axios.all(pageUrlApiUrls.map((url) => axios.get(url)));
-    const transitions = transitionsResponses.map((response) => response.data);
+    const transitions: TransitionMatomo[] = transitionsResponses.map((response, responseIdx) => ({
+      pageUrl: allPageUrls[responseIdx],
+      info: response.data,
+    }));
 
     const overviewApiUrl = `${config.matomoSiteUrl}/index.php?module=API&method=API.get&expanded=1&format=json&idSite=${config.matomoSiteId}&period=${period}&date=${date}&token_auth=${config.matomoToken}&filter_limit=-1&format_metrics=1`;
     const overview = (await axios.get(overviewApiUrl)).data;
 
-    return res
-      .status(200)
-      .json({ os, screens, devices, browsers, pagesExpanded, pagesFlat, transitions, overview });
+    return res.status(200).json({ os, screens, devices, browsers, pagesExpanded, pagesFlat, transitions, overview });
   } catch (error) {
     return res.status(500).json({
       error: 'Internal server error',

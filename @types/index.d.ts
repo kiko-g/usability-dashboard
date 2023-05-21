@@ -1,4 +1,4 @@
-import { OverviewMatomoResponse } from "./matomo";
+import { OverviewMatomoResponse, TransitionMatomo } from "./matomo";
 
 export interface Frequency {
   name: string;
@@ -114,7 +114,7 @@ export type Visits = {
   screens: Frequency[];
   pagesExpanded: Frequency[];
   pagesFlat: Frequency[];
-  transitions?: any
+  transitions: TransitionMatomo[]
   overview: OverviewMatomoResponse
 };
 
