@@ -403,6 +403,8 @@ function PageTransitionSummary({ twClasses, transitions }: { twClasses?: string;
             key={`transition-${itemIdx}`}
             className="flex flex-col truncate text-xs font-normal tracking-tighter dark:bg-white/10"
           >
+            <span>{item.pageUrl}</span>
+            &middot;
             {item.info.previousPages.map((page, pageIdx) => (
               <span key={`transition-prev-${itemIdx}-page-${pageIdx}`}>{page.label}</span>
             ))}
