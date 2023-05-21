@@ -377,7 +377,7 @@ export const mockVisitsData: Visits = {
     },
     {
       pageUrl: '',
-      info: { result: 'error', message: "Please specify a value for 'actionName'." },
+      info: null,
       apiUrl:
         'http://localhost:80/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=&idSite=1&period=range&date=2023-04-29,today&format=JSON&token_auth=8a396695bcb95af437f0e8c3a5fdee83&force_api_session=1',
     },

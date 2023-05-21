@@ -398,9 +398,10 @@ function PageTransitionSummary({ twClasses, transitions }: { twClasses?: string;
         <div className="flex items-center gap-2"></div>
       </div>
       <ul className="mt-2 flex flex-1 flex-col space-y-2 self-stretch overflow-scroll">
-        {transitions
-          .filter((item) => item.info !== null)
-          .map((item, itemIdx) => (
+        {transitions.map((item, itemIdx) => {
+          if (!item.info) return null;
+
+          return (
             <li
               key={`transition-${itemIdx}`}
               className="flex flex-col truncate text-xs font-normal tracking-tighter dark:bg-white/10"
@@ -415,7 +416,8 @@ function PageTransitionSummary({ twClasses, transitions }: { twClasses?: string;
                 <span key={`transition-next-${itemIdx}-page-${pageIdx}`}>{page.label}</span>
               ))}
             </li>
-          ))}
+          );
+        })}
       </ul>
     </div>
   );
