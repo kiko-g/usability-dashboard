@@ -3,12 +3,17 @@ import Link from 'next/link';
 import classNames from 'classnames';
 import type { Frequency, Visits } from '../@types';
 import {
+  ArrowLongDownIcon,
+  ArrowLongLeftIcon,
+  ArrowLongRightIcon,
+  ArrowLongUpIcon,
   ArrowPathIcon,
   ArrowsPointingOutIcon,
   Bars3CenterLeftIcon,
   Bars4Icon,
   BarsArrowUpIcon,
   CheckCircleIcon,
+  ChevronRightIcon,
   ChevronUpDownIcon,
   ChevronUpIcon,
   CircleStackIcon,
@@ -393,11 +398,17 @@ function VisitsSummary({ twClasses, overview }: { twClasses?: string; overview: 
 }
 
 function PageTransitionSummary({ twClasses, transitions }: { twClasses?: string; transitions: TransitionMatomo[] }) {
-  const options = React.useMemo(() => transitions.map((item) => item.pageUrl), [transitions]);
+  const options = React.useMemo(() => transitions.map((item) => item), [transitions]);
   const [picked, setPicked] = React.useState(options[0]);
+  console.log(picked);
 
   return (
-    <div className="relative flex flex-1 flex-col items-start justify-start self-stretch rounded bg-white p-4 dark:bg-darker">
+    <div
+      className={classNames(
+        twClasses,
+        'relative flex flex-1 flex-col items-start justify-start self-stretch rounded bg-white p-4 dark:bg-darker'
+      )}
+    >
       <div className="flex items-center justify-between gap-2 self-stretch">
         <h2 className="text-xl font-bold tracking-tighter">Transitions</h2>
         <div className="flex items-center gap-2">
@@ -407,7 +418,7 @@ function PageTransitionSummary({ twClasses, transitions }: { twClasses?: string;
                 as="button"
                 className="inline-flex w-full items-center justify-center gap-x-1 rounded border border-primary bg-primary/50 py-2 pl-3 pr-2 text-center text-sm font-medium tracking-tight text-white transition hover:bg-primary/80 disabled:cursor-not-allowed disabled:opacity-50 dark:border-secondary dark:bg-secondary/50 dark:hover:bg-secondary/80 lg:px-2 lg:py-1.5"
               >
-                <span className="block truncate text-sm font-normal">{picked}</span>
+                <span className="block truncate text-sm font-normal">{picked.pageUrl}</span>
                 <ChevronUpDownIcon className="h-5 w-5" aria-hidden="true" />
               </Listbox.Button>
               <Transition
@@ -417,66 +428,84 @@ function PageTransitionSummary({ twClasses, transitions }: { twClasses?: string;
                 leaveTo="opacity-0"
               >
                 <Listbox.Options className="absolute mt-2 max-h-60 w-full overflow-auto rounded border border-gray-300 bg-gray-100 py-2 shadow lg:w-full">
-                  {options.map((option: string, optionIdx: number) => (
-                    <Listbox.Option
-                      key={`option-${optionIdx}`}
-                      className={({ active }) =>
-                        `relative cursor-pointer select-none py-1.5 pl-10 pr-5 text-sm font-normal tracking-tight ${
-                          active
-                            ? 'bg-primary/10 text-primary dark:bg-secondary/10 dark:text-secondary'
-                            : 'text-gray-800'
-                        }`
-                      }
-                      value={option}
-                    >
-                      <span
-                        className={`block whitespace-nowrap ${option === picked ? 'font-semibold' : 'font-normal'}`}
+                  {options.map((option: TransitionMatomo, optionIdx: number) => {
+                    return (
+                      <Listbox.Option
+                        key={`option-${optionIdx}`}
+                        className={({ active }) =>
+                          `relative cursor-pointer select-none py-1.5 pl-10 pr-5 text-sm font-normal tracking-tight ${
+                            active
+                              ? 'bg-primary/10 text-primary dark:bg-secondary/10 dark:text-secondary'
+                              : 'text-gray-800'
+                          }`
+                        }
+                        value={option}
                       >
-                        {option}
-                      </span>
-                      {picked === option ? (
-                        <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-primary dark:text-secondary">
-                          <CheckCircleIcon className="h-5 w-5" aria-hidden="true" />
+                        <span
+                          className={`block truncate ${
+                            option.pageUrl === picked.pageUrl ? 'font-semibold' : 'font-normal'
+                          }`}
+                        >
+                          {option.pageUrl}
                         </span>
-                      ) : null}
-                    </Listbox.Option>
-                  ))}
+                        {picked.pageUrl === option.pageUrl ? (
+                          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-primary dark:text-secondary">
+                            <CheckCircleIcon className="h-5 w-5" aria-hidden="true" />
+                          </span>
+                        ) : null}
+                      </Listbox.Option>
+                    );
+                  })}
                 </Listbox.Options>
               </Transition>
             </div>
           </Listbox>
         </div>
       </div>
-      <ul className="mt-2 flex flex-1 flex-col space-y-2 self-stretch overflow-scroll">
-        {transitions.map((item, itemIdx) => {
-          if (!item.info) return null;
 
-          return (
-            <li
-              key={`transition-${itemIdx}`}
-              className="grid grid-cols-3 gap-2 truncate rounded text-xs font-normal tracking-tighter"
-            >
-              <span className="flex flex-col bg-slate-100 px-2 py-2 dark:bg-white/10">
-                {item.info.previousPages.map((page, pageIdx) => (
-                  <span key={`transition-prev-${itemIdx}-page-${pageIdx}`} className="truncate">
-                    {page.label.replace('localhost', '')}
-                  </span>
-                ))}
+      <div className="mt-4 flex w-full flex-col gap-3 truncate font-normal tracking-tighter xl:flex-row">
+        <div className="flex flex-1 flex-col justify-start space-y-3 self-stretch">
+          {picked.info === null || picked.info.previousPages.length === 0 ? (
+            <span className="flex items-center justify-center gap-2 truncate rounded bg-rose-600/20 px-3 py-2 dark:bg-rose-600/30">
+              No previous pages
+            </span>
+          ) : (
+            picked.info.previousPages.map((page, pageIdx) => (
+              <span
+                key={`transition-prevpage-${pageIdx}`}
+                className="flex items-center justify-between gap-2 truncate rounded border-l-4 border-primary bg-slate-100 px-3 py-2 dark:border-secondary dark:bg-white/10"
+              >
+                <span className="font-mono text-xs tracking-tighter">{page.label.replace('localhost', '')}</span>
+                <ArrowLongRightIcon className="hidden h-5 w-5 xl:flex" />
+                <ArrowLongDownIcon className="flex h-5 w-5 xl:hidden" />
               </span>
-              <span className="flex flex-col items-center justify-center truncate bg-slate-100 dark:bg-white/10">
-                {item.pageUrl}
+            ))
+          )}
+        </div>
+
+        <div className="flex flex-col items-center justify-center truncate rounded bg-slate-100 px-6 py-6 dark:bg-white/10">
+          <span className="font-mono text-xs tracking-tighter">{picked.pageUrl}</span>
+        </div>
+
+        <div className="flex flex-1 flex-col justify-start space-y-3">
+          {picked.info === null || picked.info.followingPages.length === 0 ? (
+            <span className="flex items-center justify-center gap-2 truncate rounded bg-rose-600/20 px-3 py-2 dark:bg-rose-600/30">
+              No following pages
+            </span>
+          ) : (
+            picked.info.followingPages.map((page, pageIdx) => (
+              <span
+                key={`transition-nextpage-${pageIdx}`}
+                className="flex items-center justify-between gap-2 truncate rounded border-r-4 border-primary bg-slate-100 px-3 py-2 dark:border-secondary dark:bg-white/10"
+              >
+                <ArrowLongLeftIcon className="hidden h-5 w-5 xl:flex" />
+                <ArrowLongUpIcon className="flex h-5 w-5 xl:hidden" />
+                <span className="font-mono text-xs tracking-tighter">{page.label.replace('localhost', '')}</span>
               </span>
-              <span className="flex flex-col bg-slate-100 px-2 py-2 dark:bg-white/10">
-                {item.info.followingPages.map((page, pageIdx) => (
-                  <span key={`transition-next-${itemIdx}-page-${pageIdx}`} className="truncate">
-                    {page.label.replace('localhost', '')}
-                  </span>
-                ))}
-              </span>
-            </li>
-          );
-        })}
-      </ul>
+            ))
+          )}
+        </div>
+      </div>
     </div>
   );
 }

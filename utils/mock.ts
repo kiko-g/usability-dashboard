@@ -86,9 +86,9 @@ export const mockVisitsData: Visits = {
   ],
   transitions: [
     {
-      pageUrl: 'https://localhost/Apps',
+      pageUrl: '/Apps',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [
           { label: 'localhost/Reports', referrals: 3 },
           { label: 'localhost/Entity/Employee?entityType=Employee', referrals: 1 },
@@ -115,9 +115,9 @@ export const mockVisitsData: Visits = {
         'http://localhost:80/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=https%3A%2F%2Flocalhost%2FApps&idSite=1&period=range&date=2023-04-29,today&format=JSON&token_auth=8a396695bcb95af437f0e8c3a5fdee83&force_api_session=1',
     },
     {
-      pageUrl: 'https://localhost/LandingPage/Administration',
+      pageUrl: '/LandingPage/Administration',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [
           { label: 'localhost/Home', referrals: 2 },
           { label: 'localhost/LandingPage/BusinessData', referrals: 2 },
@@ -144,9 +144,9 @@ export const mockVisitsData: Visits = {
         'http://localhost:80/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=https%3A%2F%2Flocalhost%2FLandingPage%2FAdministration&idSite=1&period=range&date=2023-04-29,today&format=JSON&token_auth=8a396695bcb95af437f0e8c3a5fdee83&force_api_session=1',
     },
     {
-      pageUrl: 'https://localhost/LandingPage/BusinessData',
+      pageUrl: '/LandingPage/BusinessData',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [
           { label: 'localhost/LandingPage/Quality', referrals: 5 },
           { label: 'localhost/Administration/Apps', referrals: 1 },
@@ -174,9 +174,9 @@ export const mockVisitsData: Visits = {
         'http://localhost:80/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=https%3A%2F%2Flocalhost%2FLandingPage%2FBusinessData&idSite=1&period=range&date=2023-04-29,today&format=JSON&token_auth=8a396695bcb95af437f0e8c3a5fdee83&force_api_session=1',
     },
     {
-      pageUrl: 'https://localhost/Administration/AugmentedReality',
+      pageUrl: '/Administration/AugmentedReality',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [
           { label: 'localhost/Apps', referrals: 1 },
           { label: 'localhost/LandingPage/Administration', referrals: 1 },
@@ -193,9 +193,9 @@ export const mockVisitsData: Visits = {
         'http://localhost:80/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=https%3A%2F%2Flocalhost%2FAdministration%2FAugmentedReality&idSite=1&period=range&date=2023-04-29,today&format=JSON&token_auth=8a396695bcb95af437f0e8c3a5fdee83&force_api_session=1',
     },
     {
-      pageUrl: 'https://localhost/Home',
+      pageUrl: '/Home',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [
           { label: 'localhost/Apps', referrals: 2 },
           { label: 'localhost/Entity/Schedule?entityType=Schedule', referrals: 1 },
@@ -217,9 +217,9 @@ export const mockVisitsData: Visits = {
         'http://localhost:80/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=https%3A%2F%2Flocalhost%2FHome&idSite=1&period=range&date=2023-04-29,today&format=JSON&token_auth=8a396695bcb95af437f0e8c3a5fdee83&force_api_session=1',
     },
     {
-      pageUrl: 'https://localhost/Administration/Apps',
+      pageUrl: '/Administration/Apps',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [{ label: 'localhost/LandingPage/Administration', referrals: 2 }],
         previousSiteSearches: [],
         pageMetrics: { loops: 0, pageviews: 2, entries: 0, exits: 0 },
@@ -236,9 +236,9 @@ export const mockVisitsData: Visits = {
         'http://localhost:80/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=https%3A%2F%2Flocalhost%2FAdministration%2FApps&idSite=1&period=range&date=2023-04-29,today&format=JSON&token_auth=8a396695bcb95af437f0e8c3a5fdee83&force_api_session=1',
     },
     {
-      pageUrl: 'https://localhost/Administration/Queries',
+      pageUrl: '/Administration/Queries',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [{ label: 'localhost/LandingPage/Administration', referrals: 2 }],
         previousSiteSearches: [],
         pageMetrics: { loops: 0, pageviews: 2, entries: 0, exits: 0 },
@@ -255,9 +255,9 @@ export const mockVisitsData: Visits = {
         'http://localhost:80/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=https%3A%2F%2Flocalhost%2FAdministration%2FQueries&idSite=1&period=range&date=2023-04-29,today&format=JSON&token_auth=8a396695bcb95af437f0e8c3a5fdee83&force_api_session=1',
     },
     {
-      pageUrl: 'https://localhost/Administration/Query/2305160621190000001',
+      pageUrl: '/Administration/Query/2305160621190000001',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [{ label: 'localhost/Administration/Queries', referrals: 1 }],
         previousSiteSearches: [],
         pageMetrics: { loops: 0, pageviews: 2, entries: 1, exits: 2 },
@@ -271,9 +271,9 @@ export const mockVisitsData: Visits = {
         'http://localhost:80/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=https%3A%2F%2Flocalhost%2FAdministration%2FQuery%2F2305160621190000001&idSite=1&period=range&date=2023-04-29,today&format=JSON&token_auth=8a396695bcb95af437f0e8c3a5fdee83&force_api_session=1',
     },
     {
-      pageUrl: 'https://localhost/Entity/Area?entityType=Area',
+      pageUrl: '/Entity/Area?entityType=Area',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [{ label: 'localhost/LandingPage/BusinessData', referrals: 2 }],
         previousSiteSearches: [],
         pageMetrics: { loops: 0, pageviews: 2, entries: 0, exits: 2 },
@@ -287,9 +287,9 @@ export const mockVisitsData: Visits = {
         'http://localhost:80/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=https%3A%2F%2Flocalhost%2FEntity%2FArea%3FentityType%3DArea&idSite=1&period=range&date=2023-04-29,today&format=JSON&token_auth=8a396695bcb95af437f0e8c3a5fdee83&force_api_session=1',
     },
     {
-      pageUrl: 'https://localhost/Entity/SetupMatrix?entityType=SetupMatrix',
+      pageUrl: '/Entity/SetupMatrix?entityType=SetupMatrix',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [{ label: 'localhost/LandingPage/BusinessData', referrals: 1 }],
         previousSiteSearches: [],
         pageMetrics: { loops: 0, pageviews: 2, entries: 1, exits: 0 },
@@ -306,9 +306,9 @@ export const mockVisitsData: Visits = {
         'http://localhost:80/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=https%3A%2F%2Flocalhost%2FEntity%2FSetupMatrix%3FentityType%3DSetupMatrix&idSite=1&period=range&date=2023-04-29,today&format=JSON&token_auth=8a396695bcb95af437f0e8c3a5fdee83&force_api_session=1',
     },
     {
-      pageUrl: 'https://localhost/LandingPage/Quality',
+      pageUrl: '/LandingPage/Quality',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [
           { label: 'localhost/Reports', referrals: 4 },
           { label: 'localhost/Apps', referrals: 1 },
@@ -335,9 +335,9 @@ export const mockVisitsData: Visits = {
         'http://localhost:80/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=https%3A%2F%2Flocalhost%2FLandingPage%2FQuality&idSite=1&period=range&date=2023-04-29,today&format=JSON&token_auth=8a396695bcb95af437f0e8c3a5fdee83&force_api_session=1',
     },
     {
-      pageUrl: 'https://localhost/Reports',
+      pageUrl: '/Reports',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [
           { label: 'localhost/LandingPage/DataPlatform', referrals: 2 },
           {
@@ -382,9 +382,9 @@ export const mockVisitsData: Visits = {
         'http://localhost:80/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=&idSite=1&period=range&date=2023-04-29,today&format=JSON&token_auth=8a396695bcb95af437f0e8c3a5fdee83&force_api_session=1',
     },
     {
-      pageUrl: 'https://localhost/Administration/Table/GenericTable/2305160621190000001',
+      pageUrl: '/Administration/Table/GenericTable/2305160621190000001',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [{ label: 'localhost/Administration/Tables', referrals: 1 }],
         previousSiteSearches: [],
         pageMetrics: { loops: 0, pageviews: 1, entries: 0, exits: 0 },
@@ -398,9 +398,9 @@ export const mockVisitsData: Visits = {
         'http://localhost:80/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=https%3A%2F%2Flocalhost%2FAdministration%2FTable%2FGenericTable%2F2305160621190000001&idSite=1&period=range&date=2023-04-29,today&format=JSON&token_auth=8a396695bcb95af437f0e8c3a5fdee83&force_api_session=1',
     },
     {
-      pageUrl: 'https://localhost/Administration/Tables',
+      pageUrl: '/Administration/Tables',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [{ label: 'localhost/LandingPage/Administration', referrals: 1 }],
         previousSiteSearches: [],
         pageMetrics: { loops: 0, pageviews: 1, entries: 0, exits: 0 },
@@ -414,9 +414,9 @@ export const mockVisitsData: Visits = {
         'http://localhost:80/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=https%3A%2F%2Flocalhost%2FAdministration%2FTables&idSite=1&period=range&date=2023-04-29,today&format=JSON&token_auth=8a396695bcb95af437f0e8c3a5fdee83&force_api_session=1',
     },
     {
-      pageUrl: 'https://localhost/Administration/UIPage',
+      pageUrl: '/Administration/UIPage',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [{ label: 'localhost/LandingPage/Administration', referrals: 1 }],
         previousSiteSearches: [],
         pageMetrics: { loops: 0, pageviews: 1, entries: 0, exits: 0 },
@@ -430,9 +430,9 @@ export const mockVisitsData: Visits = {
         'http://localhost:80/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=https%3A%2F%2Flocalhost%2FAdministration%2FUIPage&idSite=1&period=range&date=2023-04-29,today&format=JSON&token_auth=8a396695bcb95af437f0e8c3a5fdee83&force_api_session=1',
     },
     {
-      pageUrl: 'https://localhost/Automation/ConnectIoT',
+      pageUrl: '/Automation/ConnectIoT',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [
           { label: 'localhost/LandingPage/Automation', referrals: 1 },
           { label: 'localhost/LandingPage/Quality', referrals: 1 },
@@ -452,9 +452,9 @@ export const mockVisitsData: Visits = {
         'http://localhost:80/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=https%3A%2F%2Flocalhost%2FAutomation%2FConnectIoT&idSite=1&period=range&date=2023-04-29,today&format=JSON&token_auth=8a396695bcb95af437f0e8c3a5fdee83&force_api_session=1',
     },
     {
-      pageUrl: 'https://localhost/Automation/FactoryAutomation',
+      pageUrl: '/Automation/FactoryAutomation',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [
           { label: 'localhost/Automation/ConnectIoT', referrals: 1 },
           { label: 'localhost/LandingPage/Automation', referrals: 1 },
@@ -471,9 +471,9 @@ export const mockVisitsData: Visits = {
         'http://localhost:80/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=https%3A%2F%2Flocalhost%2FAutomation%2FFactoryAutomation&idSite=1&period=range&date=2023-04-29,today&format=JSON&token_auth=8a396695bcb95af437f0e8c3a5fdee83&force_api_session=1',
     },
     {
-      pageUrl: 'https://localhost/Entity/Container/2305160621190000013/View/Details',
+      pageUrl: '/Entity/Container/2305160621190000013/View/Details',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [{ label: 'localhost/Entity/Container?entityType=Container', referrals: 1 }],
         previousSiteSearches: [],
         pageMetrics: { loops: 0, pageviews: 1, entries: 0, exits: 0 },
@@ -487,9 +487,9 @@ export const mockVisitsData: Visits = {
         'http://localhost:80/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=https%3A%2F%2Flocalhost%2FEntity%2FContainer%2F2305160621190000013%2FView%2FDetails&idSite=1&period=range&date=2023-04-29,today&format=JSON&token_auth=8a396695bcb95af437f0e8c3a5fdee83&force_api_session=1',
     },
     {
-      pageUrl: 'https://localhost/Entity/Container?entityType=Container',
+      pageUrl: '/Entity/Container?entityType=Container',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [{ label: 'localhost/LandingPage/BusinessData', referrals: 1 }],
         previousSiteSearches: [],
         pageMetrics: { loops: 0, pageviews: 1, entries: 0, exits: 0 },
@@ -503,9 +503,9 @@ export const mockVisitsData: Visits = {
         'http://localhost:80/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=https%3A%2F%2Flocalhost%2FEntity%2FContainer%3FentityType%3DContainer&idSite=1&period=range&date=2023-04-29,today&format=JSON&token_auth=8a396695bcb95af437f0e8c3a5fdee83&force_api_session=1',
     },
     {
-      pageUrl: 'https://localhost/Entity/DataCollectionLimitSet?entityType=DataCollectionLimitSet',
+      pageUrl: '/Entity/DataCollectionLimitSet?entityType=DataCollectionLimitSet',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [{ label: 'localhost/LandingPage/BusinessData', referrals: 1 }],
         previousSiteSearches: [],
         pageMetrics: { loops: 0, pageviews: 1, entries: 0, exits: 0 },
@@ -519,9 +519,9 @@ export const mockVisitsData: Visits = {
         'http://localhost:80/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=https%3A%2F%2Flocalhost%2FEntity%2FDataCollectionLimitSet%3FentityType%3DDataCollectionLimitSet&idSite=1&period=range&date=2023-04-29,today&format=JSON&token_auth=8a396695bcb95af437f0e8c3a5fdee83&force_api_session=1',
     },
     {
-      pageUrl: 'https://localhost/Entity/Employee/2305160621190000001/View/Details',
+      pageUrl: '/Entity/Employee/2305160621190000001/View/Details',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [{ label: 'localhost/Entity/Employee?entityType=Employee', referrals: 1 }],
         previousSiteSearches: [],
         pageMetrics: { loops: 0, pageviews: 1, entries: 0, exits: 0 },
@@ -535,9 +535,9 @@ export const mockVisitsData: Visits = {
         'http://localhost:80/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=https%3A%2F%2Flocalhost%2FEntity%2FEmployee%2F2305160621190000001%2FView%2FDetails&idSite=1&period=range&date=2023-04-29,today&format=JSON&token_auth=8a396695bcb95af437f0e8c3a5fdee83&force_api_session=1',
     },
     {
-      pageUrl: 'https://localhost/Entity/Employee?entityType=Employee',
+      pageUrl: '/Entity/Employee?entityType=Employee',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [
           { label: 'localhost/Administration/Table/GenericTable/2305160621190000001', referrals: 1 },
           { label: 'localhost/Entity/Employee/2305160621190000001/View/Details', referrals: 1 },
@@ -559,9 +559,9 @@ export const mockVisitsData: Visits = {
         'http://localhost:80/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=https%3A%2F%2Flocalhost%2FEntity%2FEmployee%3FentityType%3DEmployee&idSite=1&period=range&date=2023-04-29,today&format=JSON&token_auth=8a396695bcb95af437f0e8c3a5fdee83&force_api_session=1',
     },
     {
-      pageUrl: 'https://localhost/Entity/MaintenancePlan?entityType=MaintenancePlan',
+      pageUrl: '/Entity/MaintenancePlan?entityType=MaintenancePlan',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [{ label: 'localhost/LandingPage/BusinessData', referrals: 1 }],
         previousSiteSearches: [],
         pageMetrics: { loops: 0, pageviews: 1, entries: 0, exits: 0 },
@@ -575,9 +575,9 @@ export const mockVisitsData: Visits = {
         'http://localhost:80/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=https%3A%2F%2Flocalhost%2FEntity%2FMaintenancePlan%3FentityType%3DMaintenancePlan&idSite=1&period=range&date=2023-04-29,today&format=JSON&token_auth=8a396695bcb95af437f0e8c3a5fdee83&force_api_session=1',
     },
     {
-      pageUrl: 'https://localhost/Entity/Schedule?entityType=Schedule',
+      pageUrl: '/Entity/Schedule?entityType=Schedule',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [{ label: 'localhost/LandingPage/BusinessData', referrals: 1 }],
         previousSiteSearches: [],
         pageMetrics: { loops: 0, pageviews: 1, entries: 0, exits: 0 },
@@ -591,9 +591,9 @@ export const mockVisitsData: Visits = {
         'http://localhost:80/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=https%3A%2F%2Flocalhost%2FEntity%2FSchedule%3FentityType%3DSchedule&idSite=1&period=range&date=2023-04-29,today&format=JSON&token_auth=8a396695bcb95af437f0e8c3a5fdee83&force_api_session=1',
     },
     {
-      pageUrl: 'https://localhost/Entity/SetupMatrix/2305160621190000002/View/Details',
+      pageUrl: '/Entity/SetupMatrix/2305160621190000002/View/Details',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [{ label: 'localhost/Entity/SetupMatrix?entityType=SetupMatrix', referrals: 1 }],
         previousSiteSearches: [],
         pageMetrics: { loops: 0, pageviews: 1, entries: 0, exits: 1 },
@@ -607,9 +607,9 @@ export const mockVisitsData: Visits = {
         'http://localhost:80/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=https%3A%2F%2Flocalhost%2FEntity%2FSetupMatrix%2F2305160621190000002%2FView%2FDetails&idSite=1&period=range&date=2023-04-29,today&format=JSON&token_auth=8a396695bcb95af437f0e8c3a5fdee83&force_api_session=1',
     },
     {
-      pageUrl: 'https://localhost/Entity/Team/2305160621190000001/View/Details',
+      pageUrl: '/Entity/Team/2305160621190000001/View/Details',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [{ label: 'localhost/Entity/Team?entityType=Team', referrals: 1 }],
         previousSiteSearches: [],
         pageMetrics: { loops: 0, pageviews: 1, entries: 0, exits: 0 },
@@ -623,9 +623,9 @@ export const mockVisitsData: Visits = {
         'http://localhost:80/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=https%3A%2F%2Flocalhost%2FEntity%2FTeam%2F2305160621190000001%2FView%2FDetails&idSite=1&period=range&date=2023-04-29,today&format=JSON&token_auth=8a396695bcb95af437f0e8c3a5fdee83&force_api_session=1',
     },
     {
-      pageUrl: 'https://localhost/Entity/Team?entityType=Team',
+      pageUrl: '/Entity/Team?entityType=Team',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [{ label: 'localhost/LandingPage/BusinessData', referrals: 1 }],
         previousSiteSearches: [],
         pageMetrics: { loops: 0, pageviews: 1, entries: 0, exits: 0 },
@@ -639,9 +639,9 @@ export const mockVisitsData: Visits = {
         'http://localhost:80/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=https%3A%2F%2Flocalhost%2FEntity%2FTeam%3FentityType%3DTeam&idSite=1&period=range&date=2023-04-29,today&format=JSON&token_auth=8a396695bcb95af437f0e8c3a5fdee83&force_api_session=1',
     },
     {
-      pageUrl: 'https://localhost/LandingPage/Automation',
+      pageUrl: '/LandingPage/Automation',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [
           { label: 'localhost/Automation/FactoryAutomation', referrals: 2 },
           { label: 'localhost/Automation/ConnectIoT', referrals: 1 },
@@ -667,9 +667,9 @@ export const mockVisitsData: Visits = {
         'http://localhost:80/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=https%3A%2F%2Flocalhost%2FLandingPage%2FAutomation&idSite=1&period=range&date=2023-04-29,today&format=JSON&token_auth=8a396695bcb95af437f0e8c3a5fdee83&force_api_session=1',
     },
     {
-      pageUrl: 'https://localhost/LandingPage/CoreExamples',
+      pageUrl: '/LandingPage/CoreExamples',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [{ label: 'localhost/LandingPage/DataPlatform', referrals: 1 }],
         previousSiteSearches: [],
         pageMetrics: { loops: 0, pageviews: 1, entries: 0, exits: 0 },
@@ -683,9 +683,9 @@ export const mockVisitsData: Visits = {
         'http://localhost:80/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=https%3A%2F%2Flocalhost%2FLandingPage%2FCoreExamples&idSite=1&period=range&date=2023-04-29,today&format=JSON&token_auth=8a396695bcb95af437f0e8c3a5fdee83&force_api_session=1',
     },
     {
-      pageUrl: 'https://localhost/LandingPage/DataPlatform',
+      pageUrl: '/LandingPage/DataPlatform',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [
           { label: 'localhost/LandingPage/Automation', referrals: 2 },
           { label: 'localhost/Apps', referrals: 1 },
@@ -707,9 +707,9 @@ export const mockVisitsData: Visits = {
         'http://localhost:80/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=https%3A%2F%2Flocalhost%2FLandingPage%2FDataPlatform&idSite=1&period=range&date=2023-04-29,today&format=JSON&token_auth=8a396695bcb95af437f0e8c3a5fdee83&force_api_session=1',
     },
     {
-      pageUrl: 'https://localhost/Login',
+      pageUrl: '/Login',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [],
         previousSiteSearches: [],
         pageMetrics: { loops: 2, pageviews: 3, entries: 1, exits: 0 },
@@ -723,9 +723,9 @@ export const mockVisitsData: Visits = {
         'http://localhost:80/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=https%3A%2F%2Flocalhost%2FLogin&idSite=1&period=range&date=2023-04-29,today&format=JSON&token_auth=8a396695bcb95af437f0e8c3a5fdee83&force_api_session=1',
     },
     {
-      pageUrl: 'https://localhost/Quality/ChangeSets',
+      pageUrl: '/Quality/ChangeSets',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [
           { label: 'localhost/LandingPage/Automation', referrals: 1 },
           { label: 'localhost/LandingPage/Quality', referrals: 1 },
@@ -745,9 +745,9 @@ export const mockVisitsData: Visits = {
         'http://localhost:80/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=https%3A%2F%2Flocalhost%2FQuality%2FChangeSets&idSite=1&period=range&date=2023-04-29,today&format=JSON&token_auth=8a396695bcb95af437f0e8c3a5fdee83&force_api_session=1',
     },
     {
-      pageUrl: 'https://localhost/Quality/Documents',
+      pageUrl: '/Quality/Documents',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [
           { label: 'localhost/LandingPage/Quality', referrals: 1 },
           { label: 'localhost/Quality/ChangeSets', referrals: 1 },
@@ -768,9 +768,9 @@ export const mockVisitsData: Visits = {
     },
     {
       pageUrl:
-        'https://localhost/Report/1fb244d5-f327-43cb-a55f-b5a210ffba31?path=%2FReports-MESDevelopment%2FPerformance%2FMaterial%20Step%20Cycle%20Time%20DWH',
+        '/Report/1fb244d5-f327-43cb-a55f-b5a210ffba31?path=%2FReports-MESDevelopment%2FPerformance%2FMaterial%20Step%20Cycle%20Time%20DWH',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [{ label: 'localhost/Reports', referrals: 1 }],
         previousSiteSearches: [],
         pageMetrics: { loops: 0, pageviews: 1, entries: 0, exits: 0 },
@@ -785,9 +785,9 @@ export const mockVisitsData: Visits = {
     },
     {
       pageUrl:
-        'https://localhost/Report/4511f9e4-fcbb-4806-b4b4-8e6c5f31030d?path=%2FReports-MESDevelopment%2FMaterial%20History%2FMaterial%20Genealogy',
+        '/Report/4511f9e4-fcbb-4806-b4b4-8e6c5f31030d?path=%2FReports-MESDevelopment%2FMaterial%20History%2FMaterial%20Genealogy',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [
           { label: 'localhost/Apps', referrals: 1 },
           { label: 'localhost/Reports', referrals: 1 },
@@ -804,9 +804,9 @@ export const mockVisitsData: Visits = {
         'http://localhost:80/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=https%3A%2F%2Flocalhost%2FReport%2F4511f9e4-fcbb-4806-b4b4-8e6c5f31030d%3Fpath%3D%252FReports-MESDevelopment%252FMaterial%2520History%252FMaterial%2520Genealogy&idSite=1&period=range&date=2023-04-29,today&format=JSON&token_auth=8a396695bcb95af437f0e8c3a5fdee83&force_api_session=1',
     },
     {
-      pageUrl: 'https://localhost/SystemIntegrations',
+      pageUrl: '/SystemIntegrations',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [{ label: 'localhost/LandingPage/Administration', referrals: 1 }],
         previousSiteSearches: [],
         pageMetrics: { loops: 0, pageviews: 1, entries: 0, exits: 0 },
@@ -820,9 +820,9 @@ export const mockVisitsData: Visits = {
         'http://localhost:80/index.php?module=API&method=Transitions.getTransitionsForAction&actionType=url&actionName=https%3A%2F%2Flocalhost%2FSystemIntegrations&idSite=1&period=range&date=2023-04-29,today&format=JSON&token_auth=8a396695bcb95af437f0e8c3a5fdee83&force_api_session=1',
     },
     {
-      pageUrl: 'https://localhost/TestEntityPropertyEditor',
+      pageUrl: '/TestEntityPropertyEditor',
       info: {
-        date: 'Apr 29 – May 21, 2023',
+        date: 'Apr 29 – May 22, 2023',
         previousPages: [{ label: 'localhost/LandingPage/CoreExamples', referrals: 1 }],
         previousSiteSearches: [],
         pageMetrics: { loops: 0, pageviews: 1, entries: 0, exits: 0 },
