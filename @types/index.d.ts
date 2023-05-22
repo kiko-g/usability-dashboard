@@ -1,4 +1,4 @@
-import { OverviewMatomoResponse, TransitionMatomo } from "./matomo";
+import { OverviewMatomoResponse, TransitionMatomo } from './matomo';
 
 export interface Frequency {
   name: string;
@@ -114,8 +114,8 @@ export type Visits = {
   screens: Frequency[];
   pagesExpanded: Frequency[];
   pagesFlat: Frequency[];
-  transitions: TransitionMatomo[]
-  overview: OverviewMatomoResponse
+  transitions: TransitionMatomo[];
+  overview: OverviewMatomoResponse;
 };
 
 // API Error

@@ -8,6 +8,8 @@ import {
   Bars3CenterLeftIcon,
   Bars4Icon,
   BarsArrowUpIcon,
+  CheckCircleIcon,
+  ChevronUpDownIcon,
   ChevronUpIcon,
   CircleStackIcon,
   CodeBracketIcon,
@@ -17,7 +19,7 @@ import {
 import { mockVisitsData as mockData } from '../utils/mock';
 import { Layout } from '../components/layout';
 import { Loading, NotFound } from '../components/utils';
-import { Dialog, Disclosure, Transition } from '@headlessui/react';
+import { Dialog, Disclosure, Listbox, Transition } from '@headlessui/react';
 import { strIncludes } from '../utils';
 import { OverviewMatomoResponse, TransitionMatomo } from '../@types/matomo';
 
@@ -375,7 +377,7 @@ function VisitsSummary({ twClasses, overview }: { twClasses?: string; overview: 
         {summary.map((item, itemIdx) => (
           <li
             key={`summary-${itemIdx}`}
-            className="flex items-center justify-between gap-2 rounded bg-slate-200 px-3 py-2 dark:bg-white/10"
+            className="flex items-center justify-between gap-2 rounded bg-slate-100 px-3 py-2 dark:bg-white/10"
           >
             <span className="trac flex items-center gap-1.5 text-sm tracking-tighter">
               <span className="block h-3.5 w-3.5 rounded-full bg-slate-700 dark:bg-slate-400" />
@@ -391,11 +393,59 @@ function VisitsSummary({ twClasses, overview }: { twClasses?: string; overview: 
 }
 
 function PageTransitionSummary({ twClasses, transitions }: { twClasses?: string; transitions: TransitionMatomo[] }) {
+  const options = React.useMemo(() => transitions.map((item) => item.pageUrl), [transitions]);
+  const [picked, setPicked] = React.useState(options[0]);
+
   return (
     <div className="relative flex flex-1 flex-col items-start justify-start self-stretch rounded bg-white p-4 dark:bg-darker">
       <div className="flex items-center justify-between gap-2 self-stretch">
-        <h2 className="text-xl font-bold tracking-tighter">Visits Summary</h2>
-        <div className="flex items-center gap-2"></div>
+        <h2 className="text-xl font-bold tracking-tighter">Transitions</h2>
+        <div className="flex items-center gap-2">
+          <Listbox value={picked} onChange={setPicked}>
+            <div className="relative w-full min-w-full lg:w-auto lg:min-w-[15rem]">
+              <Listbox.Button
+                as="button"
+                className="inline-flex w-full items-center justify-center gap-x-1 rounded border border-primary bg-primary/50 py-2 pl-3 pr-2 text-center text-sm font-medium tracking-tight text-white transition hover:bg-primary/80 disabled:cursor-not-allowed disabled:opacity-50 dark:border-secondary dark:bg-secondary/50 dark:hover:bg-secondary/80 lg:px-2 lg:py-1.5"
+              >
+                <span className="block truncate text-sm font-normal">{picked}</span>
+                <ChevronUpDownIcon className="h-5 w-5" aria-hidden="true" />
+              </Listbox.Button>
+              <Transition
+                as={Fragment}
+                leave="transition ease-in duration-100"
+                leaveFrom="opacity-100"
+                leaveTo="opacity-0"
+              >
+                <Listbox.Options className="absolute mt-2 max-h-60 w-full overflow-auto rounded border border-gray-300 bg-gray-100 py-2 shadow lg:w-full">
+                  {options.map((option: string, optionIdx: number) => (
+                    <Listbox.Option
+                      key={`option-${optionIdx}`}
+                      className={({ active }) =>
+                        `relative cursor-pointer select-none py-1.5 pl-10 pr-5 text-sm font-normal tracking-tight ${
+                          active
+                            ? 'bg-primary/10 text-primary dark:bg-secondary/10 dark:text-secondary'
+                            : 'text-gray-800'
+                        }`
+                      }
+                      value={option}
+                    >
+                      <span
+                        className={`block whitespace-nowrap ${option === picked ? 'font-semibold' : 'font-normal'}`}
+                      >
+                        {option}
+                      </span>
+                      {picked === option ? (
+                        <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-primary dark:text-secondary">
+                          <CheckCircleIcon className="h-5 w-5" aria-hidden="true" />
+                        </span>
+                      ) : null}
+                    </Listbox.Option>
+                  ))}
+                </Listbox.Options>
+              </Transition>
+            </div>
+          </Listbox>
+        </div>
       </div>
       <ul className="mt-2 flex flex-1 flex-col space-y-2 self-stretch overflow-scroll">
         {transitions.map((item, itemIdx) => {
@@ -404,17 +454,25 @@ function PageTransitionSummary({ twClasses, transitions }: { twClasses?: string;
           return (
             <li
               key={`transition-${itemIdx}`}
-              className="flex flex-col truncate text-xs font-normal tracking-tighter dark:bg-white/10"
+              className="grid grid-cols-3 gap-2 truncate rounded text-xs font-normal tracking-tighter"
             >
-              <span>{item.pageUrl}</span>
-              &middot;
-              {item.info.previousPages.map((page, pageIdx) => (
-                <span key={`transition-prev-${itemIdx}-page-${pageIdx}`}>{page.label}</span>
-              ))}
-              &middot;
-              {item.info.followingPages.map((page, pageIdx) => (
-                <span key={`transition-next-${itemIdx}-page-${pageIdx}`}>{page.label}</span>
-              ))}
+              <span className="flex flex-col bg-slate-100 px-2 py-2 dark:bg-white/10">
+                {item.info.previousPages.map((page, pageIdx) => (
+                  <span key={`transition-prev-${itemIdx}-page-${pageIdx}`} className="truncate">
+                    {page.label.replace('localhost', '')}
+                  </span>
+                ))}
+              </span>
+              <span className="flex flex-col items-center justify-center truncate bg-slate-100 dark:bg-white/10">
+                {item.pageUrl}
+              </span>
+              <span className="flex flex-col bg-slate-100 px-2 py-2 dark:bg-white/10">
+                {item.info.followingPages.map((page, pageIdx) => (
+                  <span key={`transition-next-${itemIdx}-page-${pageIdx}`} className="truncate">
+                    {page.label.replace('localhost', '')}
+                  </span>
+                ))}
+              </span>
             </li>
           );
         })}
