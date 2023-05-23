@@ -1017,7 +1017,7 @@ function ScoreCalculcationApproachDialog() {
 function Formula() {
   return (
     <code className="my-4 block bg-navy px-3 py-2 text-sm font-normal tracking-[-0.07rem] text-white dark:bg-white/10 dark:text-white">
-      score = max(0, 100 - 10*errors - 8*stepErrors - 5*tabChanges - 3*cancels)
+      score = max(0, 100 - 10*errors - 5*tabChanges - 8*cancels)
     </code>
   );
 }

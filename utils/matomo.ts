@@ -147,19 +147,19 @@ export const evaluateWizards = (wizards: ITrackerEventGroup[]): IWizard[] => {
 
       // fail step penalty
       if (event.action.includes(WizardAction.FailStep)) {
-        score -= 8;
+        score -= 10;
         errorCount++;
       }
 
       // back to previous step penalty
       if (event.action.includes(WizardAction.BackStep)) {
-        score -= 5;
+        score -= 6;
         backStepCount++;
       }
 
       // cancel wizard penalty
       if (event.action.includes(WizardAction.Cancel)) {
-        score -= 3;
+        score -= 8;
       }
     }
 
@@ -271,9 +271,27 @@ export const evaluateExecutionViews = (executionViews: ITrackerEventGroup[]): IE
     let timespan = findComponentTimespan(executionView.events);
 
     // TODO: evaluate execution view events and type actions
+    for (const event of executionView.events) {
+      // error penalty
+      if (event.action.includes(ExecutionViewAction.Error)) {
+        score -= 10;
+        errorCount++;
+      }
+
+      // tab change penalty
+      if (event.action.includes(ExecutionViewAction.TabChange)) {
+        score -= 5;
+        errorCount++;
+      }
+
+      // cancel penalty
+      if (event.action.includes(ExecutionViewAction.Cancel)) {
+        score -= 10;
+      }
+    }
 
     const lastEvent = executionView.events[executionView.events.length - 1];
-    if (lastEvent.action.includes(WizardAction.Complete)) {
+    if (lastEvent.action.includes(ExecutionViewAction.Complete)) {
       completed = true;
     }
 
