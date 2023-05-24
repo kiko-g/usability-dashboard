@@ -31,14 +31,6 @@ export enum ExecutionViewAction {
   TabChange = 'Tab Change',
 }
 
-export const osMapping: { [key: string]: string } = {
-  WIN: 'Windows',
-  MAC: 'macOS',
-  LIN: 'Linux',
-  AND: 'Android',
-  IOS: 'iOS',
-};
-
 export const config = {
   matomoToken: process.env.NEXT_PUBLIC_MATOMO_TOKEN,
   matomoSiteId: process.env.NEXT_PUBLIC_MATOMO_SITE_ID,
@@ -138,30 +130,31 @@ export const evaluateWizards = (wizards: ITrackerEventGroup[]): IWizard[] => {
     let backStepCount = 0;
     let timespan = findComponentTimespan(wizard.events);
 
-    for (const event of wizard.events) {
-      // wizard error penalty
+    wizard.events.forEach((event, index) => {
       if (event.action.includes(WizardAction.Error)) {
+        // wizard error penalty
         score -= 10;
         errorCount++;
       }
 
-      // fail step penalty
-      if (event.action.includes(WizardAction.FailStep)) {
+      else if (event.action.includes(WizardAction.FailStep)) {
+        // fail step penalty
         score -= 10;
         errorCount++;
       }
 
-      // back to previous step penalty
-      if (event.action.includes(WizardAction.BackStep)) {
+      else if (event.action.includes(WizardAction.BackStep)) {
+        // back to previous step penalty
         score -= 6;
         backStepCount++;
       }
 
-      // cancel wizard penalty
-      if (event.action.includes(WizardAction.Cancel)) {
-        score -= 8;
+      else if (event.action.includes(WizardAction.Cancel)) {
+        // cancel wizard penalty
+        if(timespan > 20) score -= 4*(errorCount+backStepCount);
+        else score -= 5;
       }
-    }
+    });
 
     const lastEvent = wizard.events[wizard.events.length - 1];
     if (lastEvent.action.includes(WizardAction.Complete)) {
