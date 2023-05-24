@@ -151,7 +151,7 @@ export const evaluateWizards = (wizards: ITrackerEventGroup[]): IWizard[] => {
 
       else if (event.action.includes(WizardAction.Cancel)) {
         // cancel wizard penalty
-        if(timespan > 20) score -= 4*(errorCount+backStepCount);
+        if(timespan > 20) score -= 0.05*timespan - 4*(errorCount+backStepCount);
         else score -= 5;
       }
     });
