@@ -15,7 +15,7 @@ services:
   db:
     image: mysql:latest
     ports:
-      - '55000:3306'
+      - '5550:3306'
     env_file:
       - .env
     volumes:

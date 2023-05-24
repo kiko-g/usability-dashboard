@@ -9,13 +9,9 @@ import {
   ArrowLongUpIcon,
   ArrowPathIcon,
   ArrowsPointingOutIcon,
-  Bars3CenterLeftIcon,
   Bars4Icon,
-  BarsArrowUpIcon,
   CheckCircleIcon,
-  ChevronRightIcon,
   ChevronUpDownIcon,
-  ChevronUpIcon,
   CircleStackIcon,
   CodeBracketIcon,
   MagnifyingGlassIcon,
@@ -34,9 +30,7 @@ export default function Visits() {
   const [loading, setLoading] = React.useState<boolean>(true);
   const [willFetch, setWillFetch] = React.useState<boolean>(true);
 
-  React.useEffect(() => {
-    if (!willFetch) return;
-
+  const fetchData = () => {
     setError(false);
     setLoading(true);
 
@@ -52,11 +46,16 @@ export default function Visits() {
           return res.json();
         }
       })
-      .then((data: any) => {
+      .then((data: Visits) => {
         setLoading(false);
         setWillFetch(false);
-        setData(data === null || data.length === 0 ? null : data);
+        if (data !== null) setData(data);
       });
+  };
+
+  React.useEffect(() => {
+    if (!willFetch) return;
+    fetchData();
   }, [willFetch]);
 
   return (
@@ -83,22 +82,11 @@ export default function Visits() {
               </button>
             )}
 
-            <Link
-              target="_blank"
-              title="Inspect JSON data"
-              href="/api/matomo/events/wizard"
-              className="hover:opacity-80"
-            >
+            <Link target="_blank" title="Inspect JSON data" href="/api/matomo/visits" className="hover:opacity-80">
               <CodeBracketIcon className="h-6 w-6" />
             </Link>
 
-            <button
-              title="Retry fetching data"
-              className="hover:opacity-80"
-              onClick={() => {
-                setWillFetch(true);
-              }}
-            >
+            <button title="Retry fetching data" className="hover:opacity-80" onClick={() => fetchData()}>
               <ArrowPathIcon className="h-6 w-6" />
             </button>
           </div>
@@ -118,7 +106,7 @@ export default function Visits() {
               {data.browsers && <FrequencyTable title="Browsers" freq={data.browsers} />}
               {data.screens && <FrequencyTable title="Screen Sizes" freq={data.screens} />}
             </div>
-            <PageTransitionSummary transitions={data?.transitions} />
+            {/* <PageTransitionSummary transitions={data?.transitions} /> */}
           </div>
         )}
       </article>
@@ -130,7 +118,7 @@ function FrequencyTable({ twClasses, title, freq }: { twClasses?: string; title:
   return (
     <div className={classNames(twClasses, 'flex-1 self-stretch rounded bg-white p-4 dark:bg-darker')}>
       <h2 className="text-xl font-bold tracking-tighter">{title}</h2>
-      <ul className="mt-2 flex max-h-40 flex-col space-y-2 overflow-scroll">
+      <ul className="mt-2 flex max-h-40 flex-col space-y-2 overflow-y-scroll">
         {freq
           .filter((item) => item.value > 0)
           .map((item, itemIdx) => (
@@ -215,7 +203,7 @@ function PagesFrequencies({ twClasses, data }: { twClasses?: string; data: Visit
       </div>
 
       {/* List */}
-      <ul className="mt-2 flex max-h-[300px] flex-1 flex-col space-y-2 self-stretch overflow-scroll">
+      <ul className="mt-2 flex max-h-[300px] flex-1 flex-col space-y-2 self-stretch overflow-y-scroll">
         {pagesFiltered.length === 0 ? (
           <li className="text-sm">No match.</li>
         ) : (
@@ -304,7 +292,7 @@ function PagesFrequencies({ twClasses, data }: { twClasses?: string; data: Visit
                     </div>
 
                     {/* List */}
-                    <div className="z-50 mx-auto mt-3 max-h-[60vh] w-full space-y-2 overflow-scroll rounded bg-white p-3 shadow dark:bg-white/5">
+                    <div className="z-50 mx-auto mt-3 max-h-[60vh] w-full space-y-2 overflow-y-scroll rounded bg-white p-3 shadow dark:bg-white/5">
                       {pagesFiltered
                         .filter((item) => item.value > 0)
                         .map((item, itemIdx) => (
@@ -378,7 +366,7 @@ function VisitsSummary({ twClasses, overview }: { twClasses?: string; overview: 
         <div className="flex items-center gap-2"></div>
       </div>
 
-      <ul className="mt-2 flex flex-1 flex-col space-y-2 self-stretch overflow-scroll">
+      <ul className="mt-2 flex flex-1 flex-col space-y-2 self-stretch overflow-y-scroll">
         {summary.map((item, itemIdx) => (
           <li
             key={`summary-${itemIdx}`}
@@ -398,9 +386,8 @@ function VisitsSummary({ twClasses, overview }: { twClasses?: string; overview: 
 }
 
 function PageTransitionSummary({ twClasses, transitions }: { twClasses?: string; transitions: TransitionMatomo[] }) {
-  const options = React.useMemo(() => transitions.map((item) => item), [transitions]);
+  const options = transitions.map((item) => item);
   const [picked, setPicked] = React.useState(options[0]);
-  console.log(picked);
 
   return (
     <div
