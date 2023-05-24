@@ -1069,7 +1069,7 @@ function ScoreCalculcationApproachDialog() {
 function Formula() {
   return (
     <code className="my-4 block bg-navy px-3 py-2 text-sm font-normal tracking-[-0.07rem] text-white dark:bg-white/10 dark:text-white">
-      wizardScore = max(0, 100 - 10*errors - 10*stepErrors - 6*backSteps - 8*cancels)
+      score = max(0, 100 - 10*errors - 10*stepErrors - 6*backSteps - 8*cancels)
     </code>
   );
 }

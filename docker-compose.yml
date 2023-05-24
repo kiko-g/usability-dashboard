@@ -4,43 +4,22 @@ services:
   matomo:
     image: matomo
     ports:
-      - '80:80'
-      - '443:443'
+      - '8081:80'
     depends_on:
       - db
     env_file:
       - .env
     volumes:
       - matomo_data:/var/www/html
+
   db:
     image: mysql:latest
     ports:
-      - '3306:3306'
+      - '55000:3306'
     env_file:
       - .env
     volumes:
       - db_data:/var/lib/mysql
-  phpmyadmin:
-    image: phpmyadmin:latest
-    ports:
-      - '8080:80'
-    env_file:
-      - .env
-    depends_on:
-      - db
-
-  nextjs:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - .:/app
-      - /app/node_modules
-    ports:
-      - '3000:3000'
-    env_file:
-      - .env
-    command: npm run dev
 
 volumes:
   matomo_data:
