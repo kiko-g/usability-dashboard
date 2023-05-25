@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import classNames from 'classnames';
-import { CheckCircleIcon, ShieldExclamationIcon, XCircleIcon, XMarkIcon } from '@heroicons/react/24/solid';
+import { CheckCircleIcon, ShieldExclamationIcon, XMarkIcon } from '@heroicons/react/24/solid';
 
 type Props = {};
 
@@ -15,7 +15,7 @@ export default function ServiceNotice({}: Props) {
     const checkServiceStatus = async () => {
       try {
         // Update the URL to match your API route
-        const response = await axios.get('/api/pingMatomoApi');
+        const response = await axios.get('/api/matomo/ping');
 
         if (response.status === 200) {
           setServiceStatus('available');
