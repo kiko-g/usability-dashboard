@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import classNames from 'classnames';
-import { CheckCircleIcon, ShieldExclamationIcon, XMarkIcon } from '@heroicons/react/24/solid';
+import { ArrowPathIcon, CheckCircleIcon, ShieldExclamationIcon, XMarkIcon } from '@heroicons/react/24/solid';
 
 type Props = {};
 
@@ -34,9 +34,9 @@ export default function ServiceNotice({}: Props) {
     <div
       className={classNames(
         'relative w-full rounded-md border p-4',
-        serviceStatus === 'available'
-          ? 'border-emerald-400 bg-emerald-50/60 dark:bg-emerald-50/90'
-          : 'border-rose-400 bg-rose-50/60 dark:bg-rose-50/90',
+        serviceStatus === 'available' && 'border-emerald-400 bg-emerald-50/60 dark:bg-emerald-50/90',
+        serviceStatus === 'unavailable' && 'border-rose-400 bg-rose-50/60 dark:bg-rose-50/90',
+        serviceStatus === null && 'border-gray-400 bg-gray-50/60 dark:bg-gray-50/90',
         dismissed ? 'hidden' : 'block'
       )}
     >
@@ -79,6 +79,20 @@ export default function ServiceNotice({}: Props) {
                   <strong>database</strong> icon on the top right of the page to activate mock data.
                 </li>
               </ul>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {serviceStatus === null && (
+        <div className="flex">
+          <div className="flex-shrink-0">
+            <ArrowPathIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+          </div>
+          <div className="ml-3">
+            <h3 className="text-sm font-medium text-gray-800">Checking Matomo Service</h3>
+            <div className="mt-2 text-sm text-gray-700">
+              <p>Waiting for Matomo service response.</p>
             </div>
           </div>
         </div>

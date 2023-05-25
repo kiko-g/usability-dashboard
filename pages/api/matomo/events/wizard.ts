@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { config, parseEvents, evaluateWizards, groupWizards } from '../../../../utils/matomo';
+import { config, parseEvents, evaluateWizards, groupWizardsByType } from '../../../../utils/matomo';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { CustomAPIError, IWizardGroup } from '../../../../@types';
 
@@ -21,7 +21,7 @@ export default async function getWizardEvents(req: NextApiRequest, res: NextApiR
 
     const wizards = parseEvents(response.data, 'wizard');
     const evaluatedWizards = evaluateWizards(wizards);
-    const groupedWizards = groupWizards(evaluatedWizards);
+    const groupedWizards = groupWizardsByType(evaluatedWizards);
     return res.status(200).json(groupedWizards);
   } catch (err) {
     return res.status(500).json({ error: 'Internal server error' });

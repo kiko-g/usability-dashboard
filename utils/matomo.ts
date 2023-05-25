@@ -149,6 +149,8 @@ export const evaluateWizards = (wizards: ITrackerEventGroup[]): IWizard[] => {
     const lastEvent = wizard.events[wizard.events.length - 1];
     if (lastEvent.action.includes(WizardAction.Complete)) {
       completed = true;
+    } else {
+      score -= 5;
     }
 
     if (score < 20 && completed) score = 20;
@@ -169,7 +171,7 @@ export const evaluateWizards = (wizards: ITrackerEventGroup[]): IWizard[] => {
   return result;
 };
 
-export const groupWizards = (wizards: IWizard[]): IWizardGroup[] => {
+export const groupWizardsByType = (wizards: IWizard[]): IWizardGroup[] => {
   const groupedWizards: IWizardGroup[] = [];
 
   // group wizards by name
@@ -253,29 +255,26 @@ export const evaluateExecutionViews = (executionViews: ITrackerEventGroup[]): IE
     let tabChangeCount = 0;
     let timespan = findComponentTimespan(executionView.events);
 
-    // TODO: evaluate execution view events and type actions
-    for (const event of executionView.events) {
-      // error penalty
+    executionView.events.forEach((event, index) => {
       if (event.action.includes(ExecutionViewAction.Error)) {
         score -= 10;
         errorCount++;
-      }
-
-      // tab change penalty
-      if (event.action.includes(ExecutionViewAction.TabChange)) {
-        score -= 5;
-        errorCount++;
-      }
-
-      // cancel penalty
-      if (event.action.includes(ExecutionViewAction.Cancel)) {
+      } else if (event.action.includes(ExecutionViewAction.Error)) {
         score -= 10;
+        errorCount++;
+      } else if (event.action.includes(ExecutionViewAction.TabChange)) {
+        tabChangeCount++;
+      } else if (event.action.includes(WizardAction.Cancel)) {
+        if (timespan > 20) score -= timespan / 20 - 4 * errorCount;
+        else score -= 5;
       }
-    }
+    });
 
     const lastEvent = executionView.events[executionView.events.length - 1];
     if (lastEvent.action.includes(ExecutionViewAction.Complete)) {
       completed = true;
+    } else {
+      score -= 5;
     }
 
     if (score < 20 && completed) score = 20;
