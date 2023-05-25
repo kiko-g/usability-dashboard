@@ -9,6 +9,7 @@ import {
   ViewfinderCircleIcon,
 } from '@heroicons/react/24/outline';
 import classNames from 'classnames';
+import ServiceNotice from '../components/ServiceNotice';
 
 type NavAction = {
   title: string;
@@ -30,28 +31,28 @@ export default function Hub() {
       text: 'Take a look at how your users are using your software: page views, time spent on pages, frequent page pathways, devices used, and more.',
       href: '/visits',
       icon: ViewfinderCircleIcon,
-      iconClasses: 'bg-teal-50 group-hover:bg-teal-700 group-hover:text-white text-teal-700',
+      iconClasses: 'bg-teal-50 group-hover:bg-teal-600 group-hover:text-white text-teal-600',
     },
     {
       title: 'Wizard Interactions',
       text: 'Take a look at how your users are using the wizards: grouped wizards insights with time spent on wizards, errors, previous step clicks, completion rates, individual wizard inspection, and more.',
       href: '/wizards',
       icon: MapIcon,
-      iconClasses: 'bg-orange-50 group-hover:bg-orange-700 group-hover:text-white text-orange-700',
+      iconClasses: 'bg-orange-50 group-hover:bg-orange-600 group-hover:text-white text-orange-600',
     },
     {
       title: 'Execution Views Interactions',
       text: 'Take a look at how your users are using the execution views: grouped execution views insights with time spent on execution views, errors, previous step clicks, completion rates, individual execution view inspection, and more.',
       href: '/executions',
       icon: ViewColumnsIcon,
-      iconClasses: 'bg-sky-50 group-hover:bg-sky-700 group-hover:text-white text-sky-700',
+      iconClasses: 'bg-sky-50 group-hover:bg-sky-600 group-hover:text-white text-sky-600',
     },
     {
       title: 'Button Clicks',
       text: 'Inspect the button clicks and see which buttons are clicked the most and which are clicked the least among other insights.',
       href: '/buttons',
       icon: CursorArrowRaysIcon,
-      iconClasses: 'bg-rose-50 group-hover:bg-rose-700 group-hover:text-white text-rose-700',
+      iconClasses: 'bg-rose-50 group-hover:bg-rose-600 group-hover:text-white text-rose-600',
     },
   ];
 
@@ -95,6 +96,7 @@ export default function Hub() {
             </Link>
           ))}
         </div>
+        <ServiceNotice />
       </article>
     </Layout>
   );

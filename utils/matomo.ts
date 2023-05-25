@@ -132,26 +132,16 @@ export const evaluateWizards = (wizards: ITrackerEventGroup[]): IWizard[] => {
 
     wizard.events.forEach((event, index) => {
       if (event.action.includes(WizardAction.Error)) {
-        // wizard error penalty
         score -= 10;
         errorCount++;
-      }
-
-      else if (event.action.includes(WizardAction.FailStep)) {
-        // fail step penalty
+      } else if (event.action.includes(WizardAction.FailStep)) {
         score -= 10;
         errorCount++;
-      }
-
-      else if (event.action.includes(WizardAction.BackStep)) {
-        // back to previous step penalty
-        score -= 6;
+      } else if (event.action.includes(WizardAction.BackStep)) {
+        score -= 5;
         backStepCount++;
-      }
-
-      else if (event.action.includes(WizardAction.Cancel)) {
-        // cancel wizard penalty
-        if(timespan > 20) score -= 0.05*timespan - 4*(errorCount+backStepCount);
+      } else if (event.action.includes(WizardAction.Cancel)) {
+        if (timespan > 20) score -= timespan / 20 - 4 * (errorCount + backStepCount);
         else score -= 5;
       }
     });

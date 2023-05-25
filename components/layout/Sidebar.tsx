@@ -67,7 +67,7 @@ export function Sidebar({ location }: SidebarProps) {
   return (
     <aside className="hidden h-screen min-w-full flex-col space-y-4 bg-white p-5 dark:bg-darkest md:flex md:min-w-[20%]">
       <div className="flex items-center justify-start gap-2 px-2">
-        <span className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 dark:from-violet-400 dark:to-indigo-400" />
+        <span className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 dark:from-teal-400 dark:to-cyan-400" />
         <h1 className="text-2xl font-medium tracking-tighter">CMF MES UX</h1>
       </div>
       <hr />
@@ -149,7 +149,7 @@ export function MobileNav({ title, location }: MobileNavProps) {
               >
                 {open ? null : (
                   <Link href="/" className="flex items-center gap-x-2">
-                    <div className="h-6 w-6 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 shadow dark:bg-gradient-to-br dark:from-violet-400 dark:to-indigo-400"></div>
+                    <div className="h-6 w-6 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 shadow dark:bg-gradient-to-br dark:from-teal-400 dark:to-cyan-400"></div>
                     <span className="whitespace-nowrap font-bold tracking-tight">{title}</span>
                   </Link>
                 )}

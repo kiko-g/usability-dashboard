@@ -599,7 +599,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
       <button
         type="button"
         onClick={openModal}
-        className="group flex w-full flex-col items-center justify-between gap-2 rounded border border-primary bg-primary/50 px-2 py-2 text-white transition hover:bg-primary/80 dark:border-secondary dark:bg-secondary/20 dark:hover:bg-secondary/80 lg:flex-row lg:px-4 lg:py-2.5"
+        className="group flex w-full flex-col items-center justify-between gap-2 rounded border border-primary bg-primary/60 px-2 py-2 text-white transition hover:bg-primary/80 dark:border-secondary dark:bg-secondary/20 dark:hover:bg-secondary/80 lg:flex-row lg:px-4 lg:py-2.5"
       >
         <span className="flex items-center justify-between gap-1.5 text-xs font-normal lg:text-sm lg:font-medium">
           <span className="text-left tracking-tighter lg:tracking-normal">{wizardGroup.name}</span>
@@ -1068,8 +1068,24 @@ function ScoreCalculcationApproachDialog() {
 
 function Formula() {
   return (
-    <code className="my-4 block bg-navy px-3 py-2 text-sm font-normal tracking-[-0.07rem] text-white dark:bg-white/10 dark:text-white">
-      score = max(0, 100 - 10*errors - 10*stepErrors - 6*backSteps - 8*cancels)
-    </code>
+    <>
+      <p className="mb-1 mt-4">
+        If wizard timespan is <strong>greater than 20s</strong>:
+      </p>
+      <code className="mb-4 block bg-navy px-3 py-2 text-sm font-normal tracking-[-0.07rem] text-white dark:bg-white/10 dark:text-white">
+        score = max(0, 100 - 10*errors - 10*stepErrors - 5*backSteps - ((timespan / 20) - 4 * (errorCount +
+        backStepCount))*cancel)
+      </code>
+
+      <p className="mb-1 mt-4">Otherwise:</p>
+      <code className="mb-4 block bg-navy px-3 py-2 text-sm font-normal tracking-[-0.07rem] text-white dark:bg-white/10 dark:text-white">
+        score = max(0, 100 - 10*errors - 10*stepErrors - 5*backSteps - 5*cancel)
+      </code>
+
+      <p className="mb-1 mt-4">
+        In case the score is <strong>below 20 and the wizard was completed</strong> we directly assign a score of 20 to
+        the wizard, rewarding the completion.
+      </p>
+    </>
   );
 }
