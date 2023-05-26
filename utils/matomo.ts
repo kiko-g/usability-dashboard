@@ -126,35 +126,43 @@ export const evaluateWizards = (wizards: ITrackerEventGroup[]): IWizard[] => {
 
     let score = 100;
     let completed = false;
+    let cancelled = false;
     let errorCount = 0;
     let backStepCount = 0;
     let timespan = findComponentTimespan(wizard.events);
 
     wizard.events.forEach((event, index) => {
       if (event.action.includes(WizardAction.Error)) {
+        // error penalty
         score -= 10;
         errorCount++;
       } else if (event.action.includes(WizardAction.FailStep)) {
+        // step fail penalty
         score -= 10;
         errorCount++;
       } else if (event.action.includes(WizardAction.BackStep)) {
+        // back to previous step penalty
         score -= 5;
         backStepCount++;
       } else if (event.action.includes(WizardAction.Cancel)) {
+        // cancel wizard penalty
+        cancelled = true;
         if (timespan > 20) score -= timespan / 20 - 4 * (errorCount + backStepCount);
         else score -= 5;
+      } else if (event.action.includes(WizardAction.Complete)) {
+        // complete wizard bonus
+        completed = true;
       }
     });
 
-    const lastEvent = wizard.events[wizard.events.length - 1];
-    if (lastEvent.action.includes(WizardAction.Complete)) {
-      completed = true;
-    } else {
-      score -= 5;
+    // prevent the absence of complete or cancel action
+    if (!completed && !cancelled) {
+      if (timespan > 20) score -= timespan / 20 - 4 * (errorCount + backStepCount);
+      else score -= 5;
     }
 
-    if (score < 20 && completed) score = 20;
-    else if (score < 0) score = 0;
+    if (score < 20 && completed) score = 20; // prevent too low score if completed
+    else if (score < 0) score = 0; // prevent negative score
 
     const evaluatedWizard: IWizard = {
       ...wizard,
@@ -251,34 +259,38 @@ export const evaluateExecutionViews = (executionViews: ITrackerEventGroup[]): IE
 
     let score = 100;
     let completed = false;
+    let cancelled = false;
     let errorCount = 0;
     let tabChangeCount = 0;
     let timespan = findComponentTimespan(executionView.events);
 
     executionView.events.forEach((event, index) => {
       if (event.action.includes(ExecutionViewAction.Error)) {
-        score -= 10;
-        errorCount++;
-      } else if (event.action.includes(ExecutionViewAction.Error)) {
+        // error penalty
         score -= 10;
         errorCount++;
       } else if (event.action.includes(ExecutionViewAction.TabChange)) {
+        // process tab change
         tabChangeCount++;
-      } else if (event.action.includes(WizardAction.Cancel)) {
+      } else if (event.action.includes(ExecutionViewAction.Cancel)) {
+        // cancel wizard penalty
+        cancelled = true;
         if (timespan > 20) score -= timespan / 20 - 4 * errorCount;
         else score -= 5;
+      } else if (event.action.includes(ExecutionViewAction.Complete)) {
+        // complete wizard bonus
+        completed = true;
       }
     });
 
-    const lastEvent = executionView.events[executionView.events.length - 1];
-    if (lastEvent.action.includes(ExecutionViewAction.Complete)) {
-      completed = true;
-    } else {
-      score -= 5;
+    // prevent the absence of complete or cancel action
+    if (!completed && !cancelled) {
+      if (timespan > 20) score -= timespan / 20 - 4 * errorCount;
+      else score -= 5;
     }
 
-    if (score < 20 && completed) score = 20;
-    else if (score < 0) score = 0;
+    if (score < 20 && completed) score = 20; // prevent too low score if completed
+    else if (score < 0) score = 0; // prevent negative score
 
     const evaluatedExecutionView: IExecutionView = {
       ...executionView,

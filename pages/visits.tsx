@@ -233,7 +233,7 @@ function PagesFrequencies({ twClasses, data }: { twClasses?: string; data: Visit
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm dark:bg-black/40" />
+            <div className="fixed inset-0 bg-black/60 backdrop-blur dark:bg-white/10" />
           </Transition.Child>
 
           <div className="fixed inset-0 overflow-y-auto">

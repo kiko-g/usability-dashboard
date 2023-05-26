@@ -650,7 +650,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm dark:bg-black/40" />
+            <div className="fixed inset-0 bg-black/60 backdrop-blur dark:bg-white/10" />
           </Transition.Child>
 
           <div className="fixed inset-0 overflow-y-auto">
@@ -1017,7 +1017,7 @@ function ScoreCalculcationApproachDialog() {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm dark:bg-black/40" />
+            <div className="fixed inset-0 bg-black/60 backdrop-blur dark:bg-white/10" />
           </Transition.Child>
 
           <div className="fixed inset-0 overflow-y-auto">
@@ -1031,7 +1031,7 @@ function ScoreCalculcationApproachDialog() {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all dark:bg-navy">
+                <Dialog.Panel className="w-full max-w-5xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all dark:bg-navy">
                   <Dialog.Title
                     as="h3"
                     className="mb-3 font-sans text-lg font-bold leading-6 text-gray-800 dark:text-white"
@@ -1050,7 +1050,7 @@ function ScoreCalculcationApproachDialog() {
                   <div className="mt-8 flex items-center justify-end">
                     <button
                       type="button"
-                      className="flex items-center gap-2 rounded bg-primary px-4 py-2 text-sm text-white transition hover:opacity-80 dark:bg-secondary"
+                      className="flex items-center gap-2 rounded bg-emerald-600 px-4 py-2 text-sm text-white transition hover:opacity-80 dark:bg-emerald-600"
                       onClick={closeModal}
                     >
                       <span>Got it, thanks!</span>
@@ -1069,20 +1069,30 @@ function ScoreCalculcationApproachDialog() {
 function Formula() {
   return (
     <>
+      <p className="mb-1 mt-4">First we establish a baseline score:</p>
+      <code className="mb-4 block bg-navy px-3 py-2 text-sm font-normal tracking-[-0.07rem] text-white dark:bg-white/10 dark:text-white">
+        score = 100 - 10*errors - 10*stepErrors - 5*backSteps
+      </code>
+
       <p className="mb-1 mt-4">
-        If wizard timespan is <strong>greater than 20s</strong>:
+        If the <strong>wizard was cancelled</strong> we deduct extra points. In case the user was evidently attempting
+        to complete it then the <strong>timespan should be greater than 10s</strong> and/or{' '}
+        <strong>there should be at least one negative action</strong>:
       </p>
       <code className="mb-4 block bg-navy px-3 py-2 text-sm font-normal tracking-[-0.07rem] text-white dark:bg-white/10 dark:text-white">
-        score = max(0, 100 - 10*errors - 10*stepErrors - 5*backSteps - ((timespan / 20) - 4 * (errorCount +
-        backStepCount))*cancel)
-      </code>
-
-      <p className="mb-1 mt-4">Otherwise:</p>
-      <code className="mb-4 block bg-navy px-3 py-2 text-sm font-normal tracking-[-0.07rem] text-white dark:bg-white/10 dark:text-white">
-        score = max(0, 100 - 10*errors - 10*stepErrors - 5*backSteps - 5*cancel)
+        score = score - timespan/20 - 4*(errors + stepErrors + backStepCount)
       </code>
 
       <p className="mb-1 mt-4">
+        If there are <strong>no negative actions</strong> or the <strong>timespan was under 10 seconds</strong> we only
+        deduct a small amount:
+      </p>
+      <code className="mb-4 block bg-navy px-3 py-2 text-sm font-normal tracking-[-0.07rem] text-white dark:bg-white/10 dark:text-white">
+        score = score - 5
+      </code>
+
+      <p className="mb-1 mt-4">
+        The <strong>minimum score is 0</strong>, so if the score drops below that, we directly assign it a score of 0.
         In case the score is <strong>below 20 and the wizard was completed</strong> we directly assign a score of 20 to
         the wizard, rewarding the completion.
       </p>
