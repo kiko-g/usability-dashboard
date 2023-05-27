@@ -17,6 +17,7 @@ import {
   MagnifyingGlassIcon,
   RectangleStackIcon,
 } from '@heroicons/react/24/outline';
+import { CheckCircleIcon as CheckCircleSolidIcon } from '@heroicons/react/24/solid';
 import { mockVisitsData as mockData } from '../utils/mock';
 import { Layout } from '../components/layout';
 import { Loading, NotFound } from '../components/utils';
@@ -236,8 +237,8 @@ function PagesFrequencies({ twClasses, data }: { twClasses?: string; data: Visit
             <div className="fixed inset-0 bg-black/60 backdrop-blur dark:bg-white/10" />
           </Transition.Child>
 
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center">
+          <div className="fixed right-0 top-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center text-center">
               <Transition.Child
                 as={Fragment}
                 enter="ease-out duration-300"
@@ -247,79 +248,82 @@ function PagesFrequencies({ twClasses, data }: { twClasses?: string; data: Visit
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-slate-50 p-6 text-left align-middle shadow-xl transition-all dark:bg-navy">
-                  <div className="flex items-center justify-between gap-2">
-                    <Dialog.Title
-                      as="h3"
-                      className="mb-3 text-lg font-bold leading-6 tracking-tighter text-gray-800 dark:text-white"
-                    >
-                      Top Pages Focus View
-                    </Dialog.Title>
-
-                    <div>
-                      <button
-                        type="button"
-                        onClick={toggleIsFlat}
-                        className="text-gray-700 transition hover:opacity-80 dark:text-white"
+                <Dialog.Panel className="flex h-screen w-full transform flex-col justify-between gap-4 overflow-scroll bg-white p-6 text-left align-middle shadow-xl transition-all dark:bg-navy md:max-w-3xl">
+                  <div>
+                    <div className="flex items-center justify-between gap-2">
+                      <Dialog.Title
+                        as="h3"
+                        className="mb-3 text-lg font-bold leading-6 tracking-tighter text-gray-800 dark:text-white"
                       >
-                        {isFlat ? <Bars4Icon className="h-5 w-5" /> : <RectangleStackIcon className="h-5 w-5" />}
-                      </button>
-                    </div>
-                  </div>
+                        Top Pages Focus View
+                      </Dialog.Title>
 
-                  <div className="mt-2 font-normal text-gray-700 dark:text-white">
-                    {/* Search */}
-                    <div className="mb-1 w-full">
-                      <label htmlFor="email" className="sr-only">
-                        Search pages
-                      </label>
-                      <div className="mt-2 flex rounded-md shadow-sm">
-                        <div className="relative flex flex-grow items-stretch focus-within:z-10">
-                          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                            <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                          </div>
-                          <input
-                            type="email"
-                            name="email"
-                            id="email"
-                            placeholder="Filter by page name"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6"
-                          />
-                        </div>
+                      <div>
+                        <button
+                          type="button"
+                          onClick={toggleIsFlat}
+                          className="text-gray-700 transition hover:opacity-80 dark:text-white"
+                        >
+                          {isFlat ? <Bars4Icon className="h-5 w-5" /> : <RectangleStackIcon className="h-5 w-5" />}
+                        </button>
                       </div>
                     </div>
 
-                    {/* List */}
-                    <div className="z-50 mx-auto mt-3 max-h-[60vh] w-full space-y-2 overflow-y-scroll rounded bg-white p-3 shadow dark:bg-white/5">
-                      {pagesFiltered
-                        .filter((item) => item.value > 0)
-                        .map((item, itemIdx) => (
-                          <Disclosure key={`frequency-disclosure-${item.name}-${itemIdx}`}>
-                            {({ open }) => (
-                              <>
-                                <Disclosure.Button className="flex w-full justify-between rounded bg-slate-100 px-4 py-2 text-left text-sm font-medium text-slate-900 transition hover:bg-slate-600 hover:text-white dark:bg-white/20 dark:text-white dark:hover:opacity-80">
-                                  <span className="font-medium tracking-tighter">{item.name}</span>
-                                  <span className="font-mono">{item.value}</span>
-                                </Disclosure.Button>
-                                <Disclosure.Panel className="px-2 py-2 text-sm tracking-tighter text-gray-600 dark:text-white">
-                                  Inner content
-                                </Disclosure.Panel>
-                              </>
-                            )}
-                          </Disclosure>
-                        ))}
+                    <div className="mt-2 font-normal text-gray-700 dark:text-white">
+                      {/* Search */}
+                      <div className="mb-1 w-full">
+                        <label htmlFor="email" className="sr-only">
+                          Search pages
+                        </label>
+                        <div className="mt-2 flex rounded-md shadow-sm">
+                          <div className="relative flex flex-grow items-stretch focus-within:z-10">
+                            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                              <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                            </div>
+                            <input
+                              type="email"
+                              name="email"
+                              id="email"
+                              placeholder="Filter by page name"
+                              value={searchQuery}
+                              onChange={(e) => setSearchQuery(e.target.value)}
+                              className="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* List */}
+                      <div className="z-50 mx-auto mt-3 max-h-[70vh] w-full space-y-2 overflow-y-scroll rounded bg-white p-3 shadow dark:bg-white/5">
+                        {pagesFiltered
+                          .filter((item) => item.value > 0)
+                          .map((item, itemIdx) => (
+                            <Disclosure key={`frequency-disclosure-${item.name}-${itemIdx}`}>
+                              {({ open }) => (
+                                <>
+                                  <Disclosure.Button className="flex w-full justify-between rounded bg-slate-100 px-4 py-2 text-left text-sm font-medium text-slate-900 transition hover:bg-slate-600 hover:text-white dark:bg-white/20 dark:text-white dark:hover:opacity-80">
+                                    <span className="font-medium tracking-tighter">{item.name}</span>
+                                    <span className="font-mono">{item.value}</span>
+                                  </Disclosure.Button>
+                                  <Disclosure.Panel className="px-2 py-2 text-sm tracking-tighter text-gray-600 dark:text-white">
+                                    Inner content
+                                  </Disclosure.Panel>
+                                </>
+                              )}
+                            </Disclosure>
+                          ))}
+                      </div>
                     </div>
                   </div>
 
-                  <div className="mt-4 flex items-center justify-end">
+                  <div className="flex items-center justify-end">
                     <button
                       type="button"
-                      className="flex items-center gap-2 rounded bg-slate-600 px-4 py-2 text-sm text-white transition hover:opacity-80 dark:bg-slate-700"
+                      className="flex w-full items-center justify-center gap-2 bg-teal-600/20 px-4 py-2 text-sm font-medium text-teal-700 transition hover:bg-teal-600 hover:text-white"
                       onClick={closeModal}
                     >
-                      <span>Got it, thanks!</span>
+                      <span>Roger that</span>
+                      <CheckCircleSolidIcon className="h-5 w-5" />
                     </button>
                   </div>
                 </Dialog.Panel>

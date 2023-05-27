@@ -598,8 +598,8 @@ function ExecutionViewGroupFocus({ executionViewGroup }: { executionViewGroup: I
             <div className="fixed inset-0 bg-black/60 backdrop-blur dark:bg-white/10" />
           </Transition.Child>
 
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center">
+          <div className="fixed right-0 top-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center text-center">
               <Transition.Child
                 as={Fragment}
                 enter="ease-out duration-300"
@@ -609,297 +609,305 @@ function ExecutionViewGroupFocus({ executionViewGroup }: { executionViewGroup: I
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-3xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all dark:bg-navy">
-                  <div className="flex items-center justify-between gap-2">
-                    <Dialog.Title as="h3" className="text-lg font-bold leading-6 text-gray-800 dark:text-white">
-                      <strong>ExecutionView:</strong> <span className="underline">{executionViewGroup.name}</span>
-                    </Dialog.Title>
+                <Dialog.Panel className="flex h-screen w-full transform flex-col justify-between gap-4 overflow-scroll bg-white p-6 text-left align-middle shadow-xl transition-all dark:bg-navy md:max-w-3xl">
+                  <div>
+                    <div className="flex items-center justify-between gap-2">
+                      <Dialog.Title as="h3" className="text-lg font-bold leading-6 text-gray-800 dark:text-white">
+                        <strong>ExecutionView:</strong> <span className="underline">{executionViewGroup.name}</span>
+                      </Dialog.Title>
 
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => setTextView((prev) => !prev)}
-                        className="text-primary transition hover:scale-125 hover:opacity-50 dark:text-secondary"
-                      >
-                        <span className="sr-only">Toggle view mode</span>
-                        {textView ? <ChartPieIcon className="h-6 w-6" /> : <DocumentTextIcon className="h-6 w-6" />}
-                      </button>
-                      <button
-                        onClick={closeModal}
-                        className="text-rose-600 transition hover:scale-125 hover:opacity-50"
-                      >
-                        <span className="sr-only">Close modal</span>
-                        <XCircleIcon className="h-6 w-6" />
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => setTextView((prev) => !prev)}
+                          className="text-primary transition hover:scale-125 hover:opacity-50 dark:text-secondary"
+                        >
+                          <span className="sr-only">Toggle view mode</span>
+                          {textView ? <ChartPieIcon className="h-6 w-6" /> : <DocumentTextIcon className="h-6 w-6" />}
+                        </button>
+                        <button
+                          onClick={closeModal}
+                          className="text-rose-600 transition hover:scale-125 hover:opacity-50"
+                        >
+                          <span className="sr-only">Close modal</span>
+                          <XCircleIcon className="h-6 w-6" />
+                        </button>
+                      </div>
                     </div>
-                  </div>
 
-                  {/* KPIs */}
-                  <div className="mt-2 font-normal text-gray-700 dark:text-white">
-                    {textView ? (
-                      <>
-                        <p>For this executionView category:</p>
-                        <ul className="mt-1 flex list-inside list-disc flex-col gap-1 text-sm text-gray-600 dark:text-gray-200">
-                          <li>
-                            The <span className="underline">average time spent</span> on this executionView type is{' '}
-                            <strong>{executionViewGroup.stats.avgTimespan}s</strong>.{' '}
-                            {executionViewGroup.stats.stdDevTimespan === null ? (
-                              <>
-                                <span className="underline">Standard deviation analysis</span> is not available because
-                                we don&apos;t have 2 or more executionViews.
-                              </>
-                            ) : (
-                              <>
-                                The standard deviation of time spent on this kind of executionView is{' '}
-                                <strong>{executionViewGroup.stats.stdDevTimespan}</strong>
-                              </>
-                            )}
-                          </li>
-
-                          <li>
-                            A total of <strong>{executionViewGroup.stats.total} executionViews were initiated</strong>,{' '}
-                            {executionViewGroup.stats.completed} were completed, and{' '}
-                            {executionViewGroup.stats.notCompleted} were abandoned or cancelled, meaning that{' '}
-                            <strong>
-                              {(executionViewGroup.stats.completedRatio * 100).toFixed(2)}% of executionViews were
-                              completed
-                            </strong>
-                            .
-                          </li>
-
-                          <li>
-                            Data was collected for{' '}
-                            <strong>{executionViewGroup.executionViews.length} executionView(s)</strong> of this
-                            category. There were a total of{' '}
-                            <strong>{executionViewGroup.stats.totalErrors} error(s)</strong> across these, alongside a
-                            total of <strong>{executionViewGroup.stats.totalTabChanges} tab change(s)</strong>. This
-                            means that on average, each executionView had <strong>{avgError.toFixed(1)} errors</strong>{' '}
-                            and <strong>{avgTabChanges.toFixed(1)} tab changes</strong>.{' '}
-                            {executionViewGroup.stats.stdDevScore === null ? (
-                              <>
-                                <span className="underline">Standard deviation analysis</span> for UX Score is not
-                                available because we don&apos;t have 2 or more executionViews.
-                              </>
-                            ) : (
-                              <>
-                                The standard deviation of UX Score on this kind of executionView is{' '}
-                                <strong>{executionViewGroup.stats.stdDevScore}</strong>
-                              </>
-                            )}
-                          </li>
-
-                          <li>
-                            The average score was{' '}
-                            <strong>{executionViewGroup.stats.avgScore.toFixed(2)} out of a possible 100 points</strong>
-                            . This score is calculated based on the amount of executionView errors, step errors and tab
-                            changes, where we deduct point to a executionView based on negative actions.
-                            <Formula />
-                          </li>
-                        </ul>
-                      </>
-                    ) : (
-                      <>
-                        <p className="mb-2 text-sm">Here are some key stats for executionViews of this category</p>
-
-                        <div className="flex flex-wrap gap-x-4 gap-y-4">
-                          <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-blue-600 bg-blue-600/60 text-center text-white dark:border-blue-500 dark:bg-blue-500/40">
-                            <span className="w-full border-b px-2 py-2 font-mono text-xl font-bold">
-                              {executionViewGroup.stats.avgTimespan.toFixed(1)}s
-                            </span>
-                            <span className="my-auto flex min-h-[51px] items-center px-2 py-2 text-sm leading-tight tracking-tighter">
-                              Average Time Spent on ExecutionView
-                            </span>
-                          </div>
-
-                          <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-blue-600 bg-blue-600/60 text-center text-white dark:border-blue-500 dark:bg-blue-500/40">
-                            <span className="w-full border-b px-2 py-2 font-mono text-xl font-bold">
+                    {/* KPIs */}
+                    <div className="mt-2 font-normal text-gray-700 dark:text-white">
+                      {textView ? (
+                        <>
+                          <p>For this executionView category:</p>
+                          <ul className="mt-1 flex list-inside list-disc flex-col gap-1 text-sm text-gray-600 dark:text-gray-200">
+                            <li>
+                              The <span className="underline">average time spent</span> on this executionView type is{' '}
+                              <strong>{executionViewGroup.stats.avgTimespan}s</strong>.{' '}
                               {executionViewGroup.stats.stdDevTimespan === null ? (
-                                'N/A'
+                                <>
+                                  <span className="underline">Standard deviation analysis</span> is not available
+                                  because we don&apos;t have 2 or more executionViews.
+                                </>
                               ) : (
-                                <>{executionViewGroup.stats.stdDevTimespan.toFixed(1)}s</>
+                                <>
+                                  The standard deviation of time spent on this kind of executionView is{' '}
+                                  <strong>{executionViewGroup.stats.stdDevTimespan}</strong>
+                                </>
                               )}
-                            </span>
-                            <span className="my-auto flex min-h-[51px] items-center px-2 py-2 text-sm leading-tight tracking-tighter">
-                              Std Dev for Time Spent on ExecutionView
-                            </span>
-                          </div>
+                            </li>
 
-                          <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-gray-600 bg-gray-600/60 text-center text-white dark:border-gray-500 dark:bg-gray-500/40">
-                            <span className="w-full border-b px-2 py-2 font-mono text-xl font-bold">
-                              {executionViewGroup.stats.total}
-                            </span>
-                            <span className="my-auto flex min-h-[51px] items-center px-2 py-2 text-sm leading-tight tracking-tighter">
-                              Total ExecutionViews Initiated
-                            </span>
-                          </div>
+                            <li>
+                              A total of <strong>{executionViewGroup.stats.total} executionViews were initiated</strong>
+                              , {executionViewGroup.stats.completed} were completed, and{' '}
+                              {executionViewGroup.stats.notCompleted} were abandoned or cancelled, meaning that{' '}
+                              <strong>
+                                {(executionViewGroup.stats.completedRatio * 100).toFixed(2)}% of executionViews were
+                                completed
+                              </strong>
+                              .
+                            </li>
 
-                          <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-teal-600 bg-teal-600/60 text-center text-white dark:border-teal-500 dark:bg-teal-500/40">
-                            <span className="w-full border-b px-2 py-2 font-mono text-xl font-bold">
-                              {executionViewGroup.stats.completed}
-                            </span>
-                            <span className="my-auto flex min-h-[51px] items-center px-2 py-2 text-sm leading-tight tracking-tighter">
-                              Total ExecutionViews Completed
-                            </span>
-                          </div>
+                            <li>
+                              Data was collected for{' '}
+                              <strong>{executionViewGroup.executionViews.length} executionView(s)</strong> of this
+                              category. There were a total of{' '}
+                              <strong>{executionViewGroup.stats.totalErrors} error(s)</strong> across these, alongside a
+                              total of <strong>{executionViewGroup.stats.totalTabChanges} tab change(s)</strong>. This
+                              means that on average, each executionView had{' '}
+                              <strong>{avgError.toFixed(1)} errors</strong> and{' '}
+                              <strong>{avgTabChanges.toFixed(1)} tab changes</strong>.{' '}
+                              {executionViewGroup.stats.stdDevScore === null ? (
+                                <>
+                                  <span className="underline">Standard deviation analysis</span> for UX Score is not
+                                  available because we don&apos;t have 2 or more executionViews.
+                                </>
+                              ) : (
+                                <>
+                                  The standard deviation of UX Score on this kind of executionView is{' '}
+                                  <strong>{executionViewGroup.stats.stdDevScore}</strong>
+                                </>
+                              )}
+                            </li>
 
-                          <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-rose-600 bg-rose-600/60 text-center text-white dark:border-rose-500 dark:bg-rose-500/40">
-                            <span className="w-full border-b px-2 py-2 font-mono text-xl font-bold">
-                              {executionViewGroup.stats.notCompleted}
-                            </span>
-                            <span className="my-auto flex min-h-[51px] items-center px-2 py-2 text-sm leading-tight tracking-tighter">
-                              Total ExecutionViews Abandoned
-                            </span>
-                          </div>
+                            <li>
+                              The average score was{' '}
+                              <strong>
+                                {executionViewGroup.stats.avgScore.toFixed(2)} out of a possible 100 points
+                              </strong>
+                              . This score is calculated based on the amount of executionView errors, step errors and
+                              tab changes, where we deduct point to a executionView based on negative actions.
+                              <Formula />
+                            </li>
+                          </ul>
+                        </>
+                      ) : (
+                        <>
+                          <p className="mb-2 text-sm">Here are some key stats for executionViews of this category</p>
 
-                          <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-violet-600 bg-violet-600/60 text-center text-white dark:border-violet-500 dark:bg-violet-500/40">
-                            <span className="w-full border-b px-2 py-2 font-mono text-xl font-bold">
-                              {executionViewGroup.stats.avgScore}/100
-                            </span>
-                            <span className="my-auto flex min-h-[51px] items-center px-2 py-2 text-sm leading-tight tracking-tighter">
-                              Average ExecutionView UX Score
-                            </span>
-                          </div>
-
-                          <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-violet-600 bg-violet-600/60 text-center text-white dark:border-violet-500 dark:bg-violet-500/40">
-                            <span className="w-full border-b px-2 py-2 font-mono text-xl font-bold">
-                              {executionViewGroup.stats.stdDevScore === null
-                                ? 'N/A'
-                                : executionViewGroup.stats.stdDevScore.toFixed(1)}
-                            </span>
-                            <span className="my-auto flex min-h-[51px] items-center px-2 py-2 text-sm leading-tight tracking-tighter">
-                              Std Dev for ExecutionView UX Score
-                            </span>
-                          </div>
-
-                          <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-gray-600 bg-gray-600/60 text-center text-white dark:border-gray-500 dark:bg-gray-500/40">
-                            <span className="w-full border-b px-2 py-2 font-mono text-xl font-bold">
-                              {(executionViewGroup.stats.completedRatio * 100).toFixed(1)}%
-                            </span>
-                            <span className="my-auto flex min-h-[51px] items-center px-2 py-2 text-sm leading-tight tracking-tighter">
-                              ExecutionView Completion Ratio
-                            </span>
-                          </div>
-
-                          <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-amber-600 bg-amber-600/60 text-center text-white dark:border-amber-500 dark:bg-amber-500/40">
-                            <span className="w-full border-b px-2 py-2 font-mono text-xl font-bold">
-                              {executionViewGroup.stats.totalTabChanges}
-                              <span className="font-sans font-light"> &middot; </span>
-                              {executionViewGroup.stats.avgTabChanges.toFixed(1)}
-                            </span>
-                            <span className="my-auto flex min-h-[51px] items-center px-2 py-2 text-sm leading-tight tracking-tighter">
-                              Total and Average Tab Changes
-                            </span>
-                          </div>
-
-                          <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-rose-600 bg-rose-600/60 text-center text-white dark:border-rose-500 dark:bg-rose-500/40">
-                            <span className="w-full border-b px-2 py-2 font-mono text-xl font-bold">
-                              {executionViewGroup.stats.totalErrors}
-                              <span className="font-sans font-light"> &middot; </span>
-                              {executionViewGroup.stats.avgErrors.toFixed(1)}
-                            </span>
-                            <span className="my-auto flex min-h-[51px] items-center px-2 py-2 text-sm leading-tight tracking-tighter">
-                              Total and Average Errors
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="mt-4">
-                          <p className="text-sm">
-                            This score is calculated based on the amount of executionView errors, step errors and tab
-                            changes, where we deduct point to a executionView based on negative actions.
-                          </p>
-                          <Formula />
-                        </div>
-                      </>
-                    )}
-                  </div>
-
-                  {/* Inspect executionViews view */}
-                  {inspect ? (
-                    <div className="flex gap-4">
-                      {/* ExecutionView Inspect Card */}
-                      <div className="flex-1 rounded-xl bg-navy text-white dark:bg-white/10">
-                        <div className="flex items-center justify-between rounded-t border-b px-3 py-3 lg:px-4 lg:py-4">
-                          <h4 className="tracking-[-0.08rem] lg:tracking-normal">{selectedExecutionView.component}</h4>
-                          <span
-                            className={classNames(
-                              'flex gap-1 rounded-full border p-1 text-sm text-white lg:rounded lg:p-1.5',
-                              selectedExecutionView.completed
-                                ? 'border-teal-600 bg-teal-600/80'
-                                : 'border-rose-600 bg-rose-600/80'
-                            )}
-                          >
-                            {selectedExecutionView.completed ? (
-                              <CheckCircleIcon className="h-5 w-5" />
-                            ) : (
-                              <XCircleIcon className="h-5 w-5" />
-                            )}
-                            <span className="hidden lg:flex">
-                              {selectedExecutionView.completed ? 'Completed' : 'Abandoned'}
-                            </span>
-                          </span>
-                        </div>
-
-                        <div className="flex items-center justify-between rounded-b px-3 py-3 lg:px-4 lg:py-4">
-                          <div className="space-y-0.5 lg:space-y-1">
-                            <div className="flex items-center gap-x-2">
-                              <span className="h-4 w-4 rounded-full bg-rose-600" />
-                              <span className="whitespace-nowrap text-sm tracking-tighter lg:tracking-normal">
-                                Errors: <span className="font-normal">{selectedExecutionView.errorCount}</span>
+                          <div className="flex flex-wrap gap-x-4 gap-y-4">
+                            <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-blue-600 bg-blue-600/60 text-center text-white dark:border-blue-500 dark:bg-blue-500/40">
+                              <span className="w-full border-b px-2 py-2 font-mono text-xl font-bold">
+                                {executionViewGroup.stats.avgTimespan.toFixed(1)}s
+                              </span>
+                              <span className="my-auto flex min-h-[51px] items-center px-2 py-2 text-sm leading-tight tracking-tighter">
+                                Average Time Spent on ExecutionView
                               </span>
                             </div>
 
-                            <div className="flex items-center gap-x-2">
-                              <span className="h-4 w-4 rounded-full bg-amber-600" />
-                              <span className="whitespace-nowrap text-sm tracking-tighter lg:tracking-normal">
-                                Tab Changes: <span className="font-normal">{selectedExecutionView.tabChangeCount}</span>
+                            <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-blue-600 bg-blue-600/60 text-center text-white dark:border-blue-500 dark:bg-blue-500/40">
+                              <span className="w-full border-b px-2 py-2 font-mono text-xl font-bold">
+                                {executionViewGroup.stats.stdDevTimespan === null ? (
+                                  'N/A'
+                                ) : (
+                                  <>{executionViewGroup.stats.stdDevTimespan.toFixed(1)}s</>
+                                )}
+                              </span>
+                              <span className="my-auto flex min-h-[51px] items-center px-2 py-2 text-sm leading-tight tracking-tighter">
+                                Std Dev for Time Spent on ExecutionView
                               </span>
                             </div>
 
-                            <div className="flex items-center gap-x-2">
-                              <span className="h-4 w-4 rounded-full bg-blue-600" />
-                              <span className="whitespace-nowrap text-sm tracking-tighter lg:tracking-normal">
-                                Timespan:{' '}
-                                <span className="font-normal">{selectedExecutionView.timespan.toFixed(1)}s</span>
+                            <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-gray-600 bg-gray-600/60 text-center text-white dark:border-gray-500 dark:bg-gray-500/40">
+                              <span className="w-full border-b px-2 py-2 font-mono text-xl font-bold">
+                                {executionViewGroup.stats.total}
+                              </span>
+                              <span className="my-auto flex min-h-[51px] items-center px-2 py-2 text-sm leading-tight tracking-tighter">
+                                Total ExecutionViews Initiated
+                              </span>
+                            </div>
+
+                            <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-teal-600 bg-teal-600/60 text-center text-white dark:border-teal-500 dark:bg-teal-500/40">
+                              <span className="w-full border-b px-2 py-2 font-mono text-xl font-bold">
+                                {executionViewGroup.stats.completed}
+                              </span>
+                              <span className="my-auto flex min-h-[51px] items-center px-2 py-2 text-sm leading-tight tracking-tighter">
+                                Total ExecutionViews Completed
+                              </span>
+                            </div>
+
+                            <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-rose-600 bg-rose-600/60 text-center text-white dark:border-rose-500 dark:bg-rose-500/40">
+                              <span className="w-full border-b px-2 py-2 font-mono text-xl font-bold">
+                                {executionViewGroup.stats.notCompleted}
+                              </span>
+                              <span className="my-auto flex min-h-[51px] items-center px-2 py-2 text-sm leading-tight tracking-tighter">
+                                Total ExecutionViews Abandoned
+                              </span>
+                            </div>
+
+                            <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-violet-600 bg-violet-600/60 text-center text-white dark:border-violet-500 dark:bg-violet-500/40">
+                              <span className="w-full border-b px-2 py-2 font-mono text-xl font-bold">
+                                {executionViewGroup.stats.avgScore}/100
+                              </span>
+                              <span className="my-auto flex min-h-[51px] items-center px-2 py-2 text-sm leading-tight tracking-tighter">
+                                Average ExecutionView UX Score
+                              </span>
+                            </div>
+
+                            <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-violet-600 bg-violet-600/60 text-center text-white dark:border-violet-500 dark:bg-violet-500/40">
+                              <span className="w-full border-b px-2 py-2 font-mono text-xl font-bold">
+                                {executionViewGroup.stats.stdDevScore === null
+                                  ? 'N/A'
+                                  : executionViewGroup.stats.stdDevScore.toFixed(1)}
+                              </span>
+                              <span className="my-auto flex min-h-[51px] items-center px-2 py-2 text-sm leading-tight tracking-tighter">
+                                Std Dev for ExecutionView UX Score
+                              </span>
+                            </div>
+
+                            <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-gray-600 bg-gray-600/60 text-center text-white dark:border-gray-500 dark:bg-gray-500/40">
+                              <span className="w-full border-b px-2 py-2 font-mono text-xl font-bold">
+                                {(executionViewGroup.stats.completedRatio * 100).toFixed(1)}%
+                              </span>
+                              <span className="my-auto flex min-h-[51px] items-center px-2 py-2 text-sm leading-tight tracking-tighter">
+                                ExecutionView Completion Ratio
+                              </span>
+                            </div>
+
+                            <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-amber-600 bg-amber-600/60 text-center text-white dark:border-amber-500 dark:bg-amber-500/40">
+                              <span className="w-full border-b px-2 py-2 font-mono text-xl font-bold">
+                                {executionViewGroup.stats.totalTabChanges}
+                                <span className="font-sans font-light"> &middot; </span>
+                                {executionViewGroup.stats.avgTabChanges.toFixed(1)}
+                              </span>
+                              <span className="my-auto flex min-h-[51px] items-center px-2 py-2 text-sm leading-tight tracking-tighter">
+                                Total and Average Tab Changes
+                              </span>
+                            </div>
+
+                            <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-rose-600 bg-rose-600/60 text-center text-white dark:border-rose-500 dark:bg-rose-500/40">
+                              <span className="w-full border-b px-2 py-2 font-mono text-xl font-bold">
+                                {executionViewGroup.stats.totalErrors}
+                                <span className="font-sans font-light"> &middot; </span>
+                                {executionViewGroup.stats.avgErrors.toFixed(1)}
+                              </span>
+                              <span className="my-auto flex min-h-[51px] items-center px-2 py-2 text-sm leading-tight tracking-tighter">
+                                Total and Average Errors
                               </span>
                             </div>
                           </div>
 
-                          <div>
-                            <div className="flex flex-col items-center justify-center space-y-1">
-                              <CircularProgressBadge progress={selectedExecutionView.score} />
-                              <span className="text-center text-xs tracking-tighter">UX Score</span>
-                            </div>
+                          <div className="mt-4">
+                            <p className="text-sm">
+                              This score is calculated based on the amount of executionView errors, step errors and tab
+                              changes, where we deduct point to a executionView based on negative actions.
+                            </p>
+                            <Formula />
                           </div>
-                        </div>
-                      </div>
-
-                      {/* ExecutionView Scroll Buttons */}
-                      <div className="flex flex-col rounded-xl bg-navy text-white dark:bg-white/10">
-                        <button
-                          disabled={inspectIndex === 0}
-                          onClick={() => setInspectIndex((idx) => idx - 1)}
-                          className="group self-stretch rounded-t-xl px-2 py-2 transition enabled:hover:bg-sky-600/50 disabled:cursor-not-allowed disabled:opacity-20 dark:disabled:text-white"
-                        >
-                          <ChevronUpIcon className="h-5 w-5" />
-                        </button>
-
-                        <span className="flex flex-1 items-center justify-center self-stretch px-2 py-2">
-                          {inspectIndex}
-                        </span>
-
-                        <button
-                          disabled={inspectIndex === executionViewGroup.executionViews.length - 1}
-                          onClick={() => setInspectIndex((idx) => idx + 1)}
-                          className="group self-stretch rounded-b-xl px-2 py-2 transition enabled:hover:bg-sky-600/50 disabled:cursor-not-allowed disabled:opacity-20 dark:disabled:text-white"
-                        >
-                          <ChevronDownIcon className="h-5 w-5" />
-                        </button>
-                      </div>
+                        </>
+                      )}
                     </div>
-                  ) : null}
+
+                    {/* Inspect executionViews view */}
+                    {inspect ? (
+                      <div className="flex gap-4">
+                        {/* ExecutionView Inspect Card */}
+                        <div className="flex-1 rounded-xl bg-navy text-white dark:bg-white/10">
+                          <div className="flex items-center justify-between rounded-t border-b px-2 py-2 lg:px-3 lg:py-3">
+                            <h4 className="tracking-[-0.08rem] lg:tracking-normal">
+                              {selectedExecutionView.component}
+                            </h4>
+                            <span
+                              className={classNames(
+                                'flex items-center gap-1 rounded-full border p-1 text-sm text-white lg:rounded lg:p-1',
+                                selectedExecutionView.completed
+                                  ? 'border-teal-600 bg-teal-600/80'
+                                  : 'border-rose-600 bg-rose-600/80'
+                              )}
+                            >
+                              {selectedExecutionView.completed ? (
+                                <CheckCircleIcon className="h-5 w-5" />
+                              ) : (
+                                <XCircleIcon className="h-5 w-5" />
+                              )}
+                              <span className="hidden lg:flex">
+                                {selectedExecutionView.completed ? 'Completed' : 'Abandoned'}
+                              </span>
+                            </span>
+                          </div>
+
+                          <div className="flex items-center justify-between rounded-b px-3 py-3 lg:px-4 lg:py-4">
+                            <div className="space-y-0.5 lg:space-y-1">
+                              <div className="flex items-center gap-x-2">
+                                <span className="h-4 w-4 rounded-full bg-rose-600" />
+                                <span className="whitespace-nowrap text-sm tracking-tighter lg:tracking-normal">
+                                  Errors: <span className="font-normal">{selectedExecutionView.errorCount}</span>
+                                </span>
+                              </div>
+
+                              <div className="flex items-center gap-x-2">
+                                <span className="h-4 w-4 rounded-full bg-amber-600" />
+                                <span className="whitespace-nowrap text-sm tracking-tighter lg:tracking-normal">
+                                  Tab Changes:{' '}
+                                  <span className="font-normal">{selectedExecutionView.tabChangeCount}</span>
+                                </span>
+                              </div>
+
+                              <div className="flex items-center gap-x-2">
+                                <span className="h-4 w-4 rounded-full bg-blue-600" />
+                                <span className="whitespace-nowrap text-sm tracking-tighter lg:tracking-normal">
+                                  Timespan:{' '}
+                                  <span className="font-normal">{selectedExecutionView.timespan.toFixed(1)}s</span>
+                                </span>
+                              </div>
+                            </div>
+
+                            <div>
+                              <div className="flex flex-col items-center justify-center space-y-1">
+                                <CircularProgressBadge progress={selectedExecutionView.score} />
+                                <span className="text-center text-xs tracking-tighter">UX Score</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* ExecutionView Scroll Buttons */}
+                        <div className="flex flex-col rounded-xl bg-navy text-white dark:bg-white/10">
+                          <button
+                            disabled={inspectIndex === 0}
+                            onClick={() => setInspectIndex((idx) => idx - 1)}
+                            className="group self-stretch rounded-t-xl px-2 py-2 transition enabled:hover:bg-sky-600/50 disabled:cursor-not-allowed disabled:opacity-20 dark:disabled:text-white"
+                          >
+                            <ChevronUpIcon className="h-5 w-5" />
+                          </button>
+
+                          <span className="flex flex-1 items-center justify-center self-stretch px-2 py-2">
+                            {inspectIndex}
+                          </span>
+
+                          <button
+                            disabled={inspectIndex === executionViewGroup.executionViews.length - 1}
+                            onClick={() => setInspectIndex((idx) => idx + 1)}
+                            className="group self-stretch rounded-b-xl px-2 py-2 transition enabled:hover:bg-sky-600/50 disabled:cursor-not-allowed disabled:opacity-20 dark:disabled:text-white"
+                          >
+                            <ChevronDownIcon className="h-5 w-5" />
+                          </button>
+                        </div>
+                      </div>
+                    ) : null}
+                  </div>
 
                   {/* Footer buttons */}
-                  <div className="mt-8 flex flex-wrap items-center justify-end gap-3">
+                  <div className="flex flex-wrap items-center justify-end gap-3">
                     <button
                       type="button"
                       onClick={() => setInspect((prev) => !prev)}
@@ -1016,13 +1024,13 @@ function ScoreCalculcationApproachDialog() {
 
 function Formula() {
   return (
-    <>
-      <p className="mb-1 mt-4">First we establish a baseline score:</p>
+    <div className="my-1 text-sm">
+      <p className="mb-1">First we establish a baseline score:</p>
       <code className="mb-4 block bg-navy px-3 py-2 text-sm font-normal tracking-[-0.07rem] text-white dark:bg-white/10 dark:text-white">
         score = 100 - 10*errors - 5*backSteps
       </code>
 
-      <p className="mb-1 mt-4">
+      <p className="mb-1 mt-3">
         If the <strong>execution view was cancelled</strong> we deduct extra points. In case the user was evidently
         attempting to complete it then the <strong>timespan should be greater than 10s</strong> and/or{' '}
         <strong>there should be at least one negative action</strong>:
@@ -1031,7 +1039,7 @@ function Formula() {
         score = score - timespan/20 - 4*(errors + backStepCount)
       </code>
 
-      <p className="mb-1 mt-4">
+      <p className="mb-1 mt-3">
         If there are <strong>no negative actions</strong> or the <strong>timespan was under 10 seconds</strong> we only
         deduct a small amount:
       </p>
@@ -1039,11 +1047,11 @@ function Formula() {
         score = score - 5
       </code>
 
-      <p className="mb-1 mt-4">
+      <p className="mt-3">
         The <strong>minimum score is 0</strong>, so if the score drops below that, we directly assign it a score of 0.
         In case the score is <strong>below 20 and the execution view was completed</strong> we directly assign a score
         of 20 to the execution view, rewarding the completion.
       </p>
-    </>
+    </div>
   );
 }

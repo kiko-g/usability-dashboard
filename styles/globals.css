@@ -24,7 +24,7 @@ h6 {
 }
 
 code {
-  @apply rounded-xl bg-dark px-1 py-0.5 font-code text-pink-600;
+  @apply rounded-md bg-dark px-1 py-0.5 font-code text-pink-600;
 }
 
 th {
