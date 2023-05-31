@@ -6,7 +6,7 @@ services:
     ports:
       - '8081:80'
     depends_on:
-      - db
+      - mysql
     env_file:
       - .env
     volumes:
