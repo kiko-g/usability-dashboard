@@ -12,15 +12,27 @@ services:
     volumes:
       - matomo_data:/var/www/html
 
-  db:
+  mysql:
     image: mysql:latest
     ports:
       - '5550:3306'
     env_file:
       - .env
     volumes:
-      - db_data:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
+
+  next:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - 3030:3030
+    depends_on:
+      - mysql
+      - matomo
 
 volumes:
   matomo_data:
-  db_data:
+  mysql_data:
