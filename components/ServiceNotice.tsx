@@ -8,6 +8,7 @@ type Props = {};
 type AvailabilityType = 'available' | 'unavailable' | null;
 
 export default function ServiceNotice({}: Props) {
+  const [message, setMessage] = useState<string>('');
   const [dismissed, setDismissed] = useState<boolean>(false);
   const [serviceStatus, setServiceStatus] = useState<AvailabilityType>(null);
 
@@ -20,6 +21,7 @@ export default function ServiceNotice({}: Props) {
         if (response.status === 200) {
           setServiceStatus('available');
         } else {
+          setMessage(response.data.message);
           setServiceStatus('unavailable');
         }
       } catch (error) {
@@ -72,7 +74,11 @@ export default function ServiceNotice({}: Props) {
             </h3>
             <div className="mt-2 text-sm text-rose-700">
               <ul role="list" className="list-disc space-y-1 pl-5">
-                <li>Your configuration could be invalid</li>
+                <li>Matomo API said: &quot;{message}&quot;</li>
+                <li>Check your auth token (Matomo Dashboard, Gear Icon, Personal, Security, Create Auth Token)</li>
+                <li>
+                  Check the ports and the <code>NEXT_PUBLIC_MATOMO_SITE_URL</code> value in your <code>.env</code> file
+                </li>
                 <li>You could be running only the Next JS dashboard app</li>
                 <li>
                   You can use the mock data to get a feeling of what the dashboard should look like. Click the{' '}
