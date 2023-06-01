@@ -16,8 +16,8 @@ COPY . ./
 # Build the Next.js app
 RUN npm run build
 
-# Expose port 3030 in the container
-EXPOSE 3030
+# Expose port 3000 in the container
+EXPOSE 3000
 
 # Run the app
 CMD [ "npm", "run", "dev" ]
