@@ -3,8 +3,18 @@ FROM matomo:latest
 # Update packages and install nano
 RUN apt-get update && apt-get install nano -y
 
-# Modify the config.ini.php file
+# We need to modify the config.ini.php file
 # nano config/config.ini.php
 # [General]
 # ...
 # trusted_hosts[] = "localhost:8081"
+
+# Copy a script that can modify the config file
+COPY modify-config.sh /tmp/
+
+# Set permissions for the script
+RUN chmod +x /tmp/modify-config.sh
+
+# Run the script
+RUN /tmp/modify-config.sh
+
