@@ -2,6 +2,9 @@ version: '3.9'
 
 services:
   matomo:
+    build:
+      context: .
+      dockerfile: Dockerfile.matomo
     image: matomo
     ports:
       - '8081:80'
