@@ -38,18 +38,20 @@ export default function Wizards() {
     fetch('/api/matomo/events/wizard')
       .then((res) => {
         if (!res.ok) {
-          setError(true);
-          setLoading(false);
-          setWillFetch(false);
-          return null;
-        } else {
-          return res.json();
+          throw new Error(res.statusText);
         }
+        return res.json();
       })
       .then((data: IWizardGroup[]) => {
         setLoading(false);
         setWillFetch(false);
-        setData(data === null ? [] : data);
+        setData(data);
+      })
+      .catch((error) => {
+        setError(true);
+        setLoading(false);
+        setWillFetch(false);
+        console.error(error);
       });
   }, [willFetch]);
 
