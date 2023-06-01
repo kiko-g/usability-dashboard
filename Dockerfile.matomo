@@ -4,4 +4,7 @@ FROM matomo:latest
 RUN apt-get update && apt-get install nano -y
 
 # Modify the config.ini.php file
-RUN echo "trusted_hosts[] = \"localhost:8081\"" >> /var/www/html/config/config.ini.php
+# nano config/config.ini.php
+# [General]
+# ...
+# trusted_hosts[] = "localhost:8081"
