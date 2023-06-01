@@ -2,6 +2,19 @@
 
 With the idea of delving into the behavior of CMF's MES users, we have created this a dashboard with the data collected from the analytics and usability study.
 
+## Troubleshooting setup
+
+- You may need to enter the matomo container and edit the `config/config.ini.php` file. Change the `trusted_hosts[]` line to `trusted_hosts[] = "localhost:8081"`. You can do this manually easily by running the following commands:
+
+```bash
+apt-get update
+apt-get install nano -y
+nano config/config.ini.php
+# replace the text and save the file
+```
+
+- You may need to replace the Matomo API Token. Go to the Matomo Dashboard: click the `gear icon`, then `personal`, `security`. Scroll down to **create auth token** and copy it into your `.env`.
+
 ## Environment Variables
 
 ### Matomo
@@ -76,3 +89,7 @@ This table contains the tasks and main points of the development for the part of
 | `Top Buttons`           |  ⏳   | ⏳  |    🟢    | Frequency of each title of clicked buttons    | Histogram |
 | `Top Buttons over time` |  ⏳   | ⏳  |    🟡    | Title of most clicked button in a time period | Start     |
 | `Clicks per day`        |  ⏳   | ⏳  |    🟡    | Total clicks per day                          | Stat      |
+
+```
+
+```

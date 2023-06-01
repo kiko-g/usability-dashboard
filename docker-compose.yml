@@ -7,6 +7,8 @@ services:
       - '8081:80'
     depends_on:
       - mysql
+    environment:
+      - MATOMO_TRUSTED_HOSTS=localhost:8081
     env_file:
       - .env
     volumes:
