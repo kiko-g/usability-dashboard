@@ -10,11 +10,10 @@ RUN apt-get update && apt-get install nano -y
 # trusted_hosts[] = "localhost:8081"
 
 # Copy a script that can modify the config file
-COPY modify-config.sh /tmp/
+COPY hosts.sh /tmp/
 
 # Set permissions for the script
-RUN chmod +x /tmp/modify-config.sh
+RUN chmod +x /tmp/hosts.sh
 
 # Run the script
-RUN /tmp/modify-config.sh
-
+RUN /tmp/hosts.sh
