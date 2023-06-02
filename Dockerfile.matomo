@@ -3,17 +3,18 @@ FROM matomo:latest
 # Update packages and install nano
 RUN apt-get update && apt-get install nano -y
 
-# We need to modify the config.ini.php file
+# We need to modify the config.ini.php file after we have finished the Matomo setup
+# You can either manually change it:
+# 
+# docker exec -it <container_id> /bin/bash;
 # nano config/config.ini.php
-# [General]
+#
 # ...
+# [General]
+# salt = ...
 # trusted_hosts[] = "localhost:8081"
-
-# Copy a script that can modify the config file
-COPY hosts.sh .
-
-# Set permissions for the script
-RUN chmod +x ./hosts.sh
-
-# Run the script
-# RUN ./hosts.sh
+# ...
+#
+# or you can run the hosts.sh script
+#
+# bash hosts.sh

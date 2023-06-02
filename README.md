@@ -10,20 +10,15 @@ This project is dockerized, so the we should be able to run it with the followin
 docker compose up -d --build
 ```
 
-You still need a website to be running, which for this project we expect it to be MES, whether it is locally or in a custom development environment. You should configure this on the Matomo Dashboard setup which should be available at `http://localhost:8081`.
+You still need a website to be running, which for this project we expect it to be MES, whether it is locally or in a custom development environment. You should do this in the **configuration of the Matomo Dashboard setup** which should be available at `http://localhost:8081`.
+
+After doing this you should see a complaint about the trusted host setup on the Matomo Dashboard. To fix this open a bash shell on the root of this project and run `bash hosts.sh`.
 
 You may need to troubleshoot a few things in the setup:
 
 1. You will probably need to replace the Matomo API Token once you are setting up the containers for the first time. Go to the Matomo Dashboard: click the `gear icon`, then `personal`, `security`. Scroll down to **create auth token** and copy it into your `.env`.
 
-2. Remember to change the content of the `matomoTrackerConfig` variable in `src/app/app.module.ts` on the CoreHTML that is being used in the MES. This should match the ports that we have chosen on this side.
-
-3. You may need to enter the matomo container and edit the `config/config.ini.php` file. Change the `trusted_hosts[]` line to `trusted_hosts[] = "localhost:8081"`. You can do this manually easily by running the following commands:
-
-```bash
-nano config/config.ini.php
-# replace the text and save the file
-```
+2. Remember to change the content of the `matomoTrackerConfig` variable in `src/app/app.module.ts` on the CoreHTML that is being used in CMF's MES. This should match the ports that we have chosen on this side.
 
 ## Environment Variables
 
@@ -59,7 +54,7 @@ Here are all the possible environment variables for the Matomo instance:
 `MYSQL_DATABASE`: This variable will create the specified database on the MySQL server.
 `MYSQL_USER` && `MYSQL_PASSWORD`: These variables are used in conjunction to create a new user, and to set that user's password.
 
-## Represented data and metrics
+## Dashboard represented data and metrics
 
 ### General metrics
 
@@ -99,7 +94,3 @@ This table contains the tasks and main points of the development for the part of
 | `Top Buttons`           |  ⏳   | ⏳  |    🟢    | Frequency of each title of clicked buttons    | Histogram |
 | `Top Buttons over time` |  ⏳   | ⏳  |    🟡    | Title of most clicked button in a time period | Start     |
 | `Clicks per day`        |  ⏳   | ⏳  |    🟡    | Total clicks per day                          | Stat      |
-
-```
-
-```
