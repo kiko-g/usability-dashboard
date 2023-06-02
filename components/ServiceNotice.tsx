@@ -21,10 +21,11 @@ export default function ServiceNotice({}: Props) {
         if (response.status === 200) {
           setServiceStatus('available');
         } else {
-          setMessage(response.data.message === '' ? response.data.toString() : response.data.message);
+          setMessage(response.data.message);
           setServiceStatus('unavailable');
         }
-      } catch (error) {
+      } catch (error: any) {
+        setMessage(error.message);
         setServiceStatus('unavailable');
       }
     };
@@ -74,7 +75,9 @@ export default function ServiceNotice({}: Props) {
             </h3>
             <div className="mt-2 text-sm text-rose-700">
               <ul role="list" className="list-disc space-y-1 pl-5">
-                <li>Matomo API said: &quot;{message}&quot;</li>
+                <li>
+                  Matomo API said: <span className="font-bold underline">{message}</span>
+                </li>
                 <li>Check your auth token (Matomo Dashboard, Gear Icon, Personal, Security, Create Auth Token)</li>
                 <li>
                   Check the ports and the <code>NEXT_PUBLIC_MATOMO_SITE_URL</code> value in your <code>.env</code> file
