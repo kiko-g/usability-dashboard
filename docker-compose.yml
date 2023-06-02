@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile.matomo
     image: matomo
     ports:
-      - '8081:80'
+      - '8089:80'
     depends_on:
       - mysql
     env_file:

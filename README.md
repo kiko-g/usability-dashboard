@@ -10,7 +10,7 @@ With the idea of delving into the behavior of CMF's MES users, we have created t
 docker compose up -d --build
 ```
 
-2. The target website should be running in parellel to this, which for this project we expect it to be MES, whether it is locally or in a custom development environment. You should provide the information of the domain of the targetted website the **configuration of the Matomo Dashboard setup** which should be available at `http://localhost:8081`.
+2. The target website should be running in parellel to this, which for this project we expect it to be MES, whether it is locally or in a custom development environment. You should provide the information of the domain of the targetted website the **configuration of the Matomo Dashboard setup** which should be available at `http://localhost:8089`.
 
 3. After doing this you should see a complaint about the trusted host setup on the Matomo Dashboard. To fix this open a bash shell on the root of this project and run `bash hosts.sh`.
 

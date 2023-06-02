@@ -21,7 +21,7 @@ export default function ServiceNotice({}: Props) {
         if (response.status === 200) {
           setServiceStatus('available');
         } else {
-          setMessage(response.data.message === '' ? response.data.error : response.data.message);
+          setMessage(response.data.message === '' ? response.data.toString() : response.data.message);
           setServiceStatus('unavailable');
         }
       } catch (error) {

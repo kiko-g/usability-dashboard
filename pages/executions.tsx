@@ -7,6 +7,7 @@ import { Layout } from '../components/layout';
 import { CircularProgressBadge, Loading, NotFound } from '../components/utils';
 import { Dialog, Listbox, Transition } from '@headlessui/react';
 import { ExecutionViewAction } from '../utils/matomo';
+import { CheckCircleIcon as CheckCircleSolidIcon } from '@heroicons/react/24/solid';
 import {
   ArrowPathIcon,
   ChartPieIcon,
@@ -979,8 +980,8 @@ function ScoreCalculcationApproachDialog({ content }: { content?: any }) {
             <div className="fixed inset-0 bg-black/60 backdrop-blur dark:bg-white/10" />
           </Transition.Child>
 
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center">
+          <div className="fixed right-0 top-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center text-center">
               <Transition.Child
                 as={Fragment}
                 enter="ease-out duration-300"
@@ -990,29 +991,32 @@ function ScoreCalculcationApproachDialog({ content }: { content?: any }) {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all dark:bg-navy">
-                  <Dialog.Title
-                    as="h3"
-                    className="mb-3 font-sans text-lg font-bold leading-6 text-gray-800 dark:text-white"
-                  >
-                    Execution Views Scoring Approach
-                  </Dialog.Title>
+                <Dialog.Panel className="flex h-screen w-full transform flex-col justify-between gap-4 overflow-scroll bg-white p-6 text-left align-middle shadow-xl transition-all dark:bg-navy md:max-w-3xl">
+                  <div>
+                    <Dialog.Title
+                      as="h3"
+                      className="mb-3 font-sans text-lg font-bold leading-6 text-gray-800 dark:text-white"
+                    >
+                      Execution Views Scoring Approach
+                    </Dialog.Title>
 
-                  <div className="mt-2 font-normal text-gray-700 dark:text-white">
-                    The score is a number between 0 and 100. This score is calculated based on the amount of{' '}
-                    <strong>execution views errors</strong>, <strong>step errors</strong> and{' '}
-                    <strong>tab changes</strong> button clicks, where we deduct points to a execution view based on
-                    negative actions. The initial score is 100, and we subtract from there as follows:
-                    <Formula />
+                    <div className="mt-2 font-normal text-gray-700 dark:text-white">
+                      The score is a number between 0 and 100. This score is calculated based on the amount of{' '}
+                      <strong>execution views errors</strong>, <strong>step errors</strong> and{' '}
+                      <strong>tab changes</strong> button clicks, where we deduct points to a execution view based on
+                      negative actions. The initial score is 100, and we subtract from there as follows:
+                      <Formula />
+                    </div>
                   </div>
 
-                  <div className="mt-8 flex items-center justify-end">
+                  <div className="flex items-center justify-end">
                     <button
                       type="button"
-                      className="flex items-center gap-2 rounded bg-primary px-4 py-2 text-sm text-white transition hover:opacity-80 dark:bg-secondary"
+                      className="flex w-full items-center justify-center gap-2 bg-teal-600/20 px-4 py-2 text-sm font-medium text-teal-700 transition hover:bg-teal-600 hover:text-white dark:text-white"
                       onClick={closeModal}
                     >
-                      <span>Got it, thanks!</span>
+                      <span>Roger that</span>
+                      <CheckCircleSolidIcon className="h-4 w-4" />
                     </button>
                   </div>
                 </Dialog.Panel>

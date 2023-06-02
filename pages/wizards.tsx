@@ -7,9 +7,10 @@ import { Layout } from '../components/layout';
 import { CircularProgressBadge, Loading, NotFound } from '../components/utils';
 import { Dialog, Listbox, Transition } from '@headlessui/react';
 import { WizardAction } from '../utils/matomo';
-import { CheckCircleIcon as CheckCircleSolidIcon, InformationCircleIcon } from '@heroicons/react/24/solid';
+import { CheckCircleIcon as CheckCircleSolidIcon } from '@heroicons/react/24/solid';
 import {
   ArrowPathIcon,
+  InformationCircleIcon,
   ChartPieIcon,
   CheckCircleIcon as CheckCircleOutlineIcon,
   ChevronDownIcon,
@@ -1059,7 +1060,7 @@ function ScoreCalculcationApproachDialog({ content }: { content?: any }) {
                   <div className="flex items-center justify-end">
                     <button
                       type="button"
-                      className="flex w-full items-center justify-center gap-2 bg-teal-600/20 px-4 py-2 text-sm font-medium text-teal-700 transition hover:bg-teal-600 hover:text-white"
+                      className="flex w-full items-center justify-center gap-2 bg-teal-600/20 px-4 py-2 text-sm font-medium text-teal-700 transition hover:bg-teal-600 hover:text-white dark:text-white"
                       onClick={closeModal}
                     >
                       <span>Roger that</span>

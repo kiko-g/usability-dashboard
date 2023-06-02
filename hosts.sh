@@ -1,7 +1,7 @@
 #!/bin/bash
 CONTAINER_NAME=$(docker ps --format '{{.Names}}' | grep matomo)
 CONFIG_FILE="/var/www/html/config/config.ini.php"
-NEW_HOSTS_LINE="trusted_hosts[] = \"localhost:8081\""
+NEW_HOSTS_LINE="trusted_hosts[] = \"localhost:8089\""
 
 if [ -n "$CONTAINER_NAME" ]; then
     if docker exec "$CONTAINER_NAME" test -f "$CONFIG_FILE"; then
