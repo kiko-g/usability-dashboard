@@ -7,7 +7,7 @@ import { Layout } from '../components/layout';
 import { CircularProgressBadge, Loading, NotFound } from '../components/utils';
 import { Dialog, Listbox, Transition } from '@headlessui/react';
 import { WizardAction } from '../utils/matomo';
-import { CheckCircleIcon as CheckCircleSolidIcon } from '@heroicons/react/24/solid';
+import { CheckCircleIcon as CheckCircleSolidIcon, InformationCircleIcon } from '@heroicons/react/24/solid';
 import {
   ArrowPathIcon,
   ChartPieIcon,
@@ -78,6 +78,8 @@ export default function Wizards() {
                 <CircleStackIcon className="h-6 w-6" />
               </button>
             )}
+
+            <ScoreCalculcationApproachDialog content={<InformationCircleIcon className="h-6 w-6" />} />
 
             <Link
               target="_blank"
@@ -994,7 +996,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
   );
 }
 
-function ScoreCalculcationApproachDialog() {
+function ScoreCalculcationApproachDialog({ content }: { content?: any }) {
   const [isOpen, setIsOpen] = React.useState(false);
 
   function closeModal() {
@@ -1008,7 +1010,7 @@ function ScoreCalculcationApproachDialog() {
   return (
     <>
       <button type="button" onClick={openModal} className="underline hover:opacity-80">
-        this approach
+        {content ? content : 'this approach'}
       </button>
 
       <Transition appear show={isOpen} as={Fragment}>

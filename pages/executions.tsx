@@ -17,6 +17,7 @@ import {
   CircleStackIcon,
   CodeBracketIcon,
   DocumentTextIcon,
+  InformationCircleIcon,
   MagnifyingGlassMinusIcon,
   MagnifyingGlassPlusIcon,
   XCircleIcon,
@@ -82,6 +83,8 @@ export default function Executions() {
                 <CircleStackIcon className="h-6 w-6" />
               </button>
             )}
+
+            <ScoreCalculcationApproachDialog content={<InformationCircleIcon className="h-6 w-6" />} />
 
             <Link
               target="_blank"
@@ -945,7 +948,7 @@ function ExecutionViewGroupFocus({ executionViewGroup }: { executionViewGroup: I
   );
 }
 
-function ScoreCalculcationApproachDialog() {
+function ScoreCalculcationApproachDialog({ content }: { content?: any }) {
   const [isOpen, setIsOpen] = React.useState(false);
 
   function closeModal() {
@@ -959,7 +962,7 @@ function ScoreCalculcationApproachDialog() {
   return (
     <>
       <button type="button" onClick={openModal} className="underline hover:opacity-80">
-        this approach
+        {content ? content : 'this approach'}
       </button>
 
       <Transition appear show={isOpen} as={Fragment}>
