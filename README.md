@@ -2,18 +2,28 @@
 
 With the idea of delving into the behavior of CMF's MES users, we have created this a dashboard with the data collected from the analytics and usability study.
 
-## Troubleshooting setup
+## Running the project
 
-- You may need to enter the matomo container and edit the `config/config.ini.php` file. Change the `trusted_hosts[]` line to `trusted_hosts[] = "localhost:8081"`. You can do this manually easily by running the following commands:
+This project is dockerized, so the we should be able to run it with the following command:
 
 ```bash
-apt-get update
-apt-get install nano -y
+docker compose up -d --build
+```
+
+You still need a website to be running, which for this project we expect it to be MES, whether it is locally or in a custom development environment. You should configure this on the Matomo Dashboard setup which should be available at `http://localhost:8081`.
+
+You may need to troubleshoot a few things in the setup:
+
+1. You will probably need to replace the Matomo API Token once you are setting up the containers for the first time. Go to the Matomo Dashboard: click the `gear icon`, then `personal`, `security`. Scroll down to **create auth token** and copy it into your `.env`.
+
+2. Remember to change the content of the `matomoTrackerConfig` variable in `src/app/app.module.ts` on the CoreHTML that is being used in the MES. This should match the ports that we have chosen on this side.
+
+3. You may need to enter the matomo container and edit the `config/config.ini.php` file. Change the `trusted_hosts[]` line to `trusted_hosts[] = "localhost:8081"`. You can do this manually easily by running the following commands:
+
+```bash
 nano config/config.ini.php
 # replace the text and save the file
 ```
-
-- You may need to replace the Matomo API Token. Go to the Matomo Dashboard: click the `gear icon`, then `personal`, `security`. Scroll down to **create auth token** and copy it into your `.env`.
 
 ## Environment Variables
 
