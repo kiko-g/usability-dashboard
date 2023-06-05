@@ -37,8 +37,8 @@ export default function ServiceNotice({}: Props) {
     <div
       className={classNames(
         'relative w-full rounded-md border p-4',
-        serviceStatus === 'available' && 'border-emerald-400 bg-emerald-50/60 dark:bg-emerald-50/90',
-        serviceStatus === 'unavailable' && 'border-rose-400 bg-rose-50/60 dark:bg-rose-50/90',
+        serviceStatus === 'available' && 'border-emerald-400 bg-emerald-50/60 dark:bg-emerald-700/30',
+        serviceStatus === 'unavailable' && 'border-rose-400 bg-rose-50/60 dark:bg-rose-700/30',
         serviceStatus === null && 'border-gray-400 bg-gray-50/60 dark:bg-gray-50/90',
         dismissed ? 'hidden' : 'block'
       )}
@@ -70,10 +70,10 @@ export default function ServiceNotice({}: Props) {
             <ShieldExclamationIcon className="h-5 w-5 text-rose-400" aria-hidden="true" />
           </div>
           <div className="ml-3">
-            <h3 className="text-sm font-medium text-rose-800">
+            <h3 className="text-sm font-medium text-rose-800 dark:text-white">
               The Matomo API service is <strong>not</strong> responding
             </h3>
-            <div className="mt-2 text-sm text-rose-700">
+            <div className="mt-2 text-sm text-rose-700 dark:text-gray-100">
               <ul role="list" className="list-disc space-y-1 pl-5">
                 <li>
                   Matomo API said: <span className="font-bold underline">{message}</span>

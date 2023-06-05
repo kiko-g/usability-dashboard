@@ -67,6 +67,7 @@ export default function Wizards() {
           </p>
 
           <div className="flex items-center gap-2">
+            {/* Use mock data button */}
             {error === false ? null : (
               <button
                 title="Use mock data"
@@ -80,8 +81,10 @@ export default function Wizards() {
               </button>
             )}
 
+            {/* Score information button */}
             <ScoreCalculcationApproachDialog content={<InformationCircleIcon className="h-6 w-6" />} />
 
+            {/* API route source button */}
             <Link
               target="_blank"
               title="Inspect JSON data"
@@ -91,10 +94,27 @@ export default function Wizards() {
               <CodeBracketIcon className="h-6 w-6" />
             </Link>
 
+            {/* View JSON button */}
+            <button
+              title="View JSON data"
+              className="hover:opacity-80"
+              onClick={() => {
+                const jsonString = JSON.stringify(data);
+                const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(jsonString)}`;
+                window.open(dataUri, '_blank');
+              }}
+            >
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="h-6 w-6">
+                <path d="M5.759 3.975h1.783V5.76H5.759v4.458A1.783 1.783 0 0 1 3.975 12a1.783 1.783 0 0 1 1.784 1.783v4.459h1.783v1.783H5.759c-.954-.24-1.784-.803-1.784-1.783v-3.567a1.783 1.783 0 0 0-1.783-1.783H1.3v-1.783h.892a1.783 1.783 0 0 0 1.783-1.784V5.76A1.783 1.783 0 0 1 5.76 3.975m12.483 0a1.783 1.783 0 0 1 1.783 1.784v3.566a1.783 1.783 0 0 0 1.783 1.784h.892v1.783h-.892a1.783 1.783 0 0 0-1.783 1.783v3.567a1.783 1.783 0 0 1-1.783 1.783h-1.784v-1.783h1.784v-4.459A1.783 1.783 0 0 1 20.025 12a1.783 1.783 0 0 1-1.783-1.783V5.759h-1.784V3.975h1.784M12 14.675a.892.892 0 0 1 .892.892.892.892 0 0 1-.892.892.892.892 0 0 1-.891-.892.892.892 0 0 1 .891-.892m-3.566 0a.892.892 0 0 1 .891.892.892.892 0 0 1-.891.892.892.892 0 0 1-.892-.892.892.892 0 0 1 .892-.892m7.133 0a.892.892 0 0 1 .891.892.892.892 0 0 1-.891.892.892.892 0 0 1-.892-.892.892.892 0 0 1 .892-.892z"></path>
+              </svg>
+            </button>
+
+            {/* Reload button */}
             <button
               title="Retry fetching data"
               className="hover:opacity-80"
               onClick={() => {
+                setError(false);
                 setWillFetch(true);
               }}
             >
@@ -141,6 +161,7 @@ function WizardKPIs({ data }: { data: IWizardGroup[] }) {
     const totalCount = data.reduce((acc, item) => acc + item.stats.total, 0);
 
     const timespans = data.flatMap((item) => item.wizards.map((wizard) => wizard.timespan));
+    console.log(timespans);
     const minTime = Math.min(...timespans);
     const maxTime = Math.max(...timespans);
     const averageTime = totalCount > 0 ? totalTime / totalCount : 0;

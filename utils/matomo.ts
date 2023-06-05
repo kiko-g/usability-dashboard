@@ -85,7 +85,8 @@ function transformGroupedEvents(groupedEvents: ITrackerEventRawEvent[][]): ITrac
 
 export const parseEvents = (body: string | any[], filterBy?: string): ITrackerEventGroup[] => {
   const eventsByComponent = new Map();
-  const events = Array.isArray(body) ? body : JSON.parse(body);
+  const eventsUnsorted = Array.isArray(body) ? body : JSON.parse(body);
+  const events = eventsUnsorted.sort((a: any, b: any) => new Date(a.Events_EventTime).getTime() - new Date(b.Events_EventTime).getTime());
 
   for (const event of events) {
     if (!isJson(event.Events_EventCategory)) continue;

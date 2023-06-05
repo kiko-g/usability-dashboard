@@ -67,7 +67,7 @@ export default function Hub() {
           </p>
         </div>
 
-        <div className="divide-y divide-gray-200 overflow-hidden rounded-lg border border-transparent bg-gray-200 shadow dark:bg-slate-400 sm:grid sm:grid-cols-2 sm:gap-px sm:divide-y-0">
+        <div className="divide-y divide-gray-200 overflow-hidden rounded-lg border border-transparent bg-gray-200 shadow-xl dark:bg-gray-500 sm:grid sm:grid-cols-2 sm:gap-px sm:divide-y-0">
           {actions.map((action, actionIdx) => (
             <Link
               href={action.href}
@@ -77,7 +77,7 @@ export default function Hub() {
                 actionIdx === 1 ? 'sm:rounded-tr-lg' : '',
                 actionIdx === actions.length - 2 ? 'sm:rounded-bl-lg' : '',
                 actionIdx === actions.length - 1 ? 'rounded-bl-lg rounded-br-lg sm:rounded-bl-none' : '',
-                'group relative bg-white p-6 transition focus-within:ring-2 focus-within:ring-inset focus-within:ring-primary hover:bg-slate-100 dark:bg-darkest dark:hover:opacity-90'
+                'group relative bg-white p-6 transition focus-within:ring-2 focus-within:ring-inset focus-within:ring-primary hover:bg-gray-100 dark:bg-gray-700 dark:hover:opacity-90'
               )}
             >
               <span className={classNames(action.iconClasses, 'inline-flex rounded-lg p-4 transition')}>
