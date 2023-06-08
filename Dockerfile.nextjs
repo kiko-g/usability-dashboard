@@ -2,7 +2,7 @@
 FROM node:lts-alpine
 
 # Update packages and install nano
-RUN apt-get update && apt-get install nano -y
+RUN apk update && apk add nano
 
 # Set the working directory in the container
 WORKDIR /app
