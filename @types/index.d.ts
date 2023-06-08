@@ -69,6 +69,9 @@ export type WizardStats = {
   totalErrors: number;
   totalBackSteps: number;
   totalFailedSteps: number;
+  avgSuccessfulStepTime: number | null;
+  minSuccessfulStepTime: number | null;
+  maxSuccessfulStepTime: number | null;
 };
 
 // Execution Views

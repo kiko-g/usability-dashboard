@@ -23,6 +23,7 @@ import {
   MagnifyingGlassPlusIcon,
   XCircleIcon,
 } from '@heroicons/react/24/outline';
+import { standardDeviation } from '../utils';
 
 export default function Wizards() {
   const [data, setData] = React.useState<IWizardGroup[]>([]);
@@ -162,7 +163,6 @@ function WizardKPIs({ data }: { data: IWizardGroup[] }) {
     const totalCount = data.reduce((acc, item) => acc + item.stats.total, 0);
 
     const timespans = data.flatMap((item) => item.wizards.map((wizard) => wizard.timespan));
-    console.log(timespans);
     const minTime = Math.min(...timespans);
     const maxTime = Math.max(...timespans);
     const averageTime = totalCount > 0 ? totalTime / totalCount : 0;
@@ -170,19 +170,28 @@ function WizardKPIs({ data }: { data: IWizardGroup[] }) {
     return { avg: averageTime, min: minTime, max: maxTime };
   }, [data]);
 
+  // calculate step stats considering all steps from all wizards
   const stepCompletionStats = React.useMemo(() => {
     let activatedStepsTotal = 0;
     let successStepsTotal = 0;
     let failedStepTotal = 0;
+    let successfulStepTimes: number[] = [];
 
     data.forEach((wizardGroup) => {
       wizardGroup.wizards.forEach((wizard) => {
-        wizard.events.forEach((event) => {
+        wizard.events.forEach((event, index) => {
           const action = event.action;
           if (action.includes(WizardAction.ActivateStep)) {
             activatedStepsTotal++;
           } else if (action.includes(WizardAction.SuccessStep)) {
             successStepsTotal++;
+            const nextEvent = wizard.events[index + 1];
+            if (nextEvent && nextEvent.action.includes(WizardAction.ActivateStep)) {
+              const activatedTime = new Date(nextEvent.time).getTime();
+              const successTime = new Date(event.time).getTime();
+              const stepTime = successTime - activatedTime;
+              successfulStepTimes.push(stepTime);
+            }
           } else if (action.includes(WizardAction.FailStep)) {
             failedStepTotal++;
           }
@@ -190,7 +199,21 @@ function WizardKPIs({ data }: { data: IWizardGroup[] }) {
       });
     });
 
-    return { activated: activatedStepsTotal, successful: successStepsTotal, failed: failedStepTotal };
+    const minSuccessfulStepTime = Math.min(...successfulStepTimes);
+    const maxSuccessfulStepTime = Math.max(...successfulStepTimes);
+    const avgSuccessfulStepTime =
+      successfulStepTimes.length > 0 ? successfulStepTimes.reduce((a, b) => a + b, 0) / successfulStepTimes.length : 0;
+    const stdDevSuccessfulStepTime = standardDeviation(successfulStepTimes);
+
+    return {
+      activated: activatedStepsTotal,
+      successful: successStepsTotal,
+      failed: failedStepTotal,
+      minSuccessfulStepTime,
+      maxSuccessfulStepTime,
+      avgSuccessfulStepTime,
+      stdDevSuccessfulStepTime,
+    };
   }, [data]);
 
   // calculate average, minimum and maximum error and back step considering all wizards
@@ -368,21 +391,21 @@ function TimeStatsCard({ stats }: { stats: AvgMinMax }) {
       <h2 className="mb-2 text-xl font-bold">Wizard Time Stats</h2>
       <div className="flex items-center gap-x-2">
         <span className="h-4 w-4 rounded-full bg-blue-500" />
-        <span className="whitespace-nowrap text-sm font-semibold">
+        <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
           Average: <span className="font-normal">{avg.toFixed(2)}s</span>
         </span>
       </div>
 
       <div className="flex items-center gap-x-2">
         <span className="h-4 w-4 rounded-full bg-pink-500" />
-        <span className="whitespace-nowrap text-sm font-semibold">
+        <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
           Minimum: <span className="font-normal">{min.toFixed(2)}s</span>
         </span>
       </div>
 
       <div className="flex items-center gap-x-2">
         <span className="h-4 w-4 rounded-full bg-violet-500" />
-        <span className="whitespace-nowrap text-sm font-semibold">
+        <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
           Maximum: <span className="font-normal">{max.toFixed(2)}s</span>
         </span>
       </div>
@@ -394,41 +417,99 @@ type StepCompletionStats = {
   activated: number;
   successful: number;
   failed: number;
+  minSuccessfulStepTime: number;
+  maxSuccessfulStepTime: number;
+  avgSuccessfulStepTime: number;
+  stdDevSuccessfulStepTime: number | null;
 };
 
 function StepCompletionStatsCard({ stats }: { stats: StepCompletionStats }) {
-  const { activated, successful, failed } = stats;
+  const {
+    activated,
+    successful,
+    failed,
+    minSuccessfulStepTime,
+    maxSuccessfulStepTime,
+    avgSuccessfulStepTime,
+    stdDevSuccessfulStepTime,
+  } = stats;
+
+  const abandoned = activated - successful - failed;
   const failedRatio = ((100 * failed) / activated).toFixed(1);
   const successfulRatio = ((100 * successful) / activated).toFixed(1);
+  const abandonedRatio = ((100 * abandoned) / activated).toFixed(1);
 
   return (
-    <div className="relative flex flex-1 flex-col self-stretch rounded bg-white/80 p-4 dark:bg-white/10">
+    <div className="relative self-stretch rounded bg-white/80 p-4 dark:bg-white/10">
       <h2 className="mb-2 text-xl font-bold">Step Completion Stats</h2>
-      <div className="flex items-center gap-x-2">
-        <span className="h-4 w-4 rounded-full bg-blue-500" />
-        <span className="whitespace-nowrap text-sm font-semibold">
-          All activated steps: <span className="font-normal">{activated}</span>
-        </span>
-      </div>
-
-      <div className="flex items-center gap-x-2">
-        <span className="h-4 w-4 rounded-full bg-pink-500" />
-        <span className="whitespace-nowrap text-sm font-semibold">
-          Successful steps:{' '}
-          <span className="font-normal">
-            {successful} ({successfulRatio}%)
+      <div className="grid w-full grid-cols-1 grid-rows-none gap-x-0 lg:w-min lg:grid-flow-col lg:grid-cols-none lg:grid-rows-4 lg:gap-x-4">
+        <div className="flex items-center gap-x-2">
+          <span className="h-4 w-4 rounded-full bg-gray-400" />
+          <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
+            All activated steps: <span className="font-normal">{activated}</span>
           </span>
-        </span>
-      </div>
+        </div>
 
-      <div className="flex items-center gap-x-2">
-        <span className="h-4 w-4 rounded-full bg-violet-500" />
-        <span className="whitespace-nowrap text-sm font-semibold">
-          Failed steps:{' '}
-          <span className="font-normal">
-            {failed} ({failedRatio}%)
+        <div className="flex items-center gap-x-2">
+          <span className="h-4 w-4 rounded-full bg-emerald-500" />
+          <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
+            Successful steps:{' '}
+            <span className="font-normal">
+              {successful} ({successfulRatio}%)
+            </span>
           </span>
-        </span>
+        </div>
+
+        <div className="flex items-center gap-x-2">
+          <span className="h-4 w-4 rounded-full bg-rose-600" />
+          <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
+            Failed steps:{' '}
+            <span className="font-normal">
+              {failed} ({failedRatio}%)
+            </span>
+          </span>
+        </div>
+
+        <div className="flex items-center gap-x-2">
+          <span className="h-4 w-4 rounded-full bg-orange-500" />
+          <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
+            Abandoneed steps:{' '}
+            <span className="font-normal">
+              {abandoned} ({abandonedRatio}%)
+            </span>
+          </span>
+        </div>
+
+        <div className="flex items-center gap-x-2">
+          <span className="h-4 w-4 rounded-full bg-blue-500" />
+          <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
+            Avg time to complete step: <span className="font-normal">{avgSuccessfulStepTime.toFixed(1)}s</span>
+          </span>
+        </div>
+
+        <div className="flex items-center gap-x-2">
+          <span className="h-4 w-4 rounded-full bg-pink-500" />
+          <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
+            Min time to complete step: <span className="font-normal">{minSuccessfulStepTime}s</span>
+          </span>
+        </div>
+
+        <div className="flex items-center gap-x-2">
+          <span className="h-4 w-4 rounded-full bg-violet-500" />
+          <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
+            Max time to complete step: <span className="font-normal">{maxSuccessfulStepTime}s</span>
+          </span>
+        </div>
+
+        <div className="flex items-center gap-x-2">
+          <span className="h-4 w-4 rounded-full bg-lime-500" />
+          <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
+            Std Dev for completed step times:{' '}
+            <span className="font-normal">
+              {stdDevSuccessfulStepTime === null ? 'N/A' : stdDevSuccessfulStepTime?.toFixed(1)}s
+            </span>
+          </span>
+        </div>
       </div>
     </div>
   );
@@ -449,7 +530,7 @@ function ErrorStatsCard({ text, stats }: { text: string; stats: ErrorStatsType }
   return (
     <div className="relative self-stretch rounded bg-white/80 p-4 dark:bg-white/10">
       <h2 className="mb-2 text-xl font-bold">{text}</h2>
-      <div className="grid w-min grid-flow-col grid-rows-3 gap-x-4">
+      <div className="grid w-full grid-cols-1 grid-rows-none gap-x-0 lg:w-min lg:grid-flow-col lg:grid-cols-none lg:grid-rows-3 lg:gap-x-4">
         <div className="flex items-center gap-x-2">
           <span className="h-4 w-4 rounded-full bg-rose-600" />
           <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
@@ -458,14 +539,14 @@ function ErrorStatsCard({ text, stats }: { text: string; stats: ErrorStatsType }
         </div>
 
         <div className="flex items-center gap-x-2">
-          <span className="h-4 w-4 rounded-full bg-orange-500" />
+          <span className="h-4 w-4 rounded-full bg-amber-400" />
           <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
             Total Backs: <span className="font-normal">{totalBackSteps}</span>
           </span>
         </div>
 
         <div className="flex items-center gap-x-2">
-          <span className="h-4 w-4 rounded-full bg-emerald-500" />
+          <span className="h-4 w-4 rounded-full bg-orange-500" />
           <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
             Total Failed Steps: <span className="font-normal">{totalFailedSteps}</span>
           </span>
@@ -479,14 +560,14 @@ function ErrorStatsCard({ text, stats }: { text: string; stats: ErrorStatsType }
         </div>
 
         <div className="flex items-center gap-x-2">
-          <span className="h-4 w-4 rounded-full bg-orange-500" />
+          <span className="h-4 w-4 rounded-full bg-amber-400" />
           <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
             Avg Backs: <span className="font-normal">{avgBack.toFixed(2)} p/ wizard</span>
           </span>
         </div>
 
         <div className="flex items-center gap-x-2">
-          <span className="h-4 w-4 rounded-full bg-emerald-500" />
+          <span className="h-4 w-4 rounded-full bg-orange-500" />
           <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
             Avg Failed Steps: <span className="font-normal">{avgFailedSteps.toFixed(2)} p/ wizard</span>
           </span>
@@ -498,6 +579,8 @@ function ErrorStatsCard({ text, stats }: { text: string; stats: ErrorStatsType }
 
 function WizardSortedList({ data }: { data: IWizardGroup[] }) {
   const options = [
+    'Alphabetic (A to Z)',
+    'Alphabetic (Z to A)',
     'Low Score First',
     'High Score First',
     'Low Completion First',
@@ -508,6 +591,10 @@ function WizardSortedList({ data }: { data: IWizardGroup[] }) {
 
   const getSortFunction = (picked: any) => {
     switch (picked) {
+      case 'Alphabetic (A to Z)':
+        return (a: IWizardGroup, b: IWizardGroup) => a.name.localeCompare(b.name);
+      case 'Alphabetic (Z to A)':
+        return (a: IWizardGroup, b: IWizardGroup) => b.name.localeCompare(a.name);
       case 'Low Score First':
         return (a: IWizardGroup, b: IWizardGroup) => a.stats.avgScore - b.stats.avgScore;
       case 'High Score First':
@@ -585,7 +672,7 @@ function WizardSortedList({ data }: { data: IWizardGroup[] }) {
         </div>
       </div>
       <ul className="flex flex-col gap-y-2 lg:gap-y-3">
-        <li className="flex flex-col items-center justify-between gap-2 rounded bg-gray-600 px-2 py-2 text-xs font-normal tracking-tighter dark:bg-gray-400 lg:flex-row lg:px-4 lg:py-3 lg:text-xs lg:font-medium">
+        <li className="flex flex-col items-center justify-between gap-2 rounded bg-gray-600 px-2 py-2 text-xs font-normal tracking-tighter dark:bg-gray-900 lg:flex-row lg:px-4 lg:py-3 lg:text-xs lg:font-medium">
           <span className="lg:left w-full rounded text-center font-lexend text-sm font-medium text-white lg:w-auto">
             Wizard Name
           </span>
@@ -680,7 +767,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
       <button
         type="button"
         onClick={openModal}
-        className="group flex w-full flex-col items-center justify-between gap-2 rounded border border-primary bg-primary/60 px-2 py-2 text-white transition hover:bg-primary/80 dark:border-secondary dark:bg-secondary/20 dark:hover:bg-secondary/80 lg:flex-row lg:px-4 lg:py-2.5"
+        className="group flex w-full flex-col items-center justify-between gap-2 rounded border border-primary bg-primary/70 px-2 py-2 text-white transition hover:bg-primary/90 dark:border-secondary dark:bg-secondary/30 dark:hover:bg-secondary/80 lg:flex-row lg:px-4 lg:py-2.5"
       >
         <span className="flex items-center justify-between gap-1.5 text-xs font-normal lg:text-sm lg:font-medium">
           <span className="text-left tracking-tighter lg:tracking-normal">{wizardGroup.name}</span>

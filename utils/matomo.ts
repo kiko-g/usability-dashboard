@@ -234,7 +234,7 @@ export const evaluateWizards = (wizards: ITrackerEventGroup[]): IWizard[] => {
 export const groupWizardsByType = (wizards: IWizard[]): IWizardGroup[] => {
   const groupedWizards: IWizardGroup[] = [];
 
-  // group wizards by name
+  // Group wizards by name
   for (const wizard of wizards) {
     let group = groupedWizards.find((g) => g.name === wizard.name);
 
@@ -258,6 +258,9 @@ export const groupWizardsByType = (wizards: IWizard[]): IWizardGroup[] => {
           totalErrors: 0,
           totalBackSteps: 0,
           totalFailedSteps: 0,
+          avgSuccessfulStepTime: 0,
+          minSuccessfulStepTime: Infinity,
+          maxSuccessfulStepTime: 0,
         },
         wizards: [],
       };
@@ -278,7 +281,7 @@ export const groupWizardsByType = (wizards: IWizard[]): IWizardGroup[] => {
     group.wizards.push(wizard);
   }
 
-  // calculate stats after accumulating all wizards
+  // Calculate stats after accumulating all wizards
   for (const group of groupedWizards) {
     const totalCount = group.wizards.length;
     group.stats.total = totalCount;
@@ -293,6 +296,37 @@ export const groupWizardsByType = (wizards: IWizard[]): IWizardGroup[] => {
 
     group.stats.avgTimespan /= totalCount;
     group.stats.stdDevTimespan = standardDeviation(group.stats.timespans);
+
+    const successfulStepTimes: number[] = [];
+    group.wizards.forEach((wizard) => {
+      if (wizard.completed) {
+        const events = wizard.events;
+        for (let i = 0; i < events.length - 1; i++) {
+          const currentEvent = events[i];
+          const nextEvent = events[i + 1];
+          if (
+            currentEvent.action.startsWith('Activate Step cmf-core-controls-wizardStep') &&
+            nextEvent.action.startsWith('Success Step cmf-core-controls-wizardStep')
+          ) {
+            const activatedTime = new Date(currentEvent.time).getTime();
+            const successTime = new Date(nextEvent.time).getTime();
+            const stepTime = successTime - activatedTime;
+            successfulStepTimes.push(stepTime);
+          }
+        }
+      }
+    });
+
+    if (successfulStepTimes.length > 0) {
+      group.stats.avgSuccessfulStepTime = successfulStepTimes.reduce((a, b) => a + b, 0) / successfulStepTimes.length;
+      group.stats.minSuccessfulStepTime = Math.min(...successfulStepTimes);
+      group.stats.maxSuccessfulStepTime = Math.max(...successfulStepTimes);
+    }
+    else {
+      group.stats.avgSuccessfulStepTime = null;
+      group.stats.minSuccessfulStepTime = null;
+      group.stats.maxSuccessfulStepTime = null;
+    }
   }
 
   return groupedWizards.sort((a, b) => (a.stats.avgScore < b.stats.avgScore ? 1 : -1));
