@@ -645,6 +645,10 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
     () => (selectedWizard.stepStatus ? selectedWizard.stepStatus.visible : '?'),
     [selectedWizard]
   );
+  const maximumSteps = React.useMemo(
+    () => (selectedWizard.stepStatus ? selectedWizard.stepStatus.total : '?'),
+    [selectedWizard]
+  );
   const stepCompletionRatio = React.useMemo(
     () =>
       selectedWizard.stepStatus ? (100 * selectedWizard.stepStatus.current) / selectedWizard.stepStatus.visible : '?',
@@ -830,7 +834,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                         <>
                           <p className="mb-2 text-sm">Here are some key stats for wizards of this category</p>
 
-                          <div className="grid grid-cols-5 gap-x-4 gap-y-4">
+                          <div className="grid grid-cols-2 gap-x-4 gap-y-4 lg:grid-cols-5">
                             <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-blue-600 bg-blue-600/60 text-center text-white dark:border-blue-500 dark:bg-blue-500/40">
                               <span className="w-full border-b px-2 py-2 font-mono text-xl font-bold">
                                 {wizardGroup.stats.avgTimespan.toFixed(1)}s
@@ -945,7 +949,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
 
                     {/* Inspect wizards view */}
                     {inspect ? (
-                      <div className="flex gap-4">
+                      <div className="flex gap-2 lg:gap-4">
                         {/* Wizard Inspect Card */}
                         <div className="flex-1 rounded-xl bg-navy text-white dark:bg-white/10">
                           <div className="flex items-center justify-between rounded-t border-b px-3 py-3 lg:px-4 lg:py-4">
@@ -970,7 +974,14 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                           </div>
 
                           <div className="flex items-center justify-between rounded-b px-3 py-3 lg:px-4 lg:py-4">
-                            <div className="grid grid-flow-col grid-rows-3 gap-x-6">
+                            <div className="grid grid-cols-1 grid-rows-none gap-y-0 lg:grid-flow-col lg:grid-cols-none lg:grid-rows-4 lg:gap-x-6">
+                              <div className="flex items-center gap-x-2">
+                                <span className="h-4 w-4 rounded-full bg-blue-600" />
+                                <span className="whitespace-nowrap text-sm tracking-tighter lg:tracking-normal">
+                                  Timespan: <span className="font-normal">{selectedWizard.timespan.toFixed(1)}s</span>
+                                </span>
+                              </div>
+
                               <div className="flex items-center gap-x-2">
                                 <span className="h-4 w-4 rounded-full bg-rose-600" />
                                 <span className="whitespace-nowrap text-sm tracking-tighter lg:tracking-normal">
@@ -1007,14 +1018,14 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                               </div>
 
                               <div className="flex items-center gap-x-2">
-                                <span className="h-4 w-4 rounded-full bg-blue-600" />
+                                <span className="h-4 w-4 rounded-full bg-violet-500" />
                                 <span className="whitespace-nowrap text-sm tracking-tighter lg:tracking-normal">
-                                  Timespan: <span className="font-normal">{selectedWizard.timespan.toFixed(1)}s</span>
+                                  Maximum Steps: <span className="font-normal">{maximumSteps}</span>
                                 </span>
                               </div>
                             </div>
 
-                            <div className="flex items-center justify-center gap-x-2">
+                            <div className="flex flex-col items-center justify-center gap-x-0 gap-y-3 lg:flex-row lg:gap-x-3 lg:gap-y-0">
                               <div className="flex flex-col items-center justify-center space-y-1">
                                 <CircularProgressBadge
                                   progress={stepCompletionRatio === '?' ? 0 : stepCompletionRatio}
@@ -1060,7 +1071,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                   </div>
 
                   {/* Footer buttons */}
-                  <div className="mt-8 flex flex-wrap items-center justify-end gap-3">
+                  <div className="mt-4 flex flex-wrap items-center justify-end gap-3">
                     <button
                       type="button"
                       onClick={() => setInspect((prev) => !prev)}
