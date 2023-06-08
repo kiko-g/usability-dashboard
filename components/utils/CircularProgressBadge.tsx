@@ -1,8 +1,11 @@
+import classNames from 'classnames';
+
 type Props = {
   progress: number;
+  color?: 'blue' | 'green';
 };
 
-export default function CircularProgressBadge({ progress }: Props) {
+export default function CircularProgressBadge({ progress, color }: Props) {
   const diameter = 50;
   const strokeWidth = 5;
   const radius = (diameter - strokeWidth) / 2;
@@ -15,7 +18,12 @@ export default function CircularProgressBadge({ progress }: Props) {
         <circle
           fill="none"
           stroke="currentColor"
-          className="text-blue-600 opacity-20"
+          className={classNames(
+            'opacity-20',
+            color === undefined && 'text-white',
+            color === 'blue' && 'text-blue-600',
+            color === 'green' && 'text-emerald-600'
+          )}
           r={radius}
           cx={diameter / 2}
           cy={diameter / 2}
@@ -23,7 +31,12 @@ export default function CircularProgressBadge({ progress }: Props) {
         />
         <circle
           fill="none"
-          className="origin-center -rotate-90 transform stroke-current text-blue-600"
+          className={classNames(
+            'origin-center -rotate-90 transform stroke-current',
+            color === undefined && 'text-white',
+            color === 'blue' && 'text-blue-600',
+            color === 'green' && 'text-emerald-600'
+          )}
           r={radius}
           cx={diameter / 2}
           cy={diameter / 2}

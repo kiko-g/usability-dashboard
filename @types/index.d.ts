@@ -30,12 +30,20 @@ export interface ITrackerEventGroup {
 }
 
 // Wizards
+export interface IWizardStepsStatus {
+  total: number;
+  visible: number;
+  current: number;
+}
+
 export interface IWizard extends ITrackerEventGroup {
   score: number;
   timespan: number;
   completed: boolean;
   errorCount: number;
   backStepCount: number;
+  failedStepCount: number;
+  stepStatus: IWizardStepsStatus;
 }
 
 export interface IWizardGroup {
@@ -56,9 +64,11 @@ export type WizardStats = {
   stdDevTimespan: number | null;
   timespans: number[];
   avgErrors: number;
+  avgFailedSteps: number;
   avgBackSteps: number;
   totalErrors: number;
   totalBackSteps: number;
+  totalFailedSteps: number;
 };
 
 // Execution Views

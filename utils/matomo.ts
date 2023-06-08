@@ -9,6 +9,7 @@ import type {
   IExecutionView,
   IExecutionViewGroup,
   ButtonType,
+  IWizardStepsStatus,
 } from '../@types';
 
 export enum WizardAction {
@@ -18,6 +19,7 @@ export enum WizardAction {
   Error = 'Error',
   ActivateStep = 'Activate Step',
   SuccessStep = 'Success Step',
+  UpdateSteps = 'New Steps',
   FailStep = 'Fail Step',
   NextStep = 'Next Step',
   BackStep = 'Back Step',
@@ -86,7 +88,9 @@ function transformGroupedEvents(groupedEvents: ITrackerEventRawEvent[][]): ITrac
 export const parseEvents = (body: string | any[], filterBy?: string): ITrackerEventGroup[] => {
   const eventsByComponent = new Map();
   const eventsUnsorted = Array.isArray(body) ? body : JSON.parse(body);
-  const events = eventsUnsorted.sort((a: any, b: any) => new Date(a.Events_EventTime).getTime() - new Date(b.Events_EventTime).getTime());
+  const events = eventsUnsorted.sort(
+    (a: any, b: any) => new Date(a.Events_EventTime).getTime() - new Date(b.Events_EventTime).getTime()
+  );
 
   for (const event of events) {
     if (!isJson(event.Events_EventCategory)) continue;
@@ -114,51 +118,80 @@ export const evaluateWizards = (wizards: ITrackerEventGroup[]): IWizard[] => {
   const result: IWizard[] = [];
 
   for (const wizard of wizards) {
-    if (wizard.events.length === 0) {
-      result.push({
-        ...wizard,
-        score: 0,
-        timespan: 0,
-        errorCount: 0,
-        backStepCount: 0,
-        completed: false,
-      });
-    }
+    // ignore wizard with no events
+    if (wizard.events.length === 0) continue;
 
     let score = 100;
+    let timespan = findComponentTimespan(wizard.events);
+    let totalSteps = -1;
+    let visibleSteps = -1;
+    let currentStep = 0;
+    let closed = false;
     let completed = false;
     let cancelled = false;
+
+    let intendedWizard = timespan > 10; // if the wizard was open for 10 seconds it was probably intended
     let errorCount = 0;
     let backStepCount = 0;
-    let timespan = findComponentTimespan(wizard.events);
+    let failedStepCount = 0;
 
-    wizard.events.forEach((event, index) => {
-      if (event.action.includes(WizardAction.Error)) {
-        // error penalty
-        score -= 10;
+    // parse events
+    wizard.events.forEach((event, eventIdx) => {
+      // steps changed
+      if (event.action.includes(WizardAction.UpdateSteps)) {
+        const stepStatusRaw = event.action.split(': ')[1];
+        const stepStatus = JSON.parse(stepStatusRaw) as IWizardStepsStatus;
+        totalSteps = stepStatus.total;
+        visibleSteps = stepStatus.visible;
+        currentStep = stepStatus.current;
+      }
+      // error
+      else if (event.action.includes(WizardAction.Error)) {
         errorCount++;
-      } else if (event.action.includes(WizardAction.FailStep)) {
-        // step fail penalty
-        score -= 10;
-        errorCount++;
-      } else if (event.action.includes(WizardAction.BackStep)) {
-        // back to previous step penalty
-        score -= 5;
+      }
+      // step fail
+      else if (event.action.includes(WizardAction.FailStep)) {
+        failedStepCount++;
+      }
+      // back to previous step
+      else if (event.action.includes(WizardAction.BackStep)) {
         backStepCount++;
-      } else if (event.action.includes(WizardAction.Cancel)) {
-        // cancel wizard penalty
+      }
+      // close wizard
+      else if (event.action.includes(WizardAction.Cancel)) {
+        closed = true;
+        const stepStatusRaw = event.action.split(': ')[1];
+        const stepStatus = JSON.parse(stepStatusRaw) as IWizardStepsStatus;
+        totalSteps = stepStatus.total;
+        visibleSteps = stepStatus.visible;
+        currentStep = stepStatus.current;
+      }
+      // cancel wizard (close with confirm dialog)
+      else if (event.action.includes(WizardAction.Cancel)) {
         cancelled = true;
-        if (timespan > 20) score -= timespan / 20 - 4 * (errorCount + backStepCount);
-        else score -= 5;
-      } else if (event.action.includes(WizardAction.Complete)) {
-        // complete wizard bonus
+        const stepStatusRaw = event.action.split(': ')[1];
+        const stepStatus = JSON.parse(stepStatusRaw) as IWizardStepsStatus;
+        totalSteps = stepStatus.total;
+        visibleSteps = stepStatus.visible;
+        currentStep = stepStatus.current;
+      }
+      // complete wizard
+      else if (event.action.includes(WizardAction.Complete)) {
         completed = true;
+        const stepStatusRaw = event.action.split(': ')[1];
+        const stepStatus = JSON.parse(stepStatusRaw) as IWizardStepsStatus;
+        totalSteps = stepStatus.total;
+        visibleSteps = stepStatus.visible;
+        currentStep = stepStatus.current;
       }
     });
 
-    // prevent the absence of complete or cancel action
-    if (!completed && !cancelled) {
-      if (timespan > 20) score -= timespan / 20 - 4 * (errorCount + backStepCount);
+    // calculate score
+    score -= errorCount * 10 - failedStepCount * 10 - backStepCount * 5;
+
+    // penalty for not completing
+    if (!completed) {
+      if (intendedWizard) score -= timespan / 20 - 4 * (errorCount + backStepCount);
       else score -= 5;
     }
 
@@ -171,9 +204,14 @@ export const evaluateWizards = (wizards: ITrackerEventGroup[]): IWizard[] => {
       timespan,
       completed,
       errorCount,
+      failedStepCount,
       backStepCount,
+      stepStatus: {
+        total: totalSteps,
+        visible: visibleSteps,
+        current: currentStep,
+      },
     };
-
     result.push(evaluatedWizard);
   }
 
@@ -202,9 +240,11 @@ export const groupWizardsByType = (wizards: IWizard[]): IWizardGroup[] => {
           stdDevTimespan: 0,
           timespans: [],
           avgErrors: 0,
+          avgFailedSteps: 0,
           avgBackSteps: 0,
           totalErrors: 0,
           totalBackSteps: 0,
+          totalFailedSteps: 0,
         },
         wizards: [],
       };
@@ -219,6 +259,7 @@ export const groupWizardsByType = (wizards: IWizard[]): IWizardGroup[] => {
 
     group.stats.totalErrors += wizard.errorCount;
     group.stats.totalBackSteps += wizard.backStepCount;
+    group.stats.totalFailedSteps += wizard.failedStepCount;
     wizard.completed ? group.stats.completed++ : group.stats.notCompleted++;
 
     group.wizards.push(wizard);
@@ -232,6 +273,7 @@ export const groupWizardsByType = (wizards: IWizard[]): IWizardGroup[] => {
 
     group.stats.avgErrors = group.stats.totalErrors / totalCount;
     group.stats.avgBackSteps = group.stats.totalBackSteps / totalCount;
+    group.stats.avgFailedSteps = group.stats.totalFailedSteps / totalCount;
 
     group.stats.avgScore /= totalCount;
     group.stats.stdDevScore = standardDeviation(group.stats.scores);
