@@ -195,7 +195,7 @@ function WizardKPIs({ data }: { data: IWizardGroup[] }) {
           } else if (action.includes(WizardAction.SuccessStep) && isStepActivated) {
             if (activatedTime !== null) {
               const successTime = new Date(event.time).getTime();
-              const stepTime = successTime - activatedTime;
+              const stepTime = (successTime - activatedTime) / 1000; // convert to seconds
               successfulStepTimes.push(stepTime);
               totalSuccessfulStepTime += stepTime;
               successfulStepCount++;

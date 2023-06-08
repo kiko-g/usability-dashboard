@@ -299,26 +299,24 @@ export const groupWizardsByType = (wizards: IWizard[]): IWizardGroup[] => {
 
     const successfulStepTimes: number[] = [];
     group.wizards.forEach((wizard) => {
-      if (wizard.completed) {
-        const events = wizard.events;
-        let isStepActivated = false;
-        let activatedTime: number | null = null;
+      const events = wizard.events;
+      let successfulStepCount = 0;
+      let isStepActivated = false;
+      let activatedTime: number | null = null;
 
-        for (const event of events) {
-          if (event.action.includes(WizardAction.ActivateStep)) {
-            isStepActivated = true;
-            activatedTime = new Date(event.time).getTime();
-          } else if (event.action.includes(WizardAction.SuccessStep) && isStepActivated) {
-            if (activatedTime !== null) {
-              const successTime = new Date(event.time).getTime();
-              const stepTime = (successTime - activatedTime) / 1000; // Convert to seconds
-              successfulStepTimes.push(stepTime);
-              activatedTime = null;
-            }
-            isStepActivated = false;
-          } else {
-            isStepActivated = false;
+      for (const event of events) {
+        if (event.action.includes(WizardAction.ActivateStep)) {
+          isStepActivated = true;
+          activatedTime = new Date(event.time).getTime();
+        } else if (event.action.includes(WizardAction.SuccessStep) && isStepActivated) {
+          if (activatedTime !== null) {
+            const successTime = new Date(event.time).getTime();
+            const stepTime = (successTime - activatedTime) / 1000; // Convert to seconds
+            successfulStepTimes.push(stepTime);
+            activatedTime = null;
           }
+          isStepActivated = false;
+          successfulStepCount++;
         }
       }
     });
