@@ -200,7 +200,7 @@ export const evaluateWizards = (wizards: ITrackerEventGroup[]): IWizard[] => {
     });
 
     // calculate score
-    score -= errorCount * 10 - failedStepCount * 10 - backStepCount * 5;
+    score = score - errorCount * 10 - failedStepCount * 10 - backStepCount * 5;
 
     // penalty for not completing
     if (!completed) {

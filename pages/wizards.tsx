@@ -741,7 +741,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
   const [inspectIndex, setInspectIndex] = React.useState(0);
   const selectedWizard = React.useMemo(() => wizardGroup.wizards[inspectIndex], [wizardGroup, inspectIndex]);
   const currentStep = React.useMemo(
-    () => (selectedWizard.stepStatus ? selectedWizard.stepStatus.current : '?'),
+    () => (selectedWizard.stepStatus ? selectedWizard.stepStatus.current + 1 : '?'),
     [selectedWizard]
   );
   const visibleSteps = React.useMemo(
@@ -754,7 +754,9 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
   );
   const stepCompletionRatio = React.useMemo(
     () =>
-      selectedWizard.stepStatus ? (100 * selectedWizard.stepStatus.current) / selectedWizard.stepStatus.visible : '?',
+      selectedWizard.stepStatus
+        ? (100 * selectedWizard.stepStatus.current + 1) / selectedWizard.stepStatus.visible
+        : '?',
     [selectedWizard]
   );
 
