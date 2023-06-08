@@ -175,34 +175,45 @@ function WizardKPIs({ data }: { data: IWizardGroup[] }) {
     let activatedStepsTotal = 0;
     let successStepsTotal = 0;
     let failedStepTotal = 0;
+    let minSuccessfulStepTime = Infinity;
+    let maxSuccessfulStepTime = 0;
+    let totalSuccessfulStepTime = 0;
+    let successfulStepCount = 0;
     let successfulStepTimes: number[] = [];
 
     data.forEach((wizardGroup) => {
       wizardGroup.wizards.forEach((wizard) => {
-        wizard.events.forEach((event, index) => {
+        let isStepActivated = false;
+        let activatedTime: number | null = null;
+
+        wizard.events.forEach((event) => {
           const action = event.action;
           if (action.includes(WizardAction.ActivateStep)) {
+            isStepActivated = true;
+            activatedTime = new Date(event.time).getTime();
             activatedStepsTotal++;
-          } else if (action.includes(WizardAction.SuccessStep)) {
-            successStepsTotal++;
-            const nextEvent = wizard.events[index + 1];
-            if (nextEvent && nextEvent.action.includes(WizardAction.ActivateStep)) {
-              const activatedTime = new Date(nextEvent.time).getTime();
+          } else if (action.includes(WizardAction.SuccessStep) && isStepActivated) {
+            if (activatedTime !== null) {
               const successTime = new Date(event.time).getTime();
               const stepTime = successTime - activatedTime;
               successfulStepTimes.push(stepTime);
+              totalSuccessfulStepTime += stepTime;
+              successfulStepCount++;
+              minSuccessfulStepTime = Math.min(minSuccessfulStepTime, stepTime);
+              maxSuccessfulStepTime = Math.max(maxSuccessfulStepTime, stepTime);
+              activatedTime = null;
             }
+            isStepActivated = false;
+            successStepsTotal++;
           } else if (action.includes(WizardAction.FailStep)) {
             failedStepTotal++;
+            isStepActivated = false;
           }
         });
       });
     });
 
-    const minSuccessfulStepTime = Math.min(...successfulStepTimes);
-    const maxSuccessfulStepTime = Math.max(...successfulStepTimes);
-    const avgSuccessfulStepTime =
-      successfulStepTimes.length > 0 ? successfulStepTimes.reduce((a, b) => a + b, 0) / successfulStepTimes.length : 0;
+    const avgSuccessfulStepTime = successfulStepCount > 0 ? totalSuccessfulStepTime / successfulStepCount : 0;
     const stdDevSuccessfulStepTime = standardDeviation(successfulStepTimes);
 
     return {
@@ -501,9 +512,7 @@ function StepCompletionStatsCard({ stats }: { stats: StepCompletionStats }) {
           <span className="h-4 w-4 rounded-full bg-violet-500" />
           <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
             Max time to complete step:{' '}
-            <span className="font-normal">
-              {maxSuccessfulStepTime === Infinity ? 'N/A' : `${maxSuccessfulStepTime}s`}
-            </span>
+            <span className="font-normal">{maxSuccessfulStepTime < 0 ? 'N/A' : `${maxSuccessfulStepTime}s`}</span>
           </span>
         </div>
 
