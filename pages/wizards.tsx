@@ -830,7 +830,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                         <>
                           <p className="mb-2 text-sm">Here are some key stats for wizards of this category</p>
 
-                          <div className="flex flex-wrap gap-x-4 gap-y-4">
+                          <div className="grid grid-cols-5 gap-x-4 gap-y-4">
                             <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-blue-600 bg-blue-600/60 text-center text-white dark:border-blue-500 dark:bg-blue-500/40">
                               <span className="w-full border-b px-2 py-2 font-mono text-xl font-bold">
                                 {wizardGroup.stats.avgTimespan.toFixed(1)}s
@@ -882,7 +882,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
 
                             <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-violet-600 bg-violet-600/60 text-center text-white dark:border-violet-500 dark:bg-violet-500/40">
                               <span className="w-full border-b px-2 py-2 font-mono text-xl font-bold">
-                                {wizardGroup.stats.avgScore}/100
+                                {wizardGroup.stats.avgScore.toFixed(1)}/100
                               </span>
                               <span className="my-auto flex min-h-[51px] items-center px-2 py-2 text-sm leading-tight tracking-tighter">
                                 Average Wizard UX Score
@@ -1020,7 +1020,9 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                                   progress={stepCompletionRatio === '?' ? 0 : stepCompletionRatio}
                                   color="green"
                                 />
-                                <span className="text-center text-xs tracking-tighter">Step</span>
+                                <span className="text-center text-xs tracking-tighter">
+                                  Step {`${currentStep} / ${visibleSteps}`}
+                                </span>
                               </div>
 
                               <div className="flex flex-col items-center justify-center space-y-1">
