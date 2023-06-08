@@ -490,14 +490,20 @@ function StepCompletionStatsCard({ stats }: { stats: StepCompletionStats }) {
         <div className="flex items-center gap-x-2">
           <span className="h-4 w-4 rounded-full bg-pink-500" />
           <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
-            Min time to complete step: <span className="font-normal">{minSuccessfulStepTime}s</span>
+            Min time to complete step:{' '}
+            <span className="font-normal">
+              {minSuccessfulStepTime === Infinity ? 'N/A' : `${minSuccessfulStepTime}s`}
+            </span>
           </span>
         </div>
 
         <div className="flex items-center gap-x-2">
           <span className="h-4 w-4 rounded-full bg-violet-500" />
           <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
-            Max time to complete step: <span className="font-normal">{maxSuccessfulStepTime}s</span>
+            Max time to complete step:{' '}
+            <span className="font-normal">
+              {maxSuccessfulStepTime === Infinity ? 'N/A' : `${maxSuccessfulStepTime}s`}
+            </span>
           </span>
         </div>
 
@@ -506,7 +512,7 @@ function StepCompletionStatsCard({ stats }: { stats: StepCompletionStats }) {
           <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
             Std Dev for completed step times:{' '}
             <span className="font-normal">
-              {stdDevSuccessfulStepTime === null ? 'N/A' : stdDevSuccessfulStepTime?.toFixed(1)}s
+              {stdDevSuccessfulStepTime === null ? 'N/A' : `${stdDevSuccessfulStepTime.toFixed(1)}s`}
             </span>
           </span>
         </div>

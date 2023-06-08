@@ -301,17 +301,23 @@ export const groupWizardsByType = (wizards: IWizard[]): IWizardGroup[] => {
     group.wizards.forEach((wizard) => {
       if (wizard.completed) {
         const events = wizard.events;
-        for (let i = 0; i < events.length - 1; i++) {
-          const currentEvent = events[i];
-          const nextEvent = events[i + 1];
-          if (
-            currentEvent.action.startsWith('Activate Step cmf-core-controls-wizardStep') &&
-            nextEvent.action.startsWith('Success Step cmf-core-controls-wizardStep')
-          ) {
-            const activatedTime = new Date(currentEvent.time).getTime();
-            const successTime = new Date(nextEvent.time).getTime();
-            const stepTime = successTime - activatedTime;
-            successfulStepTimes.push(stepTime);
+        let isStepActivated = false;
+        let activatedTime: number | null = null;
+
+        for (const event of events) {
+          if (event.action.includes(WizardAction.ActivateStep)) {
+            isStepActivated = true;
+            activatedTime = new Date(event.time).getTime();
+          } else if (event.action.includes(WizardAction.SuccessStep) && isStepActivated) {
+            if (activatedTime !== null) {
+              const successTime = new Date(event.time).getTime();
+              const stepTime = successTime - activatedTime;
+              successfulStepTimes.push(stepTime);
+              activatedTime = null;
+            }
+            isStepActivated = false;
+          } else {
+            isStepActivated = false;
           }
         }
       }
@@ -321,8 +327,7 @@ export const groupWizardsByType = (wizards: IWizard[]): IWizardGroup[] => {
       group.stats.avgSuccessfulStepTime = successfulStepTimes.reduce((a, b) => a + b, 0) / successfulStepTimes.length;
       group.stats.minSuccessfulStepTime = Math.min(...successfulStepTimes);
       group.stats.maxSuccessfulStepTime = Math.max(...successfulStepTimes);
-    }
-    else {
+    } else {
       group.stats.avgSuccessfulStepTime = null;
       group.stats.minSuccessfulStepTime = null;
       group.stats.maxSuccessfulStepTime = null;
