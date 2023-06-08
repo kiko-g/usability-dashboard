@@ -61,6 +61,15 @@ function findComponentTimespan(group: ITrackerEvent[]) {
   return (lastTime.getTime() - firstTime.getTime()) / 1000;
 }
 
+function updateSteps(action: string) {
+  const split = action.split(': ');
+  if (split.length < 2) return;
+
+  const stepStatusRaw = split[1];
+  const stepStatus = JSON.parse(stepStatusRaw) as IWizardStepsStatus;
+  return { total: stepStatus.total, visible: stepStatus.visible, current: stepStatus.current };
+}
+
 function transformGroupedEvents(groupedEvents: ITrackerEventRawEvent[][]): ITrackerEventGroup[] {
   const result: ITrackerEventGroup[] = [];
 
@@ -139,11 +148,12 @@ export const evaluateWizards = (wizards: ITrackerEventGroup[]): IWizard[] => {
     wizard.events.forEach((event, eventIdx) => {
       // steps changed
       if (event.action.includes(WizardAction.UpdateSteps)) {
-        const stepStatusRaw = event.action.split(': ')[1];
-        const stepStatus = JSON.parse(stepStatusRaw) as IWizardStepsStatus;
-        totalSteps = stepStatus.total;
-        visibleSteps = stepStatus.visible;
-        currentStep = stepStatus.current;
+        let stepStatus = updateSteps(event.action);
+        if (stepStatus) {
+          totalSteps = stepStatus.total;
+          visibleSteps = stepStatus.visible;
+          currentStep = stepStatus.current;
+        }
       }
       // error
       else if (event.action.includes(WizardAction.Error)) {
@@ -160,29 +170,32 @@ export const evaluateWizards = (wizards: ITrackerEventGroup[]): IWizard[] => {
       // close wizard
       else if (event.action.includes(WizardAction.Cancel)) {
         closed = true;
-        const stepStatusRaw = event.action.split(': ')[1];
-        const stepStatus = JSON.parse(stepStatusRaw) as IWizardStepsStatus;
-        totalSteps = stepStatus.total;
-        visibleSteps = stepStatus.visible;
-        currentStep = stepStatus.current;
+        let stepStatus = updateSteps(event.action);
+        if (stepStatus) {
+          totalSteps = stepStatus.total;
+          visibleSteps = stepStatus.visible;
+          currentStep = stepStatus.current;
+        }
       }
       // cancel wizard (close with confirm dialog)
       else if (event.action.includes(WizardAction.Cancel)) {
         cancelled = true;
-        const stepStatusRaw = event.action.split(': ')[1];
-        const stepStatus = JSON.parse(stepStatusRaw) as IWizardStepsStatus;
-        totalSteps = stepStatus.total;
-        visibleSteps = stepStatus.visible;
-        currentStep = stepStatus.current;
+        let stepStatus = updateSteps(event.action);
+        if (stepStatus) {
+          totalSteps = stepStatus.total;
+          visibleSteps = stepStatus.visible;
+          currentStep = stepStatus.current;
+        }
       }
       // complete wizard
       else if (event.action.includes(WizardAction.Complete)) {
         completed = true;
-        const stepStatusRaw = event.action.split(': ')[1];
-        const stepStatus = JSON.parse(stepStatusRaw) as IWizardStepsStatus;
-        totalSteps = stepStatus.total;
-        visibleSteps = stepStatus.visible;
-        currentStep = stepStatus.current;
+        let stepStatus = updateSteps(event.action);
+        if (stepStatus) {
+          totalSteps = stepStatus.total;
+          visibleSteps = stepStatus.visible;
+          currentStep = stepStatus.current;
+        }
       }
     });
 
