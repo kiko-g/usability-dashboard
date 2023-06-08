@@ -1,5 +1,8 @@
 # Set the base image to Node.js LTS
-FROM node:lts-alpine
+FROM node:lts
+
+# Update packages and install nano
+RUN apt-get update && apt-get install nano -y
 
 # Set the working directory in the container
 WORKDIR /app
