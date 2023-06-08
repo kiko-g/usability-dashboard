@@ -1021,7 +1021,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                                   color="green"
                                 />
                                 <span className="text-center text-xs tracking-tighter">
-                                  Step {`${currentStep} / ${visibleSteps}`}
+                                  Step {`${currentStep}/${visibleSteps}`}
                                 </span>
                               </div>
 
