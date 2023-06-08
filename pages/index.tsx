@@ -67,7 +67,7 @@ export default function Hub() {
           </p>
         </div>
 
-        <div className="divide-y divide-gray-200 overflow-hidden rounded-lg border border-transparent bg-gray-200 shadow-xl dark:bg-gray-500 sm:grid sm:grid-cols-2 sm:gap-px sm:divide-y-0">
+        <div className="divide-y divide-gray-200 overflow-hidden rounded-lg border border-transparent bg-gray-200 dark:bg-gray-500 sm:grid sm:grid-cols-2 sm:gap-px sm:divide-y-0">
           {actions.map((action, actionIdx) => (
             <Link
               href={action.href}

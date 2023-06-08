@@ -1,12 +1,12 @@
 import React, { Fragment } from 'react';
 import Link from 'next/link';
 import classNames from 'classnames';
-import type { IWizardGroup } from '../@types';
+import type { ITrackerEventGroup, IWizardGroup } from '../@types';
 import { mockWizardData as mockData } from '../utils/mock';
 import { Layout } from '../components/layout';
 import { CircularProgressBadge, Loading, NotFound } from '../components/utils';
 import { Dialog, Listbox, Transition } from '@headlessui/react';
-import { WizardAction } from '../utils/matomo';
+import { WizardAction, evaluateAndGroupWizards } from '../utils/matomo';
 import { CheckCircleIcon as CheckCircleSolidIcon } from '@heroicons/react/24/solid';
 import {
   ArrowPathIcon,
@@ -36,17 +36,18 @@ export default function Wizards() {
     setError(false);
     setLoading(true);
 
-    fetch('/api/matomo/events/wizard')
+    fetch('/api/matomo/events/raw/wizard')
       .then((res) => {
         if (!res.ok) {
           throw new Error(res.statusText);
         }
         return res.json();
       })
-      .then((data: IWizardGroup[]) => {
+      .then((data: ITrackerEventGroup[]) => {
         setLoading(false);
         setWillFetch(false);
-        setData(data);
+        const evaluatedWizards = evaluateAndGroupWizards(data);
+        setData(evaluatedWizards);
       })
       .catch((error) => {
         setError(true);
@@ -1071,7 +1072,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                   </div>
 
                   {/* Footer buttons */}
-                  <div className="mt-4 flex flex-wrap items-center justify-end gap-3">
+                  <div className="flex flex-wrap items-center justify-end gap-3">
                     <button
                       type="button"
                       onClick={() => setInspect((prev) => !prev)}

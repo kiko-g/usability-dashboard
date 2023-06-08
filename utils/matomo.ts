@@ -460,3 +460,10 @@ export const parseButtons = (body: string): ButtonType[] => {
 
   return buttons;
 };
+
+// to be used in a frontend
+export const evaluateAndGroupWizards = (wizards: ITrackerEventGroup[], scoringType?: 'A' | 'B' | 'C') => {
+  const evaluatedWizards = evaluateWizards(wizards);
+  const groupedWizards = groupWizardsByType(evaluatedWizards);
+  return groupedWizards;
+};
