@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import Link from 'next/link';
 import classNames from 'classnames';
-import type { IExecutionView, IExecutionViewGroup } from '../@types';
+import type { IExecutionView, IExecutionViewGroup, ITrackerEventGroup } from '../@types';
 import { mockExecutionViewData as mockData } from '../utils/mock';
 import { Layout } from '../components/layout';
 import { CircularProgressBadge, Loading, NotFound } from '../components/utils';
@@ -53,11 +53,12 @@ export default function Executions() {
           return res.json();
         }
       })
-      .then((data: IExecutionViewGroup[]) => {
-        // TODO: replace any with correct type
+      .then((data: ITrackerEventGroup[]) => {
         setLoading(false);
         setWillFetch(false);
-        setData(data === null ? [] : data);
+        if (data === null) setData([]);
+        else {
+        }
       });
   }, [willFetch]);
 
@@ -936,7 +937,7 @@ function ExecutionViewGroupFocus({ executionViewGroup }: { executionViewGroup: I
                       type="button"
                       onClick={() => setInspect((prev) => !prev)}
                       className={classNames(
-                        inspect ? 'bg-rose-600' : 'bg-teal-600',
+                        inspect ? 'bg-rose-700' : 'bg-sky-700',
                         'flex items-center gap-2 rounded px-4 py-2 text-sm text-white transition hover:opacity-80'
                       )}
                     >
@@ -950,7 +951,7 @@ function ExecutionViewGroupFocus({ executionViewGroup }: { executionViewGroup: I
 
                     <button
                       type="button"
-                      className="flex items-center gap-2 rounded bg-gray-500 px-4 py-2 text-sm text-white transition hover:opacity-80"
+                      className="flex items-center gap-2 rounded bg-teal-600 px-4 py-2 text-sm text-white transition hover:opacity-80"
                       onClick={closeModal}
                     >
                       <span>Got it!</span>
@@ -1076,8 +1077,8 @@ function Formula() {
 
       <p className="mt-3">
         The <strong>minimum score is 0</strong>, so if the score drops below that, we directly assign it a score of 0.
-        In case the score is <strong>below 20 and the execution view was completed</strong> we directly assign a score
-        of 20 to the execution view, rewarding the completion.
+        In case the score is <strong>below 40 and the execution view was completed</strong> we directly assign a score
+        of 40 to the execution view, rewarding the completion.
       </p>
     </div>
   );

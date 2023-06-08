@@ -208,7 +208,7 @@ export const evaluateWizards = (wizards: ITrackerEventGroup[]): IWizard[] => {
       else score -= 5;
     }
 
-    if (score < 20 && completed) score = 20; // prevent too low score if completed
+    if (score < 40 && completed) score = 40; // prevent too low score if completed
     else if (score < 0) score = 0; // prevent negative score
 
     const evaluatedWizard: IWizard = {
@@ -339,16 +339,7 @@ export const evaluateExecutionViews = (executionViews: ITrackerEventGroup[]): IE
   const result: IExecutionView[] = [];
 
   for (const executionView of executionViews) {
-    if (executionView.events.length === 0) {
-      result.push({
-        ...executionView,
-        score: 0,
-        timespan: 0,
-        errorCount: 0,
-        tabChangeCount: 0,
-        completed: false,
-      });
-    }
+    if (executionView.events.length === 0) continue;
 
     let score = 100;
     let completed = false;
@@ -358,31 +349,33 @@ export const evaluateExecutionViews = (executionViews: ITrackerEventGroup[]): IE
     let timespan = findComponentTimespan(executionView.events);
 
     executionView.events.forEach((event, index) => {
+      // error penalty
       if (event.action.includes(ExecutionViewAction.Error)) {
-        // error penalty
-        score -= 10;
         errorCount++;
-      } else if (event.action.includes(ExecutionViewAction.TabChange)) {
-        // process tab change
+      }
+      // process tab change
+      else if (event.action.includes(ExecutionViewAction.TabChange)) {
         tabChangeCount++;
-      } else if (event.action.includes(ExecutionViewAction.Cancel)) {
-        // cancel wizard penalty
+      }
+      // cancel wizard penalty
+      else if (event.action.includes(ExecutionViewAction.Cancel)) {
         cancelled = true;
-        if (timespan > 20) score -= timespan / 20 - 4 * errorCount;
-        else score -= 5;
-      } else if (event.action.includes(ExecutionViewAction.Complete)) {
-        // complete wizard bonus
+      }
+      // complete wizard bonus
+      else if (event.action.includes(ExecutionViewAction.Complete)) {
         completed = true;
       }
     });
 
+    score = score - 10 * errorCount - 5 * tabChangeCount;
+
     // prevent the absence of complete or cancel action
-    if (!completed && !cancelled) {
+    if (!completed || cancelled) {
       if (timespan > 20) score -= timespan / 20 - 4 * errorCount;
       else score -= 5;
     }
 
-    if (score < 20 && completed) score = 20; // prevent too low score if completed
+    if (score < 40 && completed) score = 40; // prevent too low score if completed
     else if (score < 0) score = 0; // prevent negative score
 
     const evaluatedExecutionView: IExecutionView = {
@@ -503,4 +496,10 @@ export const evaluateAndGroupWizards = (wizards: ITrackerEventGroup[], scoringTy
   const evaluatedWizards = evaluateWizards(wizards);
   const groupedWizards = groupWizardsByType(evaluatedWizards);
   return groupedWizards;
+};
+
+export const evaluateAndGroupExecutionViews = (executionViews: ITrackerEventGroup[], scoringType?: 'A' | 'B' | 'C') => {
+  const evaluatedExecutionViews = evaluateExecutionViews(executionViews);
+  const groupedExecutionViews = groupExecutionViews(evaluatedExecutionViews);
+  return groupedExecutionViews;
 };
