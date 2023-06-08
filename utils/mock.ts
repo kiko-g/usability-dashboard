@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { ButtonType, IExecutionViewGroup, IWizardGroup, Visits } from '../@types';
 
 export const mockVisitsData: Visits = {

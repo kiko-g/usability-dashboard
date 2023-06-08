@@ -2,7 +2,7 @@ import classNames from 'classnames';
 
 type Props = {
   progress: number;
-  color?: 'blue' | 'green';
+  color?: 'blue' | 'green' | 'red' | 'yellow' | 'orange';
 };
 
 export default function CircularProgressBadge({ progress, color }: Props) {
@@ -22,7 +22,10 @@ export default function CircularProgressBadge({ progress, color }: Props) {
             'opacity-20',
             color === undefined && 'text-white',
             color === 'blue' && 'text-blue-600',
-            color === 'green' && 'text-emerald-600'
+            color === 'green' && 'text-emerald-600',
+            color === 'red' && 'text-rose-600',
+            color === 'yellow' && 'text-amber-400',
+            color === 'orange' && 'text-orange-600'
           )}
           r={radius}
           cx={diameter / 2}
@@ -35,7 +38,10 @@ export default function CircularProgressBadge({ progress, color }: Props) {
             'origin-center -rotate-90 transform stroke-current',
             color === undefined && 'text-white',
             color === 'blue' && 'text-blue-600',
-            color === 'green' && 'text-emerald-600'
+            color === 'green' && 'text-emerald-600',
+            color === 'red' && 'text-rose-600',
+            color === 'yellow' && 'text-amber-400',
+            color === 'orange' && 'text-orange-600'
           )}
           r={radius}
           cx={diameter / 2}
