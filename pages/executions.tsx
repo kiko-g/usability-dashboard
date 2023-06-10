@@ -6,7 +6,7 @@ import { mockExecutionViewData as mockData } from '../utils/mock';
 import { Layout } from '../components/layout';
 import { CircularProgressBadge, Loading, NotFound } from '../components/utils';
 import { Dialog, Listbox, Transition } from '@headlessui/react';
-import { ExecutionViewAction } from '../utils/matomo';
+import { ExecutionViewAction, evaluateAndGroupExecutionViews } from '../utils/matomo';
 import { CheckCircleIcon as CheckCircleSolidIcon } from '@heroicons/react/24/solid';
 import {
   ArrowPathIcon,
@@ -21,6 +21,7 @@ import {
   InformationCircleIcon,
   MagnifyingGlassMinusIcon,
   MagnifyingGlassPlusIcon,
+  ScaleIcon,
   XCircleIcon,
 } from '@heroicons/react/24/outline';
 
@@ -31,7 +32,8 @@ type CompletionRate = {
 };
 
 export default function Executions() {
-  const [data, setData] = React.useState<IExecutionViewGroup[]>([]); // TODO: replace any with correct type
+  const [rawData, setRawData] = React.useState<ITrackerEventGroup[]>([]);
+  const [processedData, setProcessedData] = React.useState<IExecutionViewGroup[]>([]);
   const [error, setError] = React.useState<boolean>(false);
   const [loading, setLoading] = React.useState<boolean>(true);
   const [willFetch, setWillFetch] = React.useState<boolean>(true);
@@ -56,8 +58,11 @@ export default function Executions() {
       .then((data: ITrackerEventGroup[]) => {
         setLoading(false);
         setWillFetch(false);
-        if (data === null) setData([]);
+        if (data === null) setProcessedData([]);
         else {
+          setRawData(data);
+          const processedExecutionViewData = evaluateAndGroupExecutionViews(data);
+          setProcessedData(processedExecutionViewData);
         }
       });
   }, [willFetch]);
@@ -80,7 +85,7 @@ export default function Executions() {
                 className="hover:opacity-80"
                 onClick={() => {
                   setError(false);
-                  setData(mockData);
+                  setProcessedData(mockData);
                 }}
               >
                 <CircleStackIcon className="h-6 w-6" />
@@ -100,12 +105,12 @@ export default function Executions() {
               <CodeBracketIcon className="h-6 w-6" />
             </Link>
 
-            {/* View JSON button */}
+            {/* View Raw JSON button */}
             <button
-              title="View JSON data"
+              title="View Raw JSON data"
               className="hover:opacity-80"
               onClick={() => {
-                const jsonString = JSON.stringify(data);
+                const jsonString = JSON.stringify(rawData);
                 const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(jsonString)}`;
                 window.open(dataUri, '_blank');
               }}
@@ -113,6 +118,19 @@ export default function Executions() {
               <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="h-6 w-6">
                 <path d="M5.759 3.975h1.783V5.76H5.759v4.458A1.783 1.783 0 0 1 3.975 12a1.783 1.783 0 0 1 1.784 1.783v4.459h1.783v1.783H5.759c-.954-.24-1.784-.803-1.784-1.783v-3.567a1.783 1.783 0 0 0-1.783-1.783H1.3v-1.783h.892a1.783 1.783 0 0 0 1.783-1.784V5.76A1.783 1.783 0 0 1 5.76 3.975m12.483 0a1.783 1.783 0 0 1 1.783 1.784v3.566a1.783 1.783 0 0 0 1.783 1.784h.892v1.783h-.892a1.783 1.783 0 0 0-1.783 1.783v3.567a1.783 1.783 0 0 1-1.783 1.783h-1.784v-1.783h1.784v-4.459A1.783 1.783 0 0 1 20.025 12a1.783 1.783 0 0 1-1.783-1.783V5.759h-1.784V3.975h1.784M12 14.675a.892.892 0 0 1 .892.892.892.892 0 0 1-.892.892.892.892 0 0 1-.891-.892.892.892 0 0 1 .891-.892m-3.566 0a.892.892 0 0 1 .891.892.892.892 0 0 1-.891.892.892.892 0 0 1-.892-.892.892.892 0 0 1 .892-.892m7.133 0a.892.892 0 0 1 .891.892.892.892 0 0 1-.891.892.892.892 0 0 1-.892-.892.892.892 0 0 1 .892-.892z"></path>
               </svg>
+            </button>
+
+            {/* View Processed JSON button */}
+            <button
+              title="View Processed JSON data"
+              className="hover:opacity-80"
+              onClick={() => {
+                const jsonString = JSON.stringify(processedData);
+                const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(jsonString)}`;
+                window.open(dataUri, '_blank');
+              }}
+            >
+              <ScaleIcon className="h-6 w-6" />
             </button>
 
             {/* Reload button */}
@@ -129,7 +147,7 @@ export default function Executions() {
           </div>
         </div>
 
-        <ExecutionViewKPIs data={data} />
+        <ExecutionViewKPIs data={processedData} />
         {loading && <Loading />}
         {error && <NotFound />}
       </article>
