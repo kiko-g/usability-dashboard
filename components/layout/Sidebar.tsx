@@ -100,7 +100,7 @@ export function Sidebar({ location }: SidebarProps) {
           </Link>
           <Link
             target="_blank"
-            href={`http://${process.env.MATOMO_TRUSTED_HOSTS}` || 'http://localhost:8089'}
+            href={process.env.NEXT_PUBLIC_MATOMO_DASHBOARD_URL || 'http://localhost:8089'}
             title="Access Matomo Dashboard"
             aria-label="Access Matomo Dashboard"
             className="github transition"

@@ -17,13 +17,14 @@ import {
   MagnifyingGlassIcon,
   RectangleStackIcon,
 } from '@heroicons/react/24/outline';
-import { CheckCircleIcon as CheckCircleSolidIcon } from '@heroicons/react/24/solid';
+import { ArrowTopRightOnSquareIcon, CheckCircleIcon as CheckCircleSolidIcon } from '@heroicons/react/24/solid';
 import { mockVisitsData as mockData } from '../utils/mock';
 import { Layout } from '../components/layout';
 import { Loading, NotFound } from '../components/utils';
 import { Dialog, Disclosure, Listbox, Transition } from '@headlessui/react';
 import { strIncludes } from '../utils';
 import { OverviewMatomoResponse, TransitionMatomo } from '../@types/matomo';
+import Image from 'next/image';
 
 export default function Visits() {
   const [data, setData] = React.useState<Visits | null>(null);
@@ -87,6 +88,21 @@ export default function Visits() {
               <CodeBracketIcon className="h-6 w-6" />
             </Link>
 
+            {/* View JSON button */}
+            <button
+              title="View JSON data"
+              className="hover:opacity-80"
+              onClick={() => {
+                const jsonString = JSON.stringify(data);
+                const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(jsonString)}`;
+                window.open(dataUri, '_blank');
+              }}
+            >
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="h-6 w-6">
+                <path d="M5.759 3.975h1.783V5.76H5.759v4.458A1.783 1.783 0 0 1 3.975 12a1.783 1.783 0 0 1 1.784 1.783v4.459h1.783v1.783H5.759c-.954-.24-1.784-.803-1.784-1.783v-3.567a1.783 1.783 0 0 0-1.783-1.783H1.3v-1.783h.892a1.783 1.783 0 0 0 1.783-1.784V5.76A1.783 1.783 0 0 1 5.76 3.975m12.483 0a1.783 1.783 0 0 1 1.783 1.784v3.566a1.783 1.783 0 0 0 1.783 1.784h.892v1.783h-.892a1.783 1.783 0 0 0-1.783 1.783v3.567a1.783 1.783 0 0 1-1.783 1.783h-1.784v-1.783h1.784v-4.459A1.783 1.783 0 0 1 20.025 12a1.783 1.783 0 0 1-1.783-1.783V5.759h-1.784V3.975h1.784M12 14.675a.892.892 0 0 1 .892.892.892.892 0 0 1-.892.892.892.892 0 0 1-.891-.892.892.892 0 0 1 .891-.892m-3.566 0a.892.892 0 0 1 .891.892.892.892 0 0 1-.891.892.892.892 0 0 1-.892-.892.892.892 0 0 1 .892-.892m7.133 0a.892.892 0 0 1 .891.892.892.892 0 0 1-.891.892.892.892 0 0 1-.892-.892.892.892 0 0 1 .892-.892z"></path>
+              </svg>
+            </button>
+
             <button title="Retry fetching data" className="hover:opacity-80" onClick={() => fetchData()}>
               <ArrowPathIcon className="h-6 w-6" />
             </button>
@@ -107,7 +123,7 @@ export default function Visits() {
               {data.browsers && <FrequencyTable title="Browsers" freq={data.browsers} />}
               {data.screens && <FrequencyTable title="Screen Sizes" freq={data.screens} />}
             </div>
-            {/* <PageTransitionSummary transitions={data?.transitions} /> */}
+            <PageTransitionsMatomoLink />
           </div>
         )}
       </article>
@@ -116,21 +132,28 @@ export default function Visits() {
 }
 
 function FrequencyTable({ twClasses, title, freq }: { twClasses?: string; title: string; freq: Frequency[] }) {
+  const total = freq.reduce((acc, curr) => acc + curr.value, 0);
+
   return (
     <div className={classNames(twClasses, 'flex-1 self-stretch rounded bg-white p-4 dark:bg-darker')}>
       <h2 className="text-xl font-bold tracking-tighter">{title}</h2>
       <ul className="mt-2 flex max-h-40 flex-col space-y-2 overflow-y-scroll">
         {freq
           .filter((item) => item.value > 0)
-          .map((item, itemIdx) => (
-            <li
-              key={`frequency-${item.name}-${itemIdx}`}
-              className="flex items-center justify-between gap-3 rounded bg-slate-100 px-2 py-2 text-sm dark:bg-white/10"
-            >
-              <span className="font-medium tracking-tighter">{item.name}</span>
-              <span className="font-mono tracking-tighter">{item.value}</span>
-            </li>
-          ))}
+          .map((item, itemIdx) => {
+            const percentage = ((item.value / total) * 100).toFixed(1);
+            return (
+              <li
+                key={`frequency-${item.name}-${itemIdx}`}
+                className="flex items-center justify-between gap-3 rounded bg-slate-100 px-2 py-2 text-sm dark:bg-white/10"
+              >
+                <span className="font-medium tracking-tighter">{item.name}</span>
+                <span className="whitespace-nowrap font-mono tracking-tighter">
+                  ({percentage}%) <span className="font-bold">{item.value}</span>
+                </span>
+              </li>
+            );
+          })}
       </ul>
     </div>
   );
@@ -146,6 +169,8 @@ function PagesFrequencies({ twClasses, data }: { twClasses?: string; data: Visit
     () => (pages ? pages.filter((item) => strIncludes(item.name, searchQuery)) : []),
     [pages, searchQuery]
   );
+
+  const total = React.useMemo(() => pagesFiltered.reduce((acc, curr) => acc + curr.value, 0), [pagesFiltered]);
 
   function closeModal() {
     setIsModalOpen(false);
@@ -210,15 +235,20 @@ function PagesFrequencies({ twClasses, data }: { twClasses?: string; data: Visit
         ) : (
           pagesFiltered
             .filter((item) => item.value > 0)
-            .map((item, itemIdx) => (
-              <li
-                key={`frequency-${item.name}-${itemIdx}`}
-                className="flex items-center justify-between gap-3 rounded bg-slate-100 px-4 py-2.5 text-sm dark:bg-white/10"
-              >
-                <span className="wrap truncate font-medium tracking-tighter">{item.name}</span>
-                <span className="font-mono">{item.value}</span>
-              </li>
-            ))
+            .map((item, itemIdx) => {
+              const percentage = ((item.value / total) * 100).toFixed(1);
+              return (
+                <li
+                  key={`frequency-${item.name}-${itemIdx}`}
+                  className="flex items-center justify-between gap-3 rounded bg-slate-100 px-4 py-2.5 text-sm dark:bg-white/10"
+                >
+                  <span className="wrap truncate font-medium tracking-tighter">{item.name}</span>
+                  <span className="whitespace-nowrap font-mono tracking-tighter">
+                    ({percentage}%) <span className="font-bold">{item.value}</span>
+                  </span>
+                </li>
+              );
+            })
         )}
       </ul>
 
@@ -248,7 +278,7 @@ function PagesFrequencies({ twClasses, data }: { twClasses?: string; data: Visit
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="flex h-screen w-full transform flex-col justify-between gap-4 overflow-scroll bg-white p-6 text-left align-middle shadow-xl transition-all dark:bg-navy md:max-w-3xl">
+                <Dialog.Panel className="flex h-screen w-full transform flex-col justify-between gap-4 overflow-scroll bg-white p-6 text-left align-middle shadow-xl transition-all dark:bg-navy md:min-w-[32rem] md:max-w-3xl">
                   <div>
                     <div className="flex items-center justify-between gap-2">
                       <Dialog.Title
@@ -294,24 +324,29 @@ function PagesFrequencies({ twClasses, data }: { twClasses?: string; data: Visit
                       </div>
 
                       {/* List */}
-                      <div className="z-50 mx-auto mt-3 max-h-[70vh] w-full space-y-2 overflow-y-scroll rounded bg-white p-3 shadow dark:bg-white/5">
+                      <div className="z-50 mx-auto mt-3 max-h-[70vh] w-full space-y-2 overflow-y-scroll rounded bg-white dark:bg-white/5">
                         {pagesFiltered
                           .filter((item) => item.value > 0)
-                          .map((item, itemIdx) => (
-                            <Disclosure key={`frequency-disclosure-${item.name}-${itemIdx}`}>
-                              {({ open }) => (
-                                <>
-                                  <Disclosure.Button className="flex w-full justify-between rounded bg-slate-100 px-4 py-2 text-left text-sm font-medium text-slate-900 transition hover:bg-slate-600 hover:text-white dark:bg-white/20 dark:text-white dark:hover:opacity-80">
-                                    <span className="font-medium tracking-tighter">{item.name}</span>
-                                    <span className="font-mono">{item.value}</span>
-                                  </Disclosure.Button>
-                                  <Disclosure.Panel className="px-2 py-2 text-sm tracking-tighter text-gray-600 dark:text-white">
-                                    Inner content
-                                  </Disclosure.Panel>
-                                </>
-                              )}
-                            </Disclosure>
-                          ))}
+                          .map((item, itemIdx) => {
+                            const percentage = ((item.value / total) * 100).toFixed(1);
+                            return (
+                              <Disclosure key={`frequency-disclosure-${item.name}-${itemIdx}`}>
+                                {({ open }) => (
+                                  <>
+                                    <Disclosure.Button className="flex w-full justify-between gap-6 rounded bg-slate-100 px-4 py-2 text-left text-sm font-medium text-slate-900 transition hover:bg-slate-600 hover:text-white dark:bg-white/20 dark:text-white dark:hover:opacity-80">
+                                      <span className="font-medium tracking-tighter">{item.name}</span>
+                                      <span className="whitespace-nowrap font-mono tracking-tighter">
+                                        ({percentage}%) <span className="font-bold">{item.value}</span>
+                                      </span>
+                                    </Disclosure.Button>
+                                    <Disclosure.Panel className="px-2 py-2 text-sm tracking-tighter text-gray-600 dark:text-white">
+                                      Inner content
+                                    </Disclosure.Panel>
+                                  </>
+                                )}
+                              </Disclosure>
+                            );
+                          })}
                       </div>
                     </div>
                   </div>
@@ -386,6 +421,36 @@ function VisitsSummary({ twClasses, overview }: { twClasses?: string; overview: 
         ))}
       </ul>
     </div>
+  );
+}
+
+function PageTransitionsMatomoLink() {
+  return (
+    <Link
+      target="_blank"
+      title="Check Page Transitions on the Matomo Dashboard"
+      href={
+        process.env.NEXT_PUBLIC_MATOMO_DASHBOARD_URL ||
+        'http://localhost:8089/index.php?module=CoreHome&action=index&idSite=1&period=day&date=today#?idSite=1&period=day&date=yesterday&category=General_Actions&subcategory=Transitions_Transitions'
+      }
+      className="group flex items-center justify-between gap-3 rounded-lg border border-transparent bg-white p-6 transition hover:bg-gray-100 dark:border-secondary/50 dark:bg-secondary/20 dark:hover:bg-secondary/50"
+    >
+      <div className="flex items-center justify-center gap-3">
+        <Image src="/matomo.png" alt="Matomo Icon" width={64} height={64} className="rounded-full bg-gray-100 p-2" />
+        <div className="flex flex-col">
+          <h3 className="text-2xl font-bold text-slate-700 dark:text-white">
+            Check Page Transitions on the Matomo Dashboard
+          </h3>
+          <p className="mt-1 max-w-[80%] text-sm text-gray-500 dark:text-gray-200">
+            Page Transitions are better described directly on the Matomo Dashboard. Click here to check them out.
+          </p>
+        </div>
+      </div>
+
+      <div>
+        <ArrowTopRightOnSquareIcon className="h-8 w-8 transition group-hover:scale-125" />
+      </div>
+    </Link>
   );
 }
 
