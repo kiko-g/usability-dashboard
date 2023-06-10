@@ -37,7 +37,7 @@ export interface IWizardStepsStatus {
 }
 
 export interface IWizard extends ITrackerEventGroup {
-  score: number;
+  score: number | null;
   timespan: number;
   completed: boolean;
   errorCount: number;

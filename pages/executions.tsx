@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import Link from 'next/link';
 import classNames from 'classnames';
 import type { IExecutionView, IExecutionViewGroup, ITrackerEventGroup } from '../@types';
-import { mockExecutionViewData as mockData } from '../utils/mock';
+import { mockExecutionViewDataScored as mockData } from '../utils/mock';
 import { Layout } from '../components/layout';
 import { CircularProgressBadge, Loading, NotFound } from '../components/utils';
 import { Dialog, Listbox, Transition } from '@headlessui/react';

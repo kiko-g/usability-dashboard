@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 
 type Props = {
-  progress: number;
+  progress: number | null;
   color?: 'blue' | 'green' | 'red' | 'yellow' | 'orange';
 };
 
@@ -10,7 +10,8 @@ export default function CircularProgressBadge({ progress, color }: Props) {
   const strokeWidth = 5;
   const radius = (diameter - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (progress / 100) * circumference;
+  const offset = progress === null ? 0 : circumference - (progress / 100) * circumference;
+  const score = progress === null ? 'N/A' : progress.toFixed(0);
 
   return (
     <div className="relative h-12 w-12">
@@ -52,7 +53,7 @@ export default function CircularProgressBadge({ progress, color }: Props) {
         />
       </svg>
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform text-center">
-        <span className="text-xs lg:text-sm">{`${progress.toFixed(0)}`}</span>
+        <span className="text-xs lg:text-sm">{score}</span>
       </div>
     </div>
   );

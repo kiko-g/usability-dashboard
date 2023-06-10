@@ -130,7 +130,7 @@ export const evaluateWizards = (wizards: ITrackerEventGroup[]): IWizard[] => {
     // ignore wizard with no events
     if (wizard.events.length === 0) continue;
 
-    let score = 100;
+    let score: number | null = 100;
     let timespan = findComponentTimespan(wizard.events);
     let totalSteps = -1;
     let visibleSteps = -1;
@@ -200,15 +200,14 @@ export const evaluateWizards = (wizards: ITrackerEventGroup[]): IWizard[] => {
     });
 
     // calculate score
-    score = score - errorCount * 10 - failedStepCount * 10 - backStepCount * 5;
+    score = score - failedStepCount * 15 - errorCount * 10 - backStepCount * 5;
 
     // penalty for not completing
     if (!completed) {
       if (intendedWizard) score -= 4 * (errorCount + failedStepCount + backStepCount) - timespan / 12;
-      else score -= 5;
+      else score = null;
     }
-
-    if (score < 40 && completed) score = 40; // prevent too low score if completed
+    else if (score < 40 && completed) score = 40; // prevent too low score if completed
     else if (score < 0) score = 0; // prevent negative score
 
     const evaluatedWizard: IWizard = {
@@ -267,8 +266,10 @@ export const groupWizardsByType = (wizards: IWizard[]): IWizardGroup[] => {
       groupedWizards.push(group);
     }
 
-    group.stats.avgScore += wizard.score;
-    group.stats.scores.push(wizard.score);
+    if (wizard.score !== null) {
+      group.stats.avgScore += wizard.score;
+      group.stats.scores.push(wizard.score);
+    }
 
     group.stats.avgTimespan += wizard.timespan;
     group.stats.timespans.push(wizard.timespan);

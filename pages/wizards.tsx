@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import Link from 'next/link';
 import classNames from 'classnames';
 import type { ITrackerEventGroup, IWizardGroup } from '../@types';
-import { mockWizardData as mockData } from '../utils/mock';
+import { mockWizardDataScored as mockData } from '../utils/mock';
 import { Layout } from '../components/layout';
 import { CircularProgressBadge, Loading, NotFound } from '../components/utils';
 import { Dialog, Listbox, Transition } from '@headlessui/react';
@@ -500,7 +500,7 @@ function StepCompletionStatsCard({ stats }: { stats: StepCompletionStats }) {
         <div className="flex items-center gap-x-2">
           <span className="h-4 w-4 rounded-full bg-orange-500" />
           <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
-            Abandoneed steps:{' '}
+            Abandoned steps:{' '}
             <span className="font-normal">
               {abandoned} ({abandonedRatio}%)
             </span>
@@ -563,13 +563,6 @@ function ErrorStatsCard({ text, stats }: { text: string; stats: ErrorStatsType }
       <h2 className="mb-2 text-xl font-bold">{text}</h2>
       <div className="grid w-full grid-cols-1 grid-rows-none gap-x-0 lg:w-min lg:grid-flow-col lg:grid-cols-none lg:grid-rows-3 lg:gap-x-4">
         <div className="flex items-center gap-x-2">
-          <span className="h-4 w-4 rounded-full bg-rose-600" />
-          <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
-            Total Errors: <span className="font-normal">{totalErrors}</span>
-          </span>
-        </div>
-
-        <div className="flex items-center gap-x-2">
           <span className="h-4 w-4 rounded-full bg-amber-400" />
           <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
             Total Backs: <span className="font-normal">{totalBackSteps}</span>
@@ -579,14 +572,14 @@ function ErrorStatsCard({ text, stats }: { text: string; stats: ErrorStatsType }
         <div className="flex items-center gap-x-2">
           <span className="h-4 w-4 rounded-full bg-orange-500" />
           <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
-            Total Failed Steps: <span className="font-normal">{totalFailedSteps}</span>
+            Total Errors: <span className="font-normal">{totalErrors}</span>
           </span>
         </div>
 
         <div className="flex items-center gap-x-2">
           <span className="h-4 w-4 rounded-full bg-rose-600" />
           <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
-            Avg Errors: <span className="font-normal">{avgError.toFixed(2)} p/ wizard</span>
+            Total Failed Steps: <span className="font-normal">{totalFailedSteps}</span>
           </span>
         </div>
 
@@ -599,6 +592,13 @@ function ErrorStatsCard({ text, stats }: { text: string; stats: ErrorStatsType }
 
         <div className="flex items-center gap-x-2">
           <span className="h-4 w-4 rounded-full bg-orange-500" />
+          <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
+            Avg Errors: <span className="font-normal">{avgError.toFixed(2)} p/ wizard</span>
+          </span>
+        </div>
+
+        <div className="flex items-center gap-x-2">
+          <span className="h-4 w-4 rounded-full bg-rose-600" />
           <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
             Avg Failed Steps: <span className="font-normal">{avgFailedSteps.toFixed(2)} p/ wizard</span>
           </span>
@@ -1315,7 +1315,7 @@ function Formula() {
     <div className="my-1 text-sm">
       <p className="mb-1">First we establish a baseline score:</p>
       <code className="mb-4 block bg-navy px-3 py-2 text-sm font-normal tracking-[-0.07rem] text-white dark:bg-white/10 dark:text-white">
-        score = 100 - 10*errors - 10*stepErrors - 5*backSteps
+        score = 100 - 15*failedSteps - 10*errors - 5*backSteps
       </code>
 
       <p className="mb-1 mt-4">
@@ -1329,11 +1329,11 @@ function Formula() {
       </code>
 
       <p className="mb-1 mt-4">
-        If there are <strong>no negative actions</strong> or the <strong>timespan was under 10 seconds</strong> we only
-        deduct a small amount:
+        If there are <strong>no negative actions</strong> or the <strong>timespan was under 10 seconds</strong> we
+        simply ignored this wizard and do not provide a score:
       </p>
       <code className="mb-4 block bg-navy px-3 py-2 text-sm font-normal tracking-[-0.07rem] text-white dark:bg-white/10 dark:text-white">
-        score = score - 5
+        score = null
       </code>
 
       <p className="mt-4">
