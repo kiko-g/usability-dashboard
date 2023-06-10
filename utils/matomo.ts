@@ -131,6 +131,7 @@ export const evaluateWizards = (wizards: ITrackerEventGroup[]): IWizard[] => {
     if (wizard.events.length === 0) continue;
 
     let score: number | null = 100;
+    let formulaStr = '';
     let timespan = findComponentTimespan(wizard.events);
     let totalSteps = -1;
     let visibleSteps = -1;
@@ -201,18 +202,29 @@ export const evaluateWizards = (wizards: ITrackerEventGroup[]): IWizard[] => {
 
     // calculate score
     score = score - failedStepCount * 15 - errorCount * 10 - backStepCount * 5;
+    formulaStr = `${score} - ${failedStepCount}*15 - ${errorCount}*10 - ${backStepCount}*5`;
 
     // penalty for not completing
     if (!completed) {
-      if (intendedWizard) score -= 4 * (errorCount + failedStepCount + backStepCount) - timespan / 12;
-      else score = null;
+      if (intendedWizard) {
+        score = score - 20 - 3 * (errorCount + failedStepCount + backStepCount) - timespan / 6;
+        formulaStr += ` - 3*${errorCount + failedStepCount + backStepCount} - ${timespan.toFixed(0)} / 6 = ${score.toFixed(0)}`;
+      } else {
+        score = null;
+        formulaStr = 'N/A';
+      }
     }
-    else if (score < 40 && completed) score = 40; // prevent too low score if completed
-    else if (score < 0) score = 0; // prevent negative score
+    
+    if(score !== null) {
+      if (score < 40 && completed) score = 40; // prevent too low score if completed
+      else if (score < 0) score = 0; // prevent negative score
+    }
+
 
     const evaluatedWizard: IWizard = {
       ...wizard,
       score,
+      formulaStr,
       timespan,
       completed,
       errorCount,
@@ -292,9 +304,9 @@ export const groupWizardsByType = (wizards: IWizard[]): IWizardGroup[] => {
     group.stats.avgBackSteps = group.stats.totalBackSteps / totalCount;
     group.stats.avgFailedSteps = group.stats.totalFailedSteps / totalCount;
 
-    if (group.stats.avgScore === 0 || group.stats.avgScore === null) group.stats.avgScore = null
+    if (group.stats.avgScore === 0 || group.stats.avgScore === null) group.stats.avgScore = null;
     else group.stats.avgScore /= totalCount;
-    
+
     group.stats.stdDevScore = standardDeviation(group.stats.scores);
 
     group.stats.avgTimespan /= totalCount;
@@ -336,8 +348,8 @@ export const groupWizardsByType = (wizards: IWizard[]): IWizardGroup[] => {
   }
 
   return groupedWizards.sort((a, b) => {
-    if (a.stats.avgScore === null && b.stats.avgScore === null) return 0; 
-    if (a.stats.avgScore === null) return 1; 
+    if (a.stats.avgScore === null && b.stats.avgScore === null) return 0;
+    if (a.stats.avgScore === null) return 1;
     if (b.stats.avgScore === null) return -1;
     return a.stats.avgScore < b.stats.avgScore ? 1 : -1;
   });

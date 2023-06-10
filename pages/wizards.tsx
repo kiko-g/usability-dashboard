@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import type { ITrackerEventGroup, IWizardGroup } from '../@types';
 import { mockWizardData as mockData } from '../utils/mock';
 import { Layout } from '../components/layout';
-import { CircularProgressBadge, Loading, NotFound } from '../components/utils';
+import { CircularProgressBadge, Loading, NotFound, CodeBlock } from '../components/utils';
 import { Dialog, Listbox, Transition } from '@headlessui/react';
 import { WizardAction, evaluateAndGroupWizards } from '../utils/matomo';
 import { CheckCircleIcon as CheckCircleSolidIcon } from '@heroicons/react/24/solid';
@@ -154,11 +154,26 @@ export default function Wizards() {
 
 function WizardKPIs({ data }: { data: IWizardGroup[] }) {
   // calculate average score considering all wizards
-  const avgScore = React.useMemo<number | null>(() => {
-    if (data.length === 0) return null;
+  const { avgScore, discards } = React.useMemo(() => {
+    if (data.length === 0)
+      return {
+        avgScore: null,
+        discards: 0,
+      };
 
-    const sum = data.reduce((acc, item) => acc + (item.stats.avgScore === null ? 0 : item.stats.avgScore), 0);
-    return data.length > 0 ? sum / data.length : 0;
+    let discards = 0;
+    const sum = data.reduce((acc, item) => {
+      let localSum: number = 0;
+      for (const score of item.stats.scores) {
+        if (score === null) discards++;
+        else localSum += score;
+      }
+      return acc + localSum;
+    }, 0);
+
+    const avgScore = data.length > 0 ? sum / (data.length - discards) : 0;
+
+    return { avgScore, discards };
   }, [data]);
 
   // calculate average completion rate considering all wizards
@@ -295,7 +310,7 @@ function WizardKPIs({ data }: { data: IWizardGroup[] }) {
         {avgScore === null ? null : <WizardAverageUXScoreCard score={avgScore} />}
 
         <div className="flex flex-1 flex-col items-start justify-start gap-4 self-stretch">
-          <TimeStatsCard stats={wizardTimeStats} />
+          <WizardGeneralStatsCard timeStats={wizardTimeStats} />
           <StepCompletionStatsCard stats={stepCompletionStats} />
           <ErrorStatsCard text="Negative Actions Stats" stats={errorAndBackStepStats} />
         </div>
@@ -413,8 +428,8 @@ type AvgMinMax = {
   max: number;
 };
 
-function TimeStatsCard({ stats }: { stats: AvgMinMax }) {
-  const { avg, min, max } = stats;
+function WizardGeneralStatsCard({ timeStats }: { timeStats: AvgMinMax }) {
+  const { avg, min, max } = timeStats;
 
   return (
     <div className="relative flex flex-1 flex-col self-stretch rounded bg-white/80 p-4 dark:bg-white/10">
@@ -772,9 +787,9 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
   const stepCompletionRatio = React.useMemo(() => {
     const completed = selectedWizard.completed;
     const stepsDone = selectedWizard.stepStatus.current + (completed ? 1 : 0);
-    const totalSteps = selectedWizard.stepStatus.total;
+    const visibleSteps = selectedWizard.stepStatus.visible;
 
-    return 100 * (stepsDone / totalSteps);
+    return 100 * (stepsDone / visibleSteps);
   }, [selectedWizard]);
 
   const { avgError, avgBack } = React.useMemo(() => {
@@ -892,7 +907,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                     </div>
 
                     {/* KPIs */}
-                    <div className="mt-2 font-normal text-gray-700 dark:text-white">
+                    <div className="mt-1 font-normal text-gray-700 dark:text-white">
                       {textView ? (
                         <>
                           <p>For this wizard category:</p>
@@ -957,9 +972,9 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                         </>
                       ) : (
                         <>
-                          <p className="mb-2 text-sm">Here are some key stats for wizards of this category</p>
+                          <p className="mb-1.5 text-sm">Here are some key stats for wizards of this category</p>
 
-                          <div className="grid grid-cols-2 gap-x-4 gap-y-4 lg:grid-cols-5">
+                          <div className="grid grid-cols-2 gap-x-3 gap-y-3 lg:grid-cols-5">
                             <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-blue-600 bg-blue-600/60 text-center text-white dark:border-blue-500 dark:bg-blue-500/40">
                               <span className="w-full border-b px-2 py-2 font-mono text-xl font-bold">
                                 {wizardGroup.stats.avgTimespan.toFixed(1)}s
@@ -1063,7 +1078,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                             </div>
                           </div>
 
-                          <div className="mt-4">
+                          <div className="mt-2">
                             <p className="text-sm">
                               This score is calculated based on the amount of wizard errors, step errors and back to
                               previous step button clicks, where we deduct point to a wizard based on negative actions.
@@ -1080,7 +1095,10 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                         {/* Wizard Inspect Card */}
                         <div className="flex-1 rounded-xl bg-navy text-white dark:bg-white/10">
                           <div className="flex items-center justify-between rounded-t border-b px-3 py-3 lg:px-4 lg:py-4">
-                            <h4 className="tracking-[-0.08rem] lg:tracking-normal">{selectedWizard.component}</h4>
+                            <div className="flex flex-col">
+                              <h4 className="tracking-[-0.08rem] lg:tracking-normal">{selectedWizard.component}</h4>
+                              <span className="text-xxs">score = {selectedWizard.formulaStr}</span>
+                            </div>
                             <span
                               className={classNames(
                                 'flex gap-1 rounded-full border p-1 text-sm text-white lg:rounded lg:p-1.5',
@@ -1325,34 +1343,28 @@ function ScoreCalculcationApproachDialog({ content }: { content?: any }) {
 
 function Formula() {
   return (
-    <div className="my-1 text-sm">
-      <p className="mb-1">First we establish a baseline score:</p>
-      <code className="mb-4 block bg-navy px-3 py-2 text-sm font-normal tracking-[-0.07rem] text-white dark:bg-white/10 dark:text-white">
-        score = 100 - 15*failedSteps - 10*errors - 5*backSteps
-      </code>
+    <div className="my-1 text-sm leading-normal tracking-tight">
+      <p>First we establish a baseline score:</p>
+      <CodeBlock>score = 100 - 15*failedSteps - 10*errors - 5*backSteps</CodeBlock>
 
-      <p className="mb-1 mt-4">
+      <p>
         If the <strong>wizard was cancelled</strong> we deduct extra points. In case the user was evidently attempting
         to complete it then the <strong>timespan should be greater than 10s</strong> and/or{' '}
-        <strong>there should be at least one negative action</strong>. In this situation we deduct extra points for the
-        negative actions and also for the timespan (amounts to 5.0 points per minute):
+        <strong>there should be at least one negative action</strong>. We deduct 20 baseline points, extra points for
+        the negative actions and for the timespan (10.0 points per minute):
       </p>
-      <code className="mb-4 block bg-navy px-3 py-2 text-sm font-normal tracking-[-0.07rem] text-white dark:bg-white/10 dark:text-white">
-        score = score - 3*(errors + stepErrors + backStepCount) - timespan/12
-      </code>
+      <CodeBlock>score = score - 20 - 3*(errors + stepErrors + backStepCount) - timespan/6</CodeBlock>
 
-      <p className="mb-1 mt-4">
+      <p>
         If there are <strong>no negative actions</strong> or the <strong>timespan was under 10 seconds</strong> we
-        simply ignored this wizard and do not provide a score:
+        ignore this wizard:
       </p>
-      <code className="mb-4 block bg-navy px-3 py-2 text-sm font-normal tracking-[-0.07rem] text-white dark:bg-white/10 dark:text-white">
-        score = null
-      </code>
+      <CodeBlock>score = null</CodeBlock>
 
-      <p className="mt-4">
+      <p>
         The <strong>minimum score is 0</strong>, so if the score drops below that, we directly assign it a score of 0.
         In case the score is <strong>below 40 and the wizard was completed</strong> we directly assign a score of 40 to
-        the wizard, rewarding the completion.
+        the wizard, rewarding completion.
       </p>
     </div>
   );
