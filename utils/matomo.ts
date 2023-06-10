@@ -266,7 +266,7 @@ export const groupWizardsByType = (wizards: IWizard[]): IWizardGroup[] => {
       groupedWizards.push(group);
     }
 
-    if (wizard.score !== null) {
+    if (wizard.score !== null && group.stats.avgScore !== null) {
       group.stats.avgScore += wizard.score;
       group.stats.scores.push(wizard.score);
     }
@@ -292,7 +292,9 @@ export const groupWizardsByType = (wizards: IWizard[]): IWizardGroup[] => {
     group.stats.avgBackSteps = group.stats.totalBackSteps / totalCount;
     group.stats.avgFailedSteps = group.stats.totalFailedSteps / totalCount;
 
-    group.stats.avgScore /= totalCount;
+    if (group.stats.avgScore === 0 || group.stats.avgScore === null) group.stats.avgScore = null
+    else group.stats.avgScore /= totalCount;
+    
     group.stats.stdDevScore = standardDeviation(group.stats.scores);
 
     group.stats.avgTimespan /= totalCount;
@@ -333,7 +335,12 @@ export const groupWizardsByType = (wizards: IWizard[]): IWizardGroup[] => {
     }
   }
 
-  return groupedWizards.sort((a, b) => (a.stats.avgScore < b.stats.avgScore ? 1 : -1));
+  return groupedWizards.sort((a, b) => {
+    if (a.stats.avgScore === null && b.stats.avgScore === null) return 0; 
+    if (a.stats.avgScore === null) return 1; 
+    if (b.stats.avgScore === null) return -1;
+    return a.stats.avgScore < b.stats.avgScore ? 1 : -1;
+  });
 };
 
 export const evaluateExecutionViews = (executionViews: ITrackerEventGroup[]): IExecutionView[] => {

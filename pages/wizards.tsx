@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import Link from 'next/link';
 import classNames from 'classnames';
 import type { ITrackerEventGroup, IWizardGroup } from '../@types';
-import { mockWizardDataScored as mockData } from '../utils/mock';
+import { mockWizardData as mockData } from '../utils/mock';
 import { Layout } from '../components/layout';
 import { CircularProgressBadge, Loading, NotFound } from '../components/utils';
 import { Dialog, Listbox, Transition } from '@headlessui/react';
@@ -12,7 +12,6 @@ import {
   ArrowPathIcon,
   InformationCircleIcon,
   ChartPieIcon,
-  CheckCircleIcon as CheckCircleOutlineIcon,
   ChevronDownIcon,
   ChevronUpDownIcon,
   ChevronUpIcon,
@@ -33,6 +32,7 @@ export default function Wizards() {
   const [loading, setLoading] = React.useState<boolean>(true);
   const [willFetch, setWillFetch] = React.useState<boolean>(true);
 
+  // fetch data
   React.useEffect(() => {
     if (!willFetch) return;
 
@@ -71,6 +71,7 @@ export default function Wizards() {
             platform.
           </p>
 
+          {/* Buttons */}
           <div className="flex items-center gap-2">
             {/* Use mock data button */}
             {error === false ? null : (
@@ -79,7 +80,9 @@ export default function Wizards() {
                 className="hover:opacity-80"
                 onClick={() => {
                   setError(false);
-                  setProcessedData(mockData);
+                  setRawData(mockData);
+                  const processedDataResult = evaluateAndGroupWizards(mockData);
+                  setProcessedData(processedDataResult);
                 }}
               >
                 <CircleStackIcon className="h-6 w-6" />
@@ -154,7 +157,7 @@ function WizardKPIs({ data }: { data: IWizardGroup[] }) {
   const avgScore = React.useMemo<number | null>(() => {
     if (data.length === 0) return null;
 
-    const sum = data.reduce((acc, item) => acc + item.stats.avgScore, 0);
+    const sum = data.reduce((acc, item) => acc + (item.stats.avgScore === null ? 0 : item.stats.avgScore), 0);
     return data.length > 0 ? sum / data.length : 0;
   }, [data]);
 
@@ -627,9 +630,19 @@ function WizardSortedList({ data }: { data: IWizardGroup[] }) {
       case 'Alphabetic (Z to A)':
         return (a: IWizardGroup, b: IWizardGroup) => b.name.localeCompare(a.name);
       case 'Low Score First':
-        return (a: IWizardGroup, b: IWizardGroup) => a.stats.avgScore - b.stats.avgScore;
+        return (a: IWizardGroup, b: IWizardGroup) => {
+          if (a.stats.avgScore === null && b.stats.avgScore === null) return 0;
+          if (a.stats.avgScore === null) return 1;
+          if (b.stats.avgScore === null) return -1;
+          return a.stats.avgScore < b.stats.avgScore ? 1 : -1;
+        };
       case 'High Score First':
-        return (a: IWizardGroup, b: IWizardGroup) => b.stats.avgScore - a.stats.avgScore;
+        return (a: IWizardGroup, b: IWizardGroup) => {
+          if (a.stats.avgScore === null && b.stats.avgScore === null) return 0;
+          if (a.stats.avgScore === null) return 1;
+          if (b.stats.avgScore === null) return -1;
+          return a.stats.avgScore > b.stats.avgScore ? -1 : 1;
+        };
       case 'Low Completion First':
         return (a: IWizardGroup, b: IWizardGroup) => a.stats.completedRatio - b.stats.completedRatio;
       case 'High Completion First':
@@ -639,7 +652,7 @@ function WizardSortedList({ data }: { data: IWizardGroup[] }) {
       case 'High Frequency First':
         return (a: IWizardGroup, b: IWizardGroup) => b.stats.total - a.stats.total;
       default:
-        return (a: IWizardGroup, b: IWizardGroup) => a.stats.avgScore - b.stats.avgScore;
+        return (a: IWizardGroup, b: IWizardGroup) => a.name.localeCompare(b.name);
     }
   };
 
@@ -817,7 +830,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
             title="Average UX Score"
             className="flex h-7 w-7 items-center justify-center rounded-full border border-blue-600 bg-blue-600/70 text-white group-hover:bg-blue-600 lg:h-10 lg:w-10"
           >
-            {wizardGroup.stats.avgScore.toFixed(1)}
+            {wizardGroup.stats.avgScore === null ? 'N/A' : wizardGroup.stats.avgScore.toFixed(1)}
           </span>
           <span
             title="Total Wizards Opened"
@@ -932,8 +945,11 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
 
                             <li>
                               The average score was{' '}
-                              <strong>{wizardGroup.stats.avgScore.toFixed(2)} out of a possible 100 points</strong>.
-                              This score is calculated based on the amount of wizard errors, step errors and back to
+                              <strong>
+                                {wizardGroup.stats.avgScore === null ? 'N/A' : wizardGroup.stats.avgScore.toFixed(2)}{' '}
+                                out of a possible 100 points
+                              </strong>
+                              . This score is calculated based on the amount of wizard errors, step errors and back to
                               previous step button clicks, where we deduct point to a wizard based on negative actions.
                               <Formula />
                             </li>
@@ -995,7 +1011,9 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
 
                             <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-violet-600 bg-violet-600/60 text-center text-white dark:border-violet-500 dark:bg-violet-500/40">
                               <span className="w-full border-b px-2 py-2 font-mono text-xl font-bold">
-                                {wizardGroup.stats.avgScore.toFixed(1)}/100
+                                {wizardGroup.stats.avgScore === null
+                                  ? 'N/A'
+                                  : `${wizardGroup.stats.avgScore.toFixed(1)}/100`}
                               </span>
                               <span className="my-auto flex min-h-[51px] items-center px-2 py-2 text-sm leading-tight tracking-tighter">
                                 Average Wizard UX Score

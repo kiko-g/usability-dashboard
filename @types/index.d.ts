@@ -57,7 +57,7 @@ export type WizardStats = {
   completed: number;
   notCompleted: number;
   completedRatio: number;
-  avgScore: number;
+  avgScore: number | null;
   stdDevScore: number | null;
   scores: number[];
   avgTimespan: number;
