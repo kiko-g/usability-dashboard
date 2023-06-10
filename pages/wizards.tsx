@@ -756,25 +756,13 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
   const [textView, setTextView] = React.useState(false);
   const [inspectIndex, setInspectIndex] = React.useState(0);
   const selectedWizard = React.useMemo(() => wizardGroup.wizards[inspectIndex], [wizardGroup, inspectIndex]);
-  const currentStep = React.useMemo(
-    () => (selectedWizard.stepStatus ? selectedWizard.stepStatus.current + 1 : '?'),
-    [selectedWizard]
-  );
-  const visibleSteps = React.useMemo(
-    () => (selectedWizard.stepStatus ? selectedWizard.stepStatus.visible : '?'),
-    [selectedWizard]
-  );
-  const maximumSteps = React.useMemo(
-    () => (selectedWizard.stepStatus ? selectedWizard.stepStatus.total : '?'),
-    [selectedWizard]
-  );
-  const stepCompletionRatio = React.useMemo(
-    () =>
-      selectedWizard.stepStatus
-        ? (100 * selectedWizard.stepStatus.current + 1) / selectedWizard.stepStatus.visible
-        : '?',
-    [selectedWizard]
-  );
+  const stepCompletionRatio = React.useMemo(() => {
+    const completed = selectedWizard.completed;
+    const stepsDone = selectedWizard.stepStatus.current + (completed ? 1 : 0);
+    const totalSteps = selectedWizard.stepStatus.total;
+
+    return 100 * (stepsDone / totalSteps);
+  }, [selectedWizard]);
 
   const { avgError, avgBack } = React.useMemo(() => {
     const totalWizards = wizardGroup.wizards.length;
@@ -1089,7 +1077,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                                 <XCircleIcon className="h-5 w-5" />
                               )}
                               <span className="hidden lg:flex">
-                                {selectedWizard.completed ? 'Completed' : 'Abandoned'}
+                                {selectedWizard.completed ? 'Completed' : 'Cancelled'}
                               </span>
                             </span>
                           </div>
@@ -1127,21 +1115,24 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                               <div className="flex items-center gap-x-2">
                                 <span className="h-4 w-4 rounded-full bg-emerald-500" />
                                 <span className="whitespace-nowrap text-sm tracking-tighter lg:tracking-normal">
-                                  Successful Steps: <span className="font-normal">{currentStep}</span>
+                                  Last Step Started:{' '}
+                                  <span className="font-normal">{selectedWizard.stepStatus.current + 1}</span>
                                 </span>
                               </div>
 
                               <div className="flex items-center gap-x-2">
                                 <span className="h-4 w-4 rounded-full bg-pink-500" />
                                 <span className="whitespace-nowrap text-sm tracking-tighter lg:tracking-normal">
-                                  Visible Steps: <span className="font-normal">{visibleSteps}</span>
+                                  Visible Steps:{' '}
+                                  <span className="font-normal">{selectedWizard.stepStatus.visible}</span>
                                 </span>
                               </div>
 
                               <div className="flex items-center gap-x-2">
                                 <span className="h-4 w-4 rounded-full bg-violet-500" />
                                 <span className="whitespace-nowrap text-sm tracking-tighter lg:tracking-normal">
-                                  Maximum Steps: <span className="font-normal">{maximumSteps}</span>
+                                  Maximum Possible Steps:{' '}
+                                  <span className="font-normal">{selectedWizard.stepStatus.total}</span>
                                 </span>
                               </div>
                             </div>
@@ -1149,11 +1140,15 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                             <div className="flex flex-col items-center justify-center gap-x-0 gap-y-3 lg:flex-row lg:gap-x-3 lg:gap-y-0">
                               <div className="flex flex-col items-center justify-center space-y-1">
                                 <CircularProgressBadge
-                                  progress={stepCompletionRatio === '?' ? 0 : stepCompletionRatio}
-                                  color="green"
+                                  progress={stepCompletionRatio}
+                                  color={selectedWizard.completed ? 'green' : 'red'}
                                 />
                                 <span className="text-center text-xs tracking-tighter">
-                                  Step {`${currentStep}/${visibleSteps}`}
+                                  Step{' '}
+                                  {selectedWizard.completed
+                                    ? selectedWizard.stepStatus.current + 1
+                                    : selectedWizard.stepStatus.current}
+                                  /{selectedWizard.stepStatus.visible}
                                 </span>
                               </div>
 
