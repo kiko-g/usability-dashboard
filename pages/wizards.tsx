@@ -1097,7 +1097,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                               <div className="flex items-center gap-x-2">
                                 <span className="h-4 w-4 rounded-full bg-orange-600" />
                                 <span className="whitespace-nowrap text-sm tracking-tighter lg:tracking-normal">
-                                  Failed Steps: <span className="font-normal">{selectedWizard.backStepCount}</span>
+                                  Failed Steps: <span className="font-normal">{selectedWizard.failedStepCount}</span>
                                 </span>
                               </div>
 
@@ -1305,10 +1305,11 @@ function Formula() {
       <p className="mb-1 mt-4">
         If the <strong>wizard was cancelled</strong> we deduct extra points. In case the user was evidently attempting
         to complete it then the <strong>timespan should be greater than 10s</strong> and/or{' '}
-        <strong>there should be at least one negative action</strong>:
+        <strong>there should be at least one negative action</strong>. In this situation we deduct extra points for the
+        negative actions and also for the timespan (amounts to 5.0 points per minute):
       </p>
       <code className="mb-4 block bg-navy px-3 py-2 text-sm font-normal tracking-[-0.07rem] text-white dark:bg-white/10 dark:text-white">
-        score = score - timespan/20 - 4*(errors + stepErrors + backStepCount)
+        score = score - 3*(errors + stepErrors + backStepCount) - timespan/12
       </code>
 
       <p className="mb-1 mt-4">

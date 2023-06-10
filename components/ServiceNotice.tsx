@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import axios from 'axios';
 import classNames from 'classnames';
 import { ArrowPathIcon, CheckCircleIcon, ShieldExclamationIcon, XMarkIcon } from '@heroicons/react/24/solid';
+import { CodeBracketIcon } from '@heroicons/react/24/outline';
 
 type Props = {};
 
@@ -43,12 +45,18 @@ export default function ServiceNotice({}: Props) {
         dismissed ? 'hidden' : 'block'
       )}
     >
-      <button
-        onClick={() => setDismissed(true)}
-        className="absolute right-4 top-4 rounded p-1 transition hover:bg-rose-700 hover:text-white"
-      >
-        <XMarkIcon className="h-5 w-5" />
-      </button>
+      <div className="absolute right-4 top-4 flex items-center justify-center gap-1">
+        <Link target="_blank" title="Inspect JSON data" href="/api/matomo/ping" className="hover:opacity-80">
+          <CodeBracketIcon className="h-5 w-5" />
+        </Link>
+
+        <button
+          onClick={() => setDismissed(true)}
+          className="rounded p-1 transition hover:bg-rose-700 hover:text-white"
+        >
+          <XMarkIcon className="h-5 w-5" />
+        </button>
+      </div>
 
       {serviceStatus === 'available' && (
         <div className="flex">
@@ -73,8 +81,8 @@ export default function ServiceNotice({}: Props) {
             <h3 className="text-sm font-medium text-rose-800 dark:text-white">
               The Matomo API service is <strong>not</strong> responding
             </h3>
-            <div className="mt-2 text-sm text-rose-700 dark:text-gray-100">
-              <ul role="list" className="list-disc space-y-1 pl-5">
+            <div className="mt-1 text-sm text-rose-700 dark:text-gray-100">
+              <ul role="list" className="list-disc space-y-0.5 pl-4">
                 <li>
                   Matomo API said: <span className="font-bold underline">{message}</span>
                 </li>
@@ -82,7 +90,6 @@ export default function ServiceNotice({}: Props) {
                 <li>
                   Check the ports and the <code>NEXT_PUBLIC_MATOMO_SITE_URL</code> value in your <code>.env</code> file
                 </li>
-                <li>You could be running only the Next JS dashboard app</li>
                 <li>
                   You can use the mock data to get a feeling of what the dashboard should look like. Click the{' '}
                   <strong>database</strong> icon on the top right of the page to activate mock data.

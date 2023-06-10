@@ -204,7 +204,7 @@ export const evaluateWizards = (wizards: ITrackerEventGroup[]): IWizard[] => {
 
     // penalty for not completing
     if (!completed) {
-      if (intendedWizard) score -= timespan / 20 - 4 * (errorCount + backStepCount);
+      if (intendedWizard) score -= 4 * (errorCount + failedStepCount + backStepCount) - timespan / 12;
       else score -= 5;
     }
 

@@ -10,6 +10,7 @@ import {
 } from '@heroicons/react/24/outline';
 import classNames from 'classnames';
 import ServiceNotice from '../components/ServiceNotice';
+import MatomoDashboardCard from '../components/MatomoDashboardCard';
 
 type NavAction = {
   title: string;
@@ -67,6 +68,8 @@ export default function Hub() {
           </p>
         </div>
 
+        <MatomoDashboardCard />
+
         <div className="divide-y divide-gray-200 overflow-hidden rounded-lg border border-transparent bg-gray-200 dark:bg-gray-500 sm:grid sm:grid-cols-2 sm:gap-px sm:divide-y-0">
           {actions.map((action, actionIdx) => (
             <Link
@@ -83,7 +86,7 @@ export default function Hub() {
               <span className={classNames(action.iconClasses, 'inline-flex rounded-lg p-4 transition')}>
                 <action.icon className="h-6 w-6" aria-hidden="true" />
               </span>
-              <span className="mt-6 block font-lexend text-base font-semibold leading-6 text-gray-900 dark:text-white">
+              <span className="mt-3 block font-lexend text-base font-semibold leading-6 text-gray-900 dark:text-white">
                 {action.title}
               </span>
               <span className="mt-3 text-sm text-gray-500 dark:text-gray-200">{action.text}</span>
