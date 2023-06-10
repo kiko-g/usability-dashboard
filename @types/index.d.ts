@@ -127,7 +127,7 @@ export type Visits = {
   screens: Frequency[];
   pagesExpanded: Frequency[];
   pagesFlat: Frequency[];
-  transitions: TransitionMatomo[];
+  transitions?: TransitionMatomo[];
   overview: OverviewMatomoResponse;
 };
 

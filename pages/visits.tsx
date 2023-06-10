@@ -36,6 +36,7 @@ export default function Visits() {
     setError(false);
     setLoading(true);
 
+    // change to '/api/matomo/visits/transitions' to include transitions
     fetch('/api/matomo/visits')
       .then((res) => {
         if (!res.ok) {
