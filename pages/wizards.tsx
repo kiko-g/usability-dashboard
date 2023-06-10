@@ -39,7 +39,7 @@ export default function Wizards() {
     setError(false);
     setLoading(true);
 
-    fetch('/api/matomo/events/raw/wizard')
+    fetch('/api/matomo/events/wizard')
       .then((res) => {
         if (!res.ok) {
           throw new Error(res.statusText);

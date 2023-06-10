@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { config, parseEvents, evaluateWizards, groupWizardsByType } from '../../../../utils/matomo';
+import { config, parseEvents } from '../../../../utils/matomo';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import type { CustomAPIError, IWizardGroup } from '../../../../@types';
+import type { CustomAPIError, ITrackerEventGroup } from '../../../../@types';
 
-type ResponseType = IWizardGroup[] | CustomAPIError;
+type ResponseType = ITrackerEventGroup[] | CustomAPIError;
 
 export default async function getWizardEvents(req: NextApiRequest, res: NextApiResponse<ResponseType>) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method Not Allowed' });
@@ -20,9 +20,7 @@ export default async function getWizardEvents(req: NextApiRequest, res: NextApiR
     }
 
     const wizards = parseEvents(response.data, 'wizard');
-    const evaluatedWizards = evaluateWizards(wizards);
-    const groupedWizards = groupWizardsByType(evaluatedWizards);
-    return res.status(200).json(groupedWizards);
+    return res.status(200).json(wizards);
   } catch (err) {
     return res.status(500).json({ error: 'Internal server error' });
   }

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { config, parseButtons, parseEvents } from '../../../../utils/matomo';
+import { config, parseButtons } from '../../../../utils/matomo';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { CustomAPIError } from '../../../../@types';
 
