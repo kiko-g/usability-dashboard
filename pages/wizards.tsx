@@ -1,12 +1,16 @@
 import React, { Fragment } from 'react';
 import Link from 'next/link';
 import classNames from 'classnames';
-import type { ITrackerEventGroup, IWizardGroup } from '../@types';
-import { mockWizardData as mockData } from '../utils/mock';
-import { Layout } from '../components/layout';
-import { CircularProgressBadge, Loading, NotFound, CodeBlock } from '../components/utils';
 import { Dialog, Listbox, Transition } from '@headlessui/react';
-import { WizardAction, evaluateAndGroupWizards } from '../utils/matomo';
+import type { ITrackerEventGroup, IWizardGroup } from '@/@types';
+
+import { Layout } from '@/components/layout';
+import { CircularProgressBadge, Loading, NotFound, CodeBlock } from '@/components/utils';
+
+import { standardDeviation } from '@/utils';
+import { mockWizardData as mockData } from '@/utils/mock';
+import { WizardAction, evaluateAndGroupWizards } from '@/utils/matomo';
+
 import { CheckCircleIcon as CheckCircleSolidIcon } from '@heroicons/react/24/solid';
 import {
   ArrowPathIcon,
@@ -23,7 +27,6 @@ import {
   XCircleIcon,
   ScaleIcon,
 } from '@heroicons/react/24/outline';
-import { standardDeviation } from '../utils';
 
 type WizardStats = {
   avgScore: number;
@@ -128,7 +131,7 @@ export default function Wizards() {
             {/* API route source button */}
             <Link
               target="_blank"
-              title="Inspect JSON data"
+              title="Inspect API route source"
               href="/api/matomo/events/wizard"
               className="hover:opacity-80"
             >
@@ -330,7 +333,7 @@ function WizardKPIs({ data }: { data: IWizardGroup[] }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-1 flex-col gap-4 self-stretch lg:flex-row">
+      <div className="flex flex-1 flex-col gap-4 self-stretch xl:flex-row">
         <WizardCompletionRateCard wizardStats={wizardStats} />
         <WizardAverageUXScoreCard score={wizardStats.avgScore} />
 
@@ -355,7 +358,7 @@ function WizardCompletionRateCard({ wizardStats }: { wizardStats: WizardStats })
   const offset = circumference - (progress / 100) * circumference;
 
   return (
-    <div className="relative max-w-full overflow-hidden rounded bg-white/80 p-4 dark:bg-white/10 lg:max-w-xs">
+    <div className="relative max-w-full rounded bg-white/80 p-4 dark:bg-white/10 xl:max-w-xs">
       {/* Adjusted max-w value */}
       <h3 className="font-medium text-gray-700 dark:text-gray-100">Wizard Completion Rate</h3>
       <p className="mt-1 min-h-[5rem] text-sm tracking-tight">
@@ -403,7 +406,7 @@ function WizardAverageUXScoreCard({ score }: { score: number }) {
   const offset = circumference - (score / 100) * circumference;
 
   return (
-    <div className="relative max-w-full rounded bg-white/80 p-4 dark:bg-white/10 lg:max-w-xs">
+    <div className="relative max-w-full rounded bg-white/80 p-4 dark:bg-white/10 xl:max-w-xs">
       {/* Adjusted max-w value */}
       <h3 className="font-medium text-gray-700 dark:text-gray-100">Wizard Average UX Score</h3>
       <p className="mt-1 min-h-[5rem] text-sm tracking-tight">
@@ -451,7 +454,7 @@ function WizardGeneralStatsCard({ wizardStats }: { wizardStats: WizardStats }) {
   return (
     <div className="relative self-stretch rounded bg-white/80 p-4 dark:bg-white/10">
       <h2 className="mb-2 text-xl font-bold">Wizard General Stats</h2>
-      <div className="grid w-full grid-cols-1 grid-rows-none gap-x-0 lg:w-min lg:grid-flow-col lg:grid-cols-none lg:grid-rows-4 lg:gap-x-4">
+      <div className="grid w-full grid-cols-1 grid-rows-none gap-x-0 xl:w-min xl:grid-flow-col xl:grid-cols-none xl:grid-rows-4 xl:gap-x-4">
         <div className="flex items-center gap-x-2">
           <span className="h-4 w-4 rounded-full bg-gray-400" />
           <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
@@ -541,7 +544,7 @@ function StepCompletionStatsCard({ stats }: { stats: StepCompletionStats }) {
   return (
     <div className="relative self-stretch rounded bg-white/80 p-4 dark:bg-white/10">
       <h2 className="mb-2 text-xl font-bold">Step Completion Stats</h2>
-      <div className="grid w-full grid-cols-1 grid-rows-none gap-x-0 lg:w-min lg:grid-flow-col lg:grid-cols-none lg:grid-rows-4 lg:gap-x-4">
+      <div className="grid w-full grid-cols-1 grid-rows-none gap-x-0 xl:w-min xl:grid-flow-col xl:grid-cols-none xl:grid-rows-4 xl:gap-x-4">
         <div className="flex items-center gap-x-2">
           <span className="h-4 w-4 rounded-full bg-gray-400" />
           <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
@@ -624,7 +627,7 @@ function ErrorStatsCard({ text, stats }: { text: string; stats: ErrorStatsType }
   return (
     <div className="relative self-stretch rounded bg-white/80 p-4 dark:bg-white/10">
       <h2 className="mb-2 text-xl font-bold">{text}</h2>
-      <div className="grid w-full grid-cols-1 grid-rows-none gap-x-0 lg:w-min lg:grid-flow-col lg:grid-cols-none lg:grid-rows-3 lg:gap-x-4">
+      <div className="grid w-full grid-cols-1 grid-rows-none gap-x-0 xl:w-min xl:grid-flow-col xl:grid-cols-none xl:grid-rows-3 xl:gap-x-4">
         <div className="flex items-center gap-x-2">
           <span className="h-4 w-4 rounded-full bg-amber-400" />
           <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
@@ -724,16 +727,16 @@ function WizardSortedList({ data }: { data: IWizardGroup[] }) {
 
   return (
     <div className="relative w-full rounded bg-white/80 p-4 dark:bg-white/10">
-      <div className="mb-4 flex w-full flex-col items-center justify-between gap-1 lg:mb-3 lg:flex-row lg:gap-2">
-        <h2 className="mb-2 w-full text-center text-sm font-bold tracking-tighter lg:text-left lg:text-xl lg:tracking-normal">
+      <div className="mb-4 flex w-full flex-col items-center justify-between gap-1 xl:mb-3 xl:flex-row xl:gap-2">
+        <h2 className="mb-2 w-full text-center text-sm font-bold tracking-tighter xl:text-left xl:text-xl xl:tracking-normal">
           Wizards Sorted by <span className="underline">{picked}</span>
         </h2>
-        <div className="w-full lg:w-auto">
+        <div className="w-full xl:w-auto">
           <Listbox value={picked} onChange={setPicked}>
-            <div className="relative w-full min-w-full lg:w-auto lg:min-w-[15rem]">
+            <div className="relative w-full min-w-full xl:w-auto xl:min-w-[15rem]">
               <Listbox.Button
                 as="button"
-                className="inline-flex w-full items-center justify-center gap-x-1 rounded border border-primary bg-primary/50 py-2 pl-3 pr-2 text-center text-sm font-medium tracking-tight text-white transition hover:bg-primary/80 disabled:cursor-not-allowed disabled:opacity-50 dark:border-secondary dark:bg-secondary/50 dark:hover:bg-secondary/80 lg:px-2 lg:py-1.5"
+                className="inline-flex w-full items-center justify-center gap-x-1 rounded border border-primary bg-primary/50 py-2 pl-3 pr-2 text-center text-sm font-medium tracking-tight text-white transition hover:bg-primary/80 disabled:cursor-not-allowed disabled:opacity-50 dark:border-secondary dark:bg-secondary/50 dark:hover:bg-secondary/80 xl:px-2 xl:py-1.5"
               >
                 <span className="block truncate text-sm font-normal">{picked}</span>
                 <ChevronUpDownIcon className="h-5 w-5" aria-hidden="true" />
@@ -744,7 +747,7 @@ function WizardSortedList({ data }: { data: IWizardGroup[] }) {
                 leaveFrom="opacity-100"
                 leaveTo="opacity-0"
               >
-                <Listbox.Options className="absolute mt-2 w-full overflow-auto rounded border border-gray-300 bg-gray-100 py-2 shadow lg:w-full">
+                <Listbox.Options className="absolute mt-2 w-full overflow-auto rounded border border-gray-300 bg-gray-100 py-2 shadow xl:w-full">
                   {options.map((option: string, optionIdx: number) => (
                     <Listbox.Option
                       key={`option-${optionIdx}`}
@@ -775,46 +778,46 @@ function WizardSortedList({ data }: { data: IWizardGroup[] }) {
           </Listbox>
         </div>
       </div>
-      <ul className="flex flex-col gap-y-2 lg:gap-y-3">
-        <li className="flex flex-col items-center justify-between gap-2 rounded bg-gray-600 px-2 py-2 text-xs font-normal tracking-tighter dark:bg-gray-900 lg:flex-row lg:px-4 lg:py-3 lg:text-xs lg:font-medium">
-          <span className="lg:left w-full rounded text-center font-lexend text-sm font-medium text-white lg:w-auto">
+      <ul className="flex flex-col gap-y-2 xl:gap-y-3">
+        <li className="flex flex-col items-center justify-between gap-2 rounded bg-primary px-2 py-2 text-xs font-normal tracking-tighter dark:bg-secondary xl:flex-row xl:px-4 xl:py-3 xl:text-xs xl:font-medium">
+          <span className="lg:left w-full rounded text-center font-lexend text-sm font-medium text-white xl:w-auto">
             Wizard Name
           </span>
-          <span className="flex items-center gap-2 text-center text-[0.65rem] font-normal lg:gap-2 lg:text-[0.65rem] lg:font-medium">
+          <span className="flex items-center gap-2 text-center text-[0.65rem] font-normal xl:gap-2 xl:text-[0.65rem] xl:font-medium">
             <span
               title="Average Number of Errors"
-              className="flex h-auto w-auto items-center justify-center rounded border border-rose-500 bg-rose-500/70 p-1 text-white group-hover:bg-rose-500 lg:h-12 lg:w-10"
+              className="flex h-auto w-auto items-center justify-center rounded border border-rose-500 bg-rose-500/70 p-1 text-white group-hover:bg-rose-500 xl:h-12 xl:w-10"
             >
               Avg Fails
             </span>
 
             <span
               title="Average Number of Errors"
-              className="flex h-auto w-auto items-center justify-center rounded border border-orange-500 bg-orange-500/70 p-1 text-white group-hover:bg-orange-500 lg:h-12 lg:w-10"
+              className="flex h-auto w-auto items-center justify-center rounded border border-orange-500 bg-orange-500/70 p-1 text-white group-hover:bg-orange-500 xl:h-12 xl:w-10"
             >
               Avg Errors
             </span>
             <span
               title="Average Number of Back to Previous Step Clicks"
-              className="flex h-auto w-auto items-center justify-center rounded border border-amber-400 bg-amber-400/70 p-1 text-white group-hover:bg-amber-400 lg:h-12 lg:w-10"
+              className="flex h-auto w-auto items-center justify-center rounded border border-amber-400 bg-amber-400/70 p-1 text-white group-hover:bg-amber-400 xl:h-12 xl:w-10"
             >
               Avg Backs
             </span>
             <span
               title="Average Completed Ratio"
-              className="flex h-auto w-auto items-center justify-center rounded border border-emerald-500 bg-emerald-500/70 p-1 text-white group-hover:bg-emerald-500 lg:h-12 lg:w-10"
+              className="flex h-auto w-auto items-center justify-center rounded border border-emerald-500 bg-emerald-500/70 p-1 text-white group-hover:bg-emerald-500 xl:h-12 xl:w-10"
             >
               Avg Rate
             </span>
             <span
               title="Average UX Score"
-              className="flex h-auto w-auto items-center justify-center rounded border border-blue-600 bg-blue-600/70 p-1 text-white group-hover:bg-blue-600 lg:h-12 lg:w-10"
+              className="flex h-auto w-auto items-center justify-center rounded border border-blue-600 bg-blue-600/70 p-1 text-white group-hover:bg-blue-600 xl:h-12 xl:w-10"
             >
               Avg Score
             </span>
             <span
               title="Total Wizards Opened"
-              className="flex h-auto w-auto items-center justify-center rounded border border-gray-100 bg-gray-100/70 p-1 text-gray-800 group-hover:bg-gray-100 dark:border-gray-200 dark:bg-gray-200/70 dark:group-hover:bg-gray-200 lg:h-12 lg:w-10"
+              className="flex h-auto w-auto items-center justify-center rounded border border-gray-100 bg-gray-100/70 p-1 text-gray-800 group-hover:bg-gray-100 dark:border-gray-200 dark:bg-gray-200/70 dark:group-hover:bg-gray-200 xl:h-12 xl:w-10"
             >
               Total Wizards
             </span>
@@ -870,46 +873,46 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
       <button
         type="button"
         onClick={openModal}
-        className="group flex w-full flex-col items-center justify-between gap-2 rounded border border-primary bg-primary/70 px-2 py-2 text-white transition hover:bg-primary/90 dark:border-secondary dark:bg-secondary/30 dark:hover:bg-secondary/80 lg:flex-row lg:px-4 lg:py-2.5"
+        className="group flex w-full flex-col items-center justify-between gap-2 rounded border border-primary bg-primary/70 px-2 py-2 text-white transition hover:bg-primary/90 dark:border-secondary dark:bg-secondary/30 dark:hover:bg-secondary/80 xl:flex-row xl:px-4 xl:py-2.5"
       >
-        <span className="flex items-center justify-between gap-1.5 text-xs font-normal lg:text-sm lg:font-medium">
-          <span className="text-left tracking-tighter lg:tracking-normal">{wizardGroup.name}</span>
+        <span className="flex items-center justify-between gap-1.5 text-xs font-normal xl:text-sm xl:font-medium">
+          <span className="text-left tracking-tighter xl:tracking-normal">{wizardGroup.name}</span>
           <MagnifyingGlassPlusIcon className="h-5 w-5" />
         </span>
-        <span className="flex items-center gap-1 text-[0.60rem] font-normal lg:gap-2 lg:text-xs lg:font-medium">
+        <span className="flex items-center gap-1 text-[0.60rem] font-normal xl:gap-2 xl:text-xs xl:font-medium">
           <span
             title="Average Number of Errors"
-            className="flex h-7 w-7 items-center justify-center rounded-full border border-rose-500 bg-rose-500/70 text-white group-hover:bg-rose-500 lg:h-10 lg:w-10"
+            className="flex h-7 w-7 items-center justify-center rounded-full border border-rose-500 bg-rose-500/70 text-white group-hover:bg-rose-500 xl:h-10 xl:w-10"
           >
             {wizardGroup.stats.avgFailedSteps.toFixed(1)}
           </span>
           <span
             title="Average Number of Back to Previous Step Clicks"
-            className="flex h-7 w-7 items-center justify-center rounded-full border border-orange-500 bg-orange-500/70 text-white group-hover:bg-orange-500 lg:h-10 lg:w-10"
+            className="flex h-7 w-7 items-center justify-center rounded-full border border-orange-500 bg-orange-500/70 text-white group-hover:bg-orange-500 xl:h-10 xl:w-10"
           >
             {wizardGroup.stats.avgErrors.toFixed(1)}
           </span>
           <span
             title="Average Number of Back to Previous Step Clicks"
-            className="flex h-7 w-7 items-center justify-center rounded-full border border-amber-400 bg-amber-400/70 text-white group-hover:bg-amber-400 lg:h-10 lg:w-10"
+            className="flex h-7 w-7 items-center justify-center rounded-full border border-amber-400 bg-amber-400/70 text-white group-hover:bg-amber-400 xl:h-10 xl:w-10"
           >
             {wizardGroup.stats.avgBackSteps.toFixed(1)}
           </span>
           <span
             title="Average Completed Ratio"
-            className="flex h-7 w-7 items-center justify-center rounded-full border border-emerald-500 bg-emerald-500/70 text-white group-hover:bg-emerald-500 lg:h-10 lg:w-10"
+            className="flex h-7 w-7 items-center justify-center rounded-full border border-emerald-500 bg-emerald-500/70 text-white group-hover:bg-emerald-500 xl:h-10 xl:w-10"
           >
             {(wizardGroup.stats.completedRatio * 100).toFixed(0)}%
           </span>
           <span
             title="Average UX Score"
-            className="flex h-7 w-7 items-center justify-center rounded-full border border-blue-600 bg-blue-600/70 text-white group-hover:bg-blue-600 lg:h-10 lg:w-10"
+            className="flex h-7 w-7 items-center justify-center rounded-full border border-blue-600 bg-blue-600/70 text-white group-hover:bg-blue-600 xl:h-10 xl:w-10"
           >
             {wizardGroup.stats.avgScore === null ? 'N/A' : wizardGroup.stats.avgScore.toFixed(1)}
           </span>
           <span
             title="Total Wizards Opened"
-            className="flex h-7 w-7 items-center justify-center rounded-full border border-gray-100 bg-gray-100/70 text-gray-800 group-hover:bg-gray-100 dark:border-gray-200 dark:bg-gray-200/70 dark:group-hover:bg-gray-200 lg:h-10 lg:w-10"
+            className="flex h-7 w-7 items-center justify-center rounded-full border border-gray-100 bg-gray-100/70 text-gray-800 group-hover:bg-gray-100 dark:border-gray-200 dark:bg-gray-200/70 dark:group-hover:bg-gray-200 xl:h-10 xl:w-10"
           >
             {wizardGroup.stats.total}
           </span>
@@ -941,7 +944,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="flex h-screen w-full transform flex-col justify-between gap-4 overflow-scroll bg-white p-6 text-left align-middle shadow-xl transition-all dark:bg-navy md:max-w-3xl">
+                <Dialog.Panel className="flex h-screen w-full transform flex-col justify-between gap-4 overflow-scroll bg-white p-5 text-left align-middle shadow-xl transition-all dark:bg-navy md:max-w-3xl">
                   <div className="flex flex-col">
                     <div className="flex items-center justify-between gap-2">
                       <Dialog.Title as="h3" className="text-lg font-bold leading-6 text-gray-800 dark:text-white">
@@ -967,7 +970,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                     </div>
 
                     {/* KPIs */}
-                    <div className="mt-1 font-normal text-gray-700 dark:text-white">
+                    <div className="mt-0 font-normal text-gray-700 dark:text-white">
                       {textView ? (
                         <>
                           <p>For this wizard category:</p>
@@ -1032,9 +1035,8 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                         </>
                       ) : (
                         <>
-                          <p className="mb-1.5 text-sm">Here are some key stats for wizards of this category</p>
-
-                          <div className="grid grid-cols-2 gap-x-3 gap-y-3 lg:grid-cols-5">
+                          <p className="mb-1 text-sm">Here are some key stats for wizards of this category</p>
+                          <div className="grid grid-cols-2 gap-x-3 gap-y-3 xl:grid-cols-5">
                             <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-blue-600 bg-blue-600/60 text-center text-white dark:border-blue-500 dark:bg-blue-500/40">
                               <span className="w-full border-b px-2 py-2 font-mono text-xl font-bold">
                                 {wizardGroup.stats.avgTimespan.toFixed(1)}s
@@ -1157,17 +1159,17 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
 
                     {/* Inspect wizards view */}
                     {inspect ? (
-                      <div className="flex gap-2 lg:gap-4">
+                      <div className="flex gap-2 xl:gap-4">
                         {/* Wizard Inspect Card */}
                         <div className="flex-1 rounded-xl bg-navy text-white dark:bg-white/10">
-                          <div className="flex items-center justify-between rounded-t border-b px-3 py-3 lg:px-4 lg:py-4">
+                          <div className="flex items-center justify-between rounded-t border-b px-2 py-2 xl:px-3 xl:py-3">
                             <div className="flex flex-col">
-                              <h4 className="tracking-[-0.08rem] lg:tracking-normal">{selectedWizard.component}</h4>
+                              <h4 className="tracking-[-0.08rem] xl:tracking-normal">{selectedWizard.component}</h4>
                               <span className="text-xxs">score = {selectedWizard.formulaStr}</span>
                             </div>
                             <span
                               className={classNames(
-                                'flex gap-1 rounded-full border p-1 text-sm text-white lg:rounded lg:p-1.5',
+                                'flex gap-1 rounded-full border p-1 text-sm text-white xl:rounded xl:p-1.5',
                                 selectedWizard.completed
                                   ? 'border-teal-600 bg-teal-600/80'
                                   : 'border-rose-600 bg-rose-600/80'
@@ -1178,24 +1180,24 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                               ) : (
                                 <XCircleIcon className="h-5 w-5" />
                               )}
-                              <span className="hidden lg:flex">
+                              <span className="hidden xl:flex">
                                 {selectedWizard.completed ? 'Completed' : 'Cancelled'}
                               </span>
                             </span>
                           </div>
 
-                          <div className="flex items-center justify-between rounded-b px-3 py-3 lg:px-4 lg:py-4">
-                            <div className="grid grid-cols-1 grid-rows-none gap-y-0 lg:grid-flow-col lg:grid-cols-none lg:grid-rows-4 lg:gap-x-6">
+                          <div className="flex items-center justify-between rounded-b px-2 py-2 xl:px-3 xl:py-3">
+                            <div className="grid grid-cols-1 grid-rows-none gap-y-0 xl:grid-flow-col xl:grid-cols-none xl:grid-rows-4 xl:gap-x-6">
                               <div className="flex items-center gap-x-2">
                                 <span className="h-4 w-4 rounded-full bg-blue-600" />
-                                <span className="whitespace-nowrap text-sm tracking-tighter lg:tracking-normal">
+                                <span className="whitespace-nowrap text-sm tracking-tighter xl:tracking-normal">
                                   Timespan: <span className="font-normal">{selectedWizard.timespan.toFixed(1)}s</span>
                                 </span>
                               </div>
 
                               <div className="flex items-center gap-x-2">
                                 <span className="h-4 w-4 rounded-full bg-emerald-500" />
-                                <span className="whitespace-nowrap text-sm tracking-tighter lg:tracking-normal">
+                                <span className="whitespace-nowrap text-sm tracking-tighter xl:tracking-normal">
                                   Last Step Started:{' '}
                                   <span className="font-normal">{selectedWizard.stepStatus.current + 1}</span>
                                 </span>
@@ -1203,7 +1205,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
 
                               <div className="flex items-center gap-x-2">
                                 <span className="h-4 w-4 rounded-full bg-pink-500" />
-                                <span className="whitespace-nowrap text-sm tracking-tighter lg:tracking-normal">
+                                <span className="whitespace-nowrap text-sm tracking-tighter xl:tracking-normal">
                                   Visible Steps:{' '}
                                   <span className="font-normal">{selectedWizard.stepStatus.visible}</span>
                                 </span>
@@ -1211,7 +1213,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
 
                               <div className="flex items-center gap-x-2">
                                 <span className="h-4 w-4 rounded-full bg-violet-500" />
-                                <span className="whitespace-nowrap text-sm tracking-tighter lg:tracking-normal">
+                                <span className="whitespace-nowrap text-sm tracking-tighter xl:tracking-normal">
                                   Max Possible Steps:{' '}
                                   <span className="font-normal">{selectedWizard.stepStatus.total}</span>
                                 </span>
@@ -1219,27 +1221,27 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
 
                               <div className="flex items-center gap-x-2">
                                 <span className="h-4 w-4 rounded-full bg-amber-500" />
-                                <span className="whitespace-nowrap text-sm tracking-tighter lg:tracking-normal">
+                                <span className="whitespace-nowrap text-sm tracking-tighter xl:tracking-normal">
                                   Backs: <span className="font-normal">{selectedWizard.backStepCount}</span>
                                 </span>
                               </div>
 
                               <div className="flex items-center gap-x-2">
                                 <span className="h-4 w-4 rounded-full bg-orange-500" />
-                                <span className="whitespace-nowrap text-sm tracking-tighter lg:tracking-normal">
+                                <span className="whitespace-nowrap text-sm tracking-tighter xl:tracking-normal">
                                   Errors: <span className="font-normal">{selectedWizard.errorCount}</span>
                                 </span>
                               </div>
 
                               <div className="flex items-center gap-x-2">
                                 <span className="h-4 w-4 rounded-full bg-rose-600" />
-                                <span className="whitespace-nowrap text-sm tracking-tighter lg:tracking-normal">
+                                <span className="whitespace-nowrap text-sm tracking-tighter xl:tracking-normal">
                                   Failed Steps: <span className="font-normal">{selectedWizard.failedStepCount}</span>
                                 </span>
                               </div>
                             </div>
 
-                            <div className="flex flex-col items-center justify-center gap-x-0 gap-y-3 lg:flex-row lg:gap-x-3 lg:gap-y-0">
+                            <div className="flex flex-col items-center justify-center gap-x-0 gap-y-3 xl:flex-row xl:gap-x-3 xl:gap-y-0">
                               <div className="flex flex-col items-center justify-center space-y-1">
                                 <CircularProgressBadge
                                   progress={stepCompletionRatio}
