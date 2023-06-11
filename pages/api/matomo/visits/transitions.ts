@@ -1,8 +1,9 @@
 import axios from 'axios';
-import { config } from '../../../../utils/matomo';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import type { CustomAPIError, Frequency, Visits } from '../../../../@types';
-import { TransitionMatomo } from '../../../../@types/matomo';
+import type { TransitionMatomo } from '@/@types/matomo';
+import type { CustomAPIError, Visits } from '@/@types';
+
+import { config } from '@/utils/matomo';
 
 type ResponseType = Visits | CustomAPIError;
 

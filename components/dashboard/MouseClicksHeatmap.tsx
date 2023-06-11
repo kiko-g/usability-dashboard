@@ -1,7 +1,7 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
-import type { MouseClicksAPI } from '../../@types';
-import { Loading } from '../utils';
+import type { MouseClicksAPI } from '@/@types';
+import { Loading } from '@/components/utils';
 
 const Plot = dynamic(() => import('react-plotly.js').then((mod) => mod.default), {
   ssr: false,

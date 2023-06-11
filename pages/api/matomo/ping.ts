@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import axios from 'axios';
-import { config } from '../../../utils/matomo';
+import { config } from '@/utils/matomo';
 
 type ResponseType = { matomoVersion: string } | { error: string; message?: string };
 

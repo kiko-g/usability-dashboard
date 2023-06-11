@@ -1,7 +1,7 @@
 // components/PieChart.tsx
 import React from 'react';
 import dynamic from 'next/dynamic';
-import type { PieData } from '../../@types';
+import type { PieData } from '@/@types';
 import { Loading } from '.';
 
 const Plot = dynamic(() => import('react-plotly.js').then((mod) => mod.default), {

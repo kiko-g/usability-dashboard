@@ -10,7 +10,7 @@ import type {
   IExecutionViewGroup,
   ButtonType,
   IWizardStepsStatus,
-} from '../@types';
+} from '@/@types';
 
 export enum WizardAction {
   Start = 'Start',

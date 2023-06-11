@@ -1,7 +1,17 @@
 import React, { Fragment } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import classNames from 'classnames';
-import type { Frequency, Visits } from '../@types';
+import { Dialog, Disclosure, Listbox, Transition } from '@headlessui/react';
+import type { Frequency, Visits } from '@/@types';
+import type { OverviewMatomoResponse, TransitionMatomo } from '@/@types/matomo';
+
+import { strIncludes } from '@/utils';
+import { mockVisitsData as mockData } from '@/utils/mock';
+
+import { Layout } from '@/components/layout';
+import { Loading, NotFound } from '@/components/utils';
+
 import {
   ArrowLongDownIcon,
   ArrowLongLeftIcon,
@@ -18,13 +28,6 @@ import {
   RectangleStackIcon,
 } from '@heroicons/react/24/outline';
 import { ArrowTopRightOnSquareIcon, CheckCircleIcon as CheckCircleSolidIcon } from '@heroicons/react/24/solid';
-import { mockVisitsData as mockData } from '../utils/mock';
-import { Layout } from '../components/layout';
-import { Loading, NotFound } from '../components/utils';
-import { Dialog, Disclosure, Listbox, Transition } from '@headlessui/react';
-import { strIncludes } from '../utils';
-import { OverviewMatomoResponse, TransitionMatomo } from '../@types/matomo';
-import Image from 'next/image';
 
 export default function Visits() {
   const [data, setData] = React.useState<Visits | null>(null);

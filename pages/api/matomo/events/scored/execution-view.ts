@@ -1,7 +1,8 @@
 import axios from 'axios';
-import { config, evaluateExecutionViews, groupExecutionViews, parseEvents } from '../../../../../utils/matomo';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import type { CustomAPIError } from '../../../../../@types';
+import type { CustomAPIError } from '@/@types';
+
+import { config, evaluateExecutionViews, groupExecutionViews, parseEvents } from '@/utils/matomo';
 
 type ResponseType = any | CustomAPIError;
 

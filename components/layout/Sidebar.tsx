@@ -3,7 +3,7 @@ import Link from 'next/link';
 import classNames from 'classnames';
 import { DarkModeSwitch } from './';
 import { Disclosure } from '@headlessui/react';
-import GithubIcon from '../utils/GithubIcon';
+import GithubIcon from '@/components/utils/GithubIcon';
 import {
   CursorArrowRippleIcon,
   HomeIcon,
@@ -14,7 +14,7 @@ import {
   FingerPrintIcon,
   RectangleGroupIcon,
 } from '@heroicons/react/24/outline';
-import MatomoIcon from '../utils/MatomoIcon';
+import MatomoIcon from '@/components/utils/MatomoIcon';
 
 const navigations = [
   {

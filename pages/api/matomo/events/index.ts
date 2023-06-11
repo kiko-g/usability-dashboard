@@ -1,7 +1,8 @@
 import axios from 'axios';
-import { config, parseEvents } from '../../../../utils/matomo';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import type { CustomAPIError, ITrackerEventGroup } from '../../../../@types';
+import type { CustomAPIError, ITrackerEventGroup } from '@/@types';
+
+import { config, parseEvents } from '@/utils/matomo';
 
 type ResponseType = ITrackerEventGroup[] | CustomAPIError;
 

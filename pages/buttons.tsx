@@ -1,26 +1,14 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import classNames from 'classnames';
-import type { ButtonType } from '../@types';
-import { mockButtonData as mockData } from '../utils/mock';
-import { Layout } from '../components/layout';
-import { CircularProgressBadge, Loading, NotFound } from '../components/utils';
-import { Dialog, Disclosure, Listbox, Transition } from '@headlessui/react';
-import { WizardAction } from '../utils/matomo';
-import {
-  ArrowPathIcon,
-  ChartPieIcon,
-  CheckCircleIcon,
-  ChevronDownIcon,
-  ChevronUpDownIcon,
-  ChevronUpIcon,
-  CircleStackIcon,
-  CodeBracketIcon,
-  DocumentTextIcon,
-  MagnifyingGlassMinusIcon,
-  MagnifyingGlassPlusIcon,
-  XCircleIcon,
-} from '@heroicons/react/24/outline';
+import type { ButtonType } from '@/@types';
+import { Disclosure } from '@headlessui/react';
+import { mockButtonData as mockData } from '@/utils/mock';
+
+import { Layout } from '@/components/layout';
+import { Loading, NotFound } from '@/components/utils';
+
+import { ArrowPathIcon, CircleStackIcon, CodeBracketIcon } from '@heroicons/react/24/outline';
 
 export default function Buttons() {
   const [data, setData] = React.useState<ButtonType[]>([]); // TODO: replace any with correct type

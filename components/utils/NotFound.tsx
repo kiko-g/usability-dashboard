@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import React from 'react';
-import ServiceNotice from '../ServiceNotice';
+import ServiceNotice from '@/components/ServiceNotice';
 
 type Props = {
   message?: string;

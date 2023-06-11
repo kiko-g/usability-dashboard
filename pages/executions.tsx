@@ -1,12 +1,15 @@
 import React, { Fragment } from 'react';
 import Link from 'next/link';
 import classNames from 'classnames';
-import type { IExecutionView, IExecutionViewGroup, ITrackerEventGroup } from '../@types';
-import { mockExecutionViewDataScored as mockData } from '../utils/mock';
-import { Layout } from '../components/layout';
-import { CircularProgressBadge, Loading, NotFound } from '../components/utils';
 import { Dialog, Listbox, Transition } from '@headlessui/react';
-import { ExecutionViewAction, evaluateAndGroupExecutionViews } from '../utils/matomo';
+import type { IExecutionViewGroup, ITrackerEventGroup } from '@/@types';
+
+import { mockExecutionViewDataScored as mockData } from '@/utils/mock';
+import { evaluateAndGroupExecutionViews } from '@/utils/matomo';
+
+import { Layout } from '@/components/layout';
+import { CircularProgressBadge, Loading, NotFound } from '@/components/utils';
+
 import { CheckCircleIcon as CheckCircleSolidIcon } from '@heroicons/react/24/solid';
 import {
   ArrowPathIcon,

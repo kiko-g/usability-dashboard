@@ -1,7 +1,7 @@
 import React from 'react';
-import { PieChart } from '../utils';
+import { PieChart } from '@/components/utils';
 import { PageVisitsTable, SelectPageVisitsType } from '.';
-import type { PieData, PageViewsAPI, PageVisitsVizTypeFilter } from '../../@types';
+import type { PieData, PageViewsAPI, PageVisitsVizTypeFilter } from '@/@types';
 
 export default function PageVisitsViz({ data }: { data: PageViewsAPI[] }) {
   const [vizType, setVizType] = React.useState<PageVisitsVizTypeFilter>({ name: 'All', value: 'all' });

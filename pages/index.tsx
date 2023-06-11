@@ -1,6 +1,11 @@
 import React from 'react';
 import Link from 'next/link';
-import Layout from '../components/layout/Layout';
+import classNames from 'classnames';
+
+import { Layout } from '@/components/layout';
+import ServiceNotice from '@/components/ServiceNotice';
+import MatomoDashboardCard from '@/components/MatomoDashboardCard';
+
 import {
   ArrowLongRightIcon,
   CursorArrowRaysIcon,
@@ -8,9 +13,6 @@ import {
   ViewColumnsIcon,
   ViewfinderCircleIcon,
 } from '@heroicons/react/24/outline';
-import classNames from 'classnames';
-import ServiceNotice from '../components/ServiceNotice';
-import MatomoDashboardCard from '../components/MatomoDashboardCard';
 
 type NavAction = {
   title: string;

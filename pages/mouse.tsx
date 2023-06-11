@@ -1,15 +1,15 @@
 import React from 'react';
-import type { MouseClicksAPI, MouseClickVizTypeFilter } from '../@types';
+import type { MouseClicksAPI, MouseClickVizTypeFilter } from '@/@types';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
-import { Layout } from '../components/layout';
-import { Loading, NotFound } from '../components/utils';
+import { Layout } from '@/components/layout';
+import { Loading, NotFound } from '@/components/utils';
 import {
   MouseClicksChart,
   MouseClickStats,
   MouseClicksHeatmap,
   MouseClicksTable,
   SelectMouseClicksType,
-} from '../components/dashboard';
+} from '@/components/dashboard';
 
 export default function Mouse() {
   return (

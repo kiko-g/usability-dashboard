@@ -1,7 +1,8 @@
 import axios from 'axios';
-import { config, parseEvents, evaluateWizards, groupWizardsByType } from '../../../../../utils/matomo';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import type { CustomAPIError, IWizardGroup } from '../../../../../@types';
+import type { CustomAPIError, IWizardGroup } from '@/@types';
+
+import { config, parseEvents, evaluateWizards, groupWizardsByType } from '@/utils/matomo';
 
 type ResponseType = IWizardGroup[] | CustomAPIError;
 

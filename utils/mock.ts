@@ -1,4 +1,4 @@
-import type { ButtonType, IExecutionViewGroup, ITrackerEventGroup, IWizardGroup, Visits } from '../@types';
+import type { ButtonType, IExecutionViewGroup, ITrackerEventGroup, IWizardGroup, Visits } from '@/@types';
 
 export const mockVisitsData: Visits = {
   os: [{ name: 'Windows', value: 8 }],
