@@ -41,6 +41,7 @@ export interface IWizard extends ITrackerEventGroup {
   formulaStr: string;
   timespan: number;
   completed: boolean;
+  discarded: boolean;
   errorCount: number;
   backStepCount: number;
   failedStepCount: number;
@@ -60,7 +61,7 @@ export type WizardStats = {
   completedRatio: number;
   avgScore: number | null;
   stdDevScore: number | null;
-  scores: number[];
+  scores: (number | null)[];
   avgTimespan: number;
   stdDevTimespan: number | null;
   timespans: number[];

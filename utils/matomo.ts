@@ -137,10 +137,10 @@ export const evaluateWizards = (wizards: ITrackerEventGroup[]): IWizard[] => {
     let visibleSteps = -1;
     let currentStep = 0;
     let closed = false;
-    let completed = false;
     let cancelled = false;
+    let completed = false;
+    let discarded = timespan < 10; // if the wizard was open for 10 seconds it was probably intended
 
-    let intendedWizard = timespan > 10; // if the wizard was open for 10 seconds it was probably intended
     let errorCount = 0;
     let backStepCount = 0;
     let failedStepCount = 0;
@@ -206,20 +206,22 @@ export const evaluateWizards = (wizards: ITrackerEventGroup[]): IWizard[] => {
 
     // penalty for not completing
     if (!completed) {
-      if (intendedWizard) {
-        score = score - 20 - 3 * (errorCount + failedStepCount + backStepCount) - timespan / 6;
-        formulaStr += ` - 3*${errorCount + failedStepCount + backStepCount} - ${timespan.toFixed(0)} / 6 = ${score.toFixed(0)}`;
+      if (!discarded) {
+        const negativeActions = errorCount + failedStepCount + backStepCount;
+        score = score - 20 - 3 * negativeActions - timespan / 6;
+        formulaStr += ` - 3*${negativeActions} - ${timespan.toFixed(0)} / 6`;
       } else {
         score = null;
         formulaStr = 'N/A';
       }
     }
-    
-    if(score !== null) {
+
+    if (score !== null) {
+      formulaStr += ` = ${score.toFixed(0)}`; // save score before corrections
+
       if (score < 40 && completed) score = 40; // prevent too low score if completed
       else if (score < 0) score = 0; // prevent negative score
     }
-
 
     const evaluatedWizard: IWizard = {
       ...wizard,
@@ -227,6 +229,7 @@ export const evaluateWizards = (wizards: ITrackerEventGroup[]): IWizard[] => {
       formulaStr,
       timespan,
       completed,
+      discarded,
       errorCount,
       failedStepCount,
       backStepCount,
@@ -307,7 +310,8 @@ export const groupWizardsByType = (wizards: IWizard[]): IWizardGroup[] => {
     if (group.stats.avgScore === 0 || group.stats.avgScore === null) group.stats.avgScore = null;
     else group.stats.avgScore /= totalCount;
 
-    group.stats.stdDevScore = standardDeviation(group.stats.scores);
+    const scoresFiltered = group.stats.scores.filter((score) => score !== null) as number[];
+    group.stats.stdDevScore = standardDeviation(scoresFiltered);
 
     group.stats.avgTimespan /= totalCount;
     group.stats.stdDevTimespan = standardDeviation(group.stats.timespans);

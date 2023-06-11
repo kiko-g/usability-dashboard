@@ -10,7 +10,7 @@ export default function CircularProgressBadge({ progress, color }: Props) {
   const strokeWidth = 5;
   const radius = (diameter - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
-  const offset = progress === null ? 0 : circumference - (progress / 100) * circumference;
+  const offset = progress === null ? circumference : circumference - (progress / 100) * circumference;
   const score = progress === null ? 'N/A' : progress.toFixed(0);
 
   return (
@@ -20,7 +20,7 @@ export default function CircularProgressBadge({ progress, color }: Props) {
           fill="none"
           stroke="currentColor"
           className={classNames(
-            'opacity-20',
+            'opacity-30',
             color === undefined && 'text-white',
             color === 'blue' && 'text-blue-600',
             color === 'green' && 'text-emerald-600',

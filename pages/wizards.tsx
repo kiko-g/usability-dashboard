@@ -25,12 +25,45 @@ import {
 } from '@heroicons/react/24/outline';
 import { standardDeviation } from '../utils';
 
+type WizardStats = {
+  avgScore: number;
+  minTime: number;
+  maxTime: number;
+  avgTime: number;
+  stdDevTime: number | null;
+  total: number;
+  completed: number;
+  cancelled: number;
+  discarded: number;
+  notCompleted: number;
+  completedRatio: number;
+};
+
+type StepCompletionStats = {
+  activated: number;
+  successful: number;
+  failed: number;
+  minSuccessfulStepTime: number;
+  maxSuccessfulStepTime: number;
+  avgSuccessfulStepTime: number;
+  stdDevSuccessfulStepTime: number | null;
+};
+
+type ErrorStatsType = {
+  avgBack: number;
+  avgError: number;
+  avgFailedSteps: number;
+  totalBackSteps: number;
+  totalErrors: number;
+  totalFailedSteps: number;
+};
+
 export default function Wizards() {
-  const [rawData, setRawData] = React.useState<ITrackerEventGroup[]>([]);
-  const [processedData, setProcessedData] = React.useState<IWizardGroup[]>([]);
   const [error, setError] = React.useState<boolean>(false);
   const [loading, setLoading] = React.useState<boolean>(true);
   const [willFetch, setWillFetch] = React.useState<boolean>(true);
+  const [rawData, setRawData] = React.useState<ITrackerEventGroup[]>([]);
+  const [processedData, setProcessedData] = React.useState<IWizardGroup[]>([]);
 
   // fetch data
   React.useEffect(() => {
@@ -153,59 +186,61 @@ export default function Wizards() {
 }
 
 function WizardKPIs({ data }: { data: IWizardGroup[] }) {
-  // calculate average score considering all wizards
-  const { avgScore, discards } = React.useMemo(() => {
+  const wizardStats = React.useMemo<WizardStats>(() => {
     if (data.length === 0)
       return {
-        avgScore: null,
-        discards: 0,
+        avgScore: 0,
+        minTime: 0,
+        maxTime: 0,
+        avgTime: 0,
+        stdDevTime: null,
+        total: 0,
+        completed: 0,
+        cancelled: 0,
+        discarded: 0,
+        notCompleted: 0,
+        completedRatio: 0,
       };
-
-    let discards = 0;
-    const sum = data.reduce((acc, item) => {
-      let localSum: number = 0;
-      for (const score of item.stats.scores) {
-        if (score === null) discards++;
-        else localSum += score;
-      }
-      return acc + localSum;
-    }, 0);
-
-    const avgScore = data.length > 0 ? sum / (data.length - discards) : 0;
-
-    return { avgScore, discards };
-  }, [data]);
-
-  // calculate average completion rate considering all wizards
-  const completionRate = React.useMemo<CompletionRate | null>(() => {
-    if (data.length === 0) return null;
 
     const completed = data.reduce((acc, item) => acc + item.stats.completed, 0);
     const notCompleted = data.reduce((acc, item) => acc + item.stats.notCompleted, 0);
+    const discarded = data.reduce((acc, item) => acc + item.wizards.filter((wizard) => wizard.discarded).length, 0);
+    const cancelled = notCompleted - discarded;
     const total = completed + notCompleted;
 
-    return {
-      completed: completed,
-      notCompleted: notCompleted,
-      ratio: total > 0 ? completed / total : 0,
-    };
-  }, [data]);
-
-  // calculate average, minimum and maximum time considering all wizards
-  const wizardTimeStats = React.useMemo(() => {
     const totalTime = data.reduce((acc, item) => acc + item.stats.avgTimespan * item.stats.total, 0);
     const totalCount = data.reduce((acc, item) => acc + item.stats.total, 0);
 
     const timespans = data.flatMap((item) => item.wizards.map((wizard) => wizard.timespan));
     const minTime = Math.min(...timespans);
     const maxTime = Math.max(...timespans);
-    const averageTime = totalCount > 0 ? totalTime / totalCount : 0;
+    const avgTime = totalCount > 0 ? totalTime / totalCount : 0;
+    const stdDevTime = standardDeviation(timespans);
 
-    return { avg: averageTime, min: minTime, max: maxTime };
+    const allScoresSum = data.reduce((acc, item) => {
+      let localSum: number = 0;
+      for (const score of item.stats.scores) if (score !== null) localSum += score;
+      return acc + localSum;
+    }, 0);
+    const avgScore = allScoresSum / (total - discarded);
+
+    return {
+      avgScore,
+      minTime,
+      maxTime,
+      avgTime,
+      stdDevTime,
+      total,
+      completed,
+      cancelled,
+      discarded,
+      notCompleted,
+      completedRatio: total > 0 ? completed / total : 0,
+    };
   }, [data]);
 
   // calculate step stats considering all steps from all wizards
-  const stepCompletionStats = React.useMemo(() => {
+  const stepStats = React.useMemo(() => {
     let activatedStepsTotal = 0;
     let successStepsTotal = 0;
     let failedStepTotal = 0;
@@ -264,11 +299,9 @@ function WizardKPIs({ data }: { data: IWizardGroup[] }) {
   // calculate average, minimum and maximum error and back step considering all wizards
   const errorAndBackStepStats = React.useMemo(() => {
     let totalWizards = 0;
-
+    let backStepCount = 0;
     let errorCount = 0;
     let failedStepCount = 0;
-    let backStepCount = 0;
-
     let totalErrors = 0;
     let totalFailedSteps = 0;
     let totalBackSteps = 0;
@@ -280,17 +313,9 @@ function WizardKPIs({ data }: { data: IWizardGroup[] }) {
         totalFailedSteps += wizard.failedStepCount;
         totalBackSteps += wizard.backStepCount;
 
-        if (wizard.errorCount > 0) {
-          errorCount++;
-        }
-
-        if (wizard.backStepCount > 0) {
-          backStepCount++;
-        }
-
-        if (wizard.failedStepCount > 0) {
-          failedStepCount++;
-        }
+        if (wizard.errorCount > 0) errorCount++;
+        if (wizard.backStepCount > 0) backStepCount++;
+        if (wizard.failedStepCount > 0) failedStepCount++;
       });
     });
 
@@ -306,12 +331,12 @@ function WizardKPIs({ data }: { data: IWizardGroup[] }) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-1 flex-col gap-4 self-stretch lg:flex-row">
-        {completionRate === null ? null : <WizardCompletionRateCard completion={completionRate} />}
-        {avgScore === null ? null : <WizardAverageUXScoreCard score={avgScore} />}
+        <WizardCompletionRateCard wizardStats={wizardStats} />
+        <WizardAverageUXScoreCard score={wizardStats.avgScore} />
 
         <div className="flex flex-1 flex-col items-start justify-start gap-4 self-stretch">
-          <WizardGeneralStatsCard timeStats={wizardTimeStats} />
-          <StepCompletionStatsCard stats={stepCompletionStats} />
+          <WizardGeneralStatsCard wizardStats={wizardStats} />
+          <StepCompletionStatsCard stats={stepStats} />
           <ErrorStatsCard text="Negative Actions Stats" stats={errorAndBackStepStats} />
         </div>
       </div>
@@ -320,14 +345,9 @@ function WizardKPIs({ data }: { data: IWizardGroup[] }) {
   );
 }
 
-type CompletionRate = {
-  completed: number;
-  notCompleted: number;
-  ratio: number;
-};
-
-function WizardCompletionRateCard({ completion }: { completion: CompletionRate }) {
-  const progress = Math.min(Math.max(completion.ratio, 0), 1) * 100;
+function WizardCompletionRateCard({ wizardStats }: { wizardStats: WizardStats }) {
+  const { completedRatio, completed, notCompleted } = wizardStats;
+  const progress = Math.min(Math.max(completedRatio, 0), 1) * 100;
   const diameter = 120; // Adjusted diameter value
   const strokeWidth = 7; // Adjusted strokeWidth value
   const radius = (diameter - strokeWidth) / 2;
@@ -367,7 +387,7 @@ function WizardCompletionRateCard({ completion }: { completion: CompletionRate }
         <div className="absolute flex w-full flex-col text-center">
           <span className="text-4xl font-bold">{`${progress.toFixed(1)}%`}</span>
           <span className="text-xl">
-            {completion.completed}/{completion.completed + completion.notCompleted}
+            {completed}/{completed + notCompleted}
           </span>
         </div>
       </div>
@@ -422,51 +442,85 @@ function WizardAverageUXScoreCard({ score }: { score: number }) {
   );
 }
 
-type AvgMinMax = {
-  avg: number;
-  min: number;
-  max: number;
-};
-
-function WizardGeneralStatsCard({ timeStats }: { timeStats: AvgMinMax }) {
-  const { avg, min, max } = timeStats;
+function WizardGeneralStatsCard({ wizardStats }: { wizardStats: WizardStats }) {
+  const { avgTime, minTime, maxTime, stdDevTime, cancelled, discarded, total, completed } = wizardStats;
+  const completedRatio = ((100 * completed) / total).toFixed(1);
+  const discardedRatio = ((100 * discarded) / total).toFixed(1);
+  const cancelledRatio = ((100 * cancelled) / total).toFixed(1);
 
   return (
-    <div className="relative flex flex-1 flex-col self-stretch rounded bg-white/80 p-4 dark:bg-white/10">
-      <h2 className="mb-2 text-xl font-bold">Wizard Time Stats</h2>
-      <div className="flex items-center gap-x-2">
-        <span className="h-4 w-4 rounded-full bg-blue-500" />
-        <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
-          Average: <span className="font-normal">{avg.toFixed(2)}s</span>
-        </span>
-      </div>
+    <div className="relative self-stretch rounded bg-white/80 p-4 dark:bg-white/10">
+      <h2 className="mb-2 text-xl font-bold">Wizard General Stats</h2>
+      <div className="grid w-full grid-cols-1 grid-rows-none gap-x-0 lg:w-min lg:grid-flow-col lg:grid-cols-none lg:grid-rows-4 lg:gap-x-4">
+        <div className="flex items-center gap-x-2">
+          <span className="h-4 w-4 rounded-full bg-gray-400" />
+          <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
+            Total: <span className="font-normal">{total}</span>
+          </span>
+        </div>
 
-      <div className="flex items-center gap-x-2">
-        <span className="h-4 w-4 rounded-full bg-pink-500" />
-        <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
-          Minimum: <span className="font-normal">{min.toFixed(2)}s</span>
-        </span>
-      </div>
+        <div className="flex items-center gap-x-2">
+          <span className="h-4 w-4 rounded-full bg-emerald-500" />
+          <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
+            Completed:{' '}
+            <span className="font-normal">
+              {completed} ({completedRatio}%)
+            </span>
+          </span>
+        </div>
 
-      <div className="flex items-center gap-x-2">
-        <span className="h-4 w-4 rounded-full bg-violet-500" />
-        <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
-          Maximum: <span className="font-normal">{max.toFixed(2)}s</span>
-        </span>
+        <div className="flex items-center gap-x-2">
+          <span className="h-4 w-4 rounded-full bg-amber-400" />
+          <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
+            Discarded:{' '}
+            <span className="font-normal">
+              {discarded} ({discardedRatio}%)
+            </span>
+          </span>
+        </div>
+
+        <div className="flex items-center gap-x-2">
+          <span className="h-4 w-4 rounded-full bg-rose-600" />
+          <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
+            Cancelled:{' '}
+            <span className="font-normal">
+              {cancelled} ({cancelledRatio}%)
+            </span>
+          </span>
+        </div>
+
+        <div className="flex items-center gap-x-2">
+          <span className="h-4 w-4 rounded-full bg-blue-500" />
+          <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
+            Avg Time to complete wizard: <span className="font-normal">{avgTime.toFixed(2)}s</span>
+          </span>
+        </div>
+
+        <div className="flex items-center gap-x-2">
+          <span className="h-4 w-4 rounded-full bg-pink-500" />
+          <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
+            Min Time to complete wizard: <span className="font-normal">{minTime.toFixed(2)}s</span>
+          </span>
+        </div>
+
+        <div className="flex items-center gap-x-2">
+          <span className="h-4 w-4 rounded-full bg-violet-500" />
+          <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
+            Max Time to complete wizard: <span className="font-normal">{maxTime.toFixed(2)}s</span>
+          </span>
+        </div>
+
+        <div className="flex items-center gap-x-2">
+          <span className="h-4 w-4 rounded-full bg-lime-400" />
+          <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
+            Std Dev for completed wizard times:{' '}
+            <span className="font-normal">{stdDevTime === null ? 'N/A' : `${stdDevTime.toFixed(2)}s`}</span>
+          </span>
+        </div>
       </div>
     </div>
   );
 }
-
-type StepCompletionStats = {
-  activated: number;
-  successful: number;
-  failed: number;
-  minSuccessfulStepTime: number;
-  maxSuccessfulStepTime: number;
-  avgSuccessfulStepTime: number;
-  stdDevSuccessfulStepTime: number | null;
-};
 
 function StepCompletionStatsCard({ stats }: { stats: StepCompletionStats }) {
   const {
@@ -479,10 +533,10 @@ function StepCompletionStatsCard({ stats }: { stats: StepCompletionStats }) {
     stdDevSuccessfulStepTime,
   } = stats;
 
-  const abandoned = activated - successful - failed;
+  const cancelled = activated - successful - failed;
   const failedRatio = ((100 * failed) / activated).toFixed(1);
   const successfulRatio = ((100 * successful) / activated).toFixed(1);
-  const abandonedRatio = ((100 * abandoned) / activated).toFixed(1);
+  const cancelledRatio = ((100 * cancelled) / activated).toFixed(1);
 
   return (
     <div className="relative self-stretch rounded bg-white/80 p-4 dark:bg-white/10">
@@ -506,21 +560,21 @@ function StepCompletionStatsCard({ stats }: { stats: StepCompletionStats }) {
         </div>
 
         <div className="flex items-center gap-x-2">
-          <span className="h-4 w-4 rounded-full bg-rose-600" />
+          <span className="h-4 w-4 rounded-full bg-orange-500" />
           <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
-            Failed steps:{' '}
+            Cancelled steps:{' '}
             <span className="font-normal">
-              {failed} ({failedRatio}%)
+              {cancelled} ({cancelledRatio}%)
             </span>
           </span>
         </div>
 
         <div className="flex items-center gap-x-2">
-          <span className="h-4 w-4 rounded-full bg-orange-500" />
+          <span className="h-4 w-4 rounded-full bg-rose-600" />
           <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
-            Abandoned steps:{' '}
+            Failed steps:{' '}
             <span className="font-normal">
-              {abandoned} ({abandonedRatio}%)
+              {failed} ({failedRatio}%)
             </span>
           </span>
         </div>
@@ -563,15 +617,6 @@ function StepCompletionStatsCard({ stats }: { stats: StepCompletionStats }) {
     </div>
   );
 }
-
-type ErrorStatsType = {
-  totalErrors: number;
-  totalFailedSteps: number;
-  totalBackSteps: number;
-  avgError: number;
-  avgFailedSteps: number;
-  avgBack: number;
-};
 
 function ErrorStatsCard({ text, stats }: { text: string; stats: ErrorStatsType }) {
   const { totalErrors, totalFailedSteps, totalBackSteps, avgError, avgBack, avgFailedSteps } = stats;
@@ -649,7 +694,7 @@ function WizardSortedList({ data }: { data: IWizardGroup[] }) {
           if (a.stats.avgScore === null && b.stats.avgScore === null) return 0;
           if (a.stats.avgScore === null) return 1;
           if (b.stats.avgScore === null) return -1;
-          return a.stats.avgScore < b.stats.avgScore ? 1 : -1;
+          return a.stats.avgScore < b.stats.avgScore ? -1 : 1;
         };
       case 'High Score First':
         return (a: IWizardGroup, b: IWizardGroup) => {
@@ -671,7 +716,7 @@ function WizardSortedList({ data }: { data: IWizardGroup[] }) {
     }
   };
 
-  const [picked, setPicked] = React.useState(options[0]);
+  const [picked, setPicked] = React.useState(options[2]);
   const sortedData = React.useMemo(() => {
     const sortFunction = getSortFunction(picked);
     return [...data].sort(sortFunction);
@@ -699,7 +744,7 @@ function WizardSortedList({ data }: { data: IWizardGroup[] }) {
                 leaveFrom="opacity-100"
                 leaveTo="opacity-0"
               >
-                <Listbox.Options className="absolute mt-2 max-h-60 w-full overflow-auto rounded border border-gray-300 bg-gray-100 py-2 shadow lg:w-full">
+                <Listbox.Options className="absolute mt-2 w-full overflow-auto rounded border border-gray-300 bg-gray-100 py-2 shadow lg:w-full">
                   {options.map((option: string, optionIdx: number) => (
                     <Listbox.Option
                       key={`option-${optionIdx}`}
@@ -718,7 +763,7 @@ function WizardSortedList({ data }: { data: IWizardGroup[] }) {
                         {option}
                       </span>
                       {picked === option ? (
-                        <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-primary dark:text-secondary">
+                        <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-teal-500">
                           <CheckCircleSolidIcon className="h-5 w-5" aria-hidden="true" />
                         </span>
                       ) : null}
@@ -738,13 +783,20 @@ function WizardSortedList({ data }: { data: IWizardGroup[] }) {
           <span className="flex items-center gap-2 text-center text-[0.65rem] font-normal lg:gap-2 lg:text-[0.65rem] lg:font-medium">
             <span
               title="Average Number of Errors"
-              className="flex h-auto w-auto items-center justify-center rounded border border-rose-500 bg-rose-500/70 p-1 text-white group-hover:bg-rose-600 lg:h-12 lg:w-10"
+              className="flex h-auto w-auto items-center justify-center rounded border border-rose-500 bg-rose-500/70 p-1 text-white group-hover:bg-rose-500 lg:h-12 lg:w-10"
+            >
+              Avg Fails
+            </span>
+
+            <span
+              title="Average Number of Errors"
+              className="flex h-auto w-auto items-center justify-center rounded border border-orange-500 bg-orange-500/70 p-1 text-white group-hover:bg-orange-500 lg:h-12 lg:w-10"
             >
               Avg Errors
             </span>
             <span
               title="Average Number of Back to Previous Step Clicks"
-              className="flex h-auto w-auto items-center justify-center rounded border border-orange-500 bg-orange-500/70 p-1 text-white group-hover:bg-orange-500 lg:h-12 lg:w-10"
+              className="flex h-auto w-auto items-center justify-center rounded border border-amber-400 bg-amber-400/70 p-1 text-white group-hover:bg-amber-400 lg:h-12 lg:w-10"
             >
               Avg Backs
             </span>
@@ -803,6 +855,8 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
     return { avgError, avgBack };
   }, [wizardGroup]);
 
+  const wizardGroupDiscards = wizardGroup.wizards.reduce((acc, w) => acc + (w.discarded ? 1 : 0), 0);
+
   function closeModal() {
     setIsOpen(false);
   }
@@ -825,13 +879,19 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
         <span className="flex items-center gap-1 text-[0.60rem] font-normal lg:gap-2 lg:text-xs lg:font-medium">
           <span
             title="Average Number of Errors"
-            className="flex h-7 w-7 items-center justify-center rounded-full border border-rose-500 bg-rose-500/70 text-white group-hover:bg-rose-600 lg:h-10 lg:w-10"
+            className="flex h-7 w-7 items-center justify-center rounded-full border border-rose-500 bg-rose-500/70 text-white group-hover:bg-rose-500 lg:h-10 lg:w-10"
+          >
+            {wizardGroup.stats.avgFailedSteps.toFixed(1)}
+          </span>
+          <span
+            title="Average Number of Back to Previous Step Clicks"
+            className="flex h-7 w-7 items-center justify-center rounded-full border border-orange-500 bg-orange-500/70 text-white group-hover:bg-orange-500 lg:h-10 lg:w-10"
           >
             {wizardGroup.stats.avgErrors.toFixed(1)}
           </span>
           <span
             title="Average Number of Back to Previous Step Clicks"
-            className="flex h-7 w-7 items-center justify-center rounded-full border border-orange-500 bg-orange-500/70 text-white group-hover:bg-orange-500 lg:h-10 lg:w-10"
+            className="flex h-7 w-7 items-center justify-center rounded-full border border-amber-400 bg-amber-400/70 text-white group-hover:bg-amber-400 lg:h-10 lg:w-10"
           >
             {wizardGroup.stats.avgBackSteps.toFixed(1)}
           </span>
@@ -931,7 +991,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                             <li>
                               A total of <strong>{wizardGroup.stats.total} wizards were initiated</strong>,{' '}
                               {wizardGroup.stats.completed} were completed, and {wizardGroup.stats.notCompleted} were
-                              abandoned or cancelled, meaning that{' '}
+                              cancelled/aborted, meaning that{' '}
                               <strong>
                                 {(wizardGroup.stats.completedRatio * 100).toFixed(2)}% of wizards were completed
                               </strong>
@@ -1000,9 +1060,11 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                             <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-gray-600 bg-gray-600/60 text-center text-white dark:border-gray-500 dark:bg-gray-500/40">
                               <span className="w-full border-b px-2 py-2 font-mono text-xl font-bold">
                                 {wizardGroup.stats.total}
+                                <span className="font-sans font-light"> &middot; </span>
+                                {(wizardGroup.stats.completedRatio * 100).toFixed(1)}%
                               </span>
                               <span className="my-auto flex min-h-[51px] items-center px-2 py-2 text-sm leading-tight tracking-tighter">
-                                Total Wizards Initiated
+                                Initiated vs. Completion Ratio
                               </span>
                             </div>
 
@@ -1017,10 +1079,12 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
 
                             <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-rose-600 bg-rose-600/60 text-center text-white dark:border-rose-500 dark:bg-rose-500/40">
                               <span className="w-full border-b px-2 py-2 font-mono text-xl font-bold">
-                                {wizardGroup.stats.notCompleted}
+                                {wizardGroupDiscards}
+                                <span className="font-sans font-light"> &middot; </span>
+                                {wizardGroup.stats.notCompleted - wizardGroupDiscards}
                               </span>
                               <span className="my-auto flex min-h-[51px] items-center px-2 py-2 text-sm leading-tight tracking-tighter">
-                                Total Wizards Abandoned
+                                Discarded or Cancelled
                               </span>
                             </div>
 
@@ -1046,34 +1110,36 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                               </span>
                             </div>
 
-                            <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-gray-600 bg-gray-600/60 text-center text-white dark:border-gray-500 dark:bg-gray-500/40">
-                              <span className="w-full border-b px-2 py-2 font-mono text-xl font-bold">
-                                {(wizardGroup.stats.completedRatio * 100).toFixed(1)}%
-                              </span>
-                              <span className="my-auto flex min-h-[51px] items-center px-2 py-2 text-sm leading-tight tracking-tighter">
-                                Wizard Completion Ratio
-                              </span>
-                            </div>
-
-                            <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-amber-600 bg-amber-600/60 text-center text-white dark:border-amber-500 dark:bg-amber-500/40">
+                            <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-amber-600 bg-amber-600/50 text-center text-white dark:border-amber-500 dark:bg-amber-500/40">
                               <span className="w-full border-b px-2 py-2 font-mono text-xl font-bold">
                                 {wizardGroup.stats.totalBackSteps}
                                 <span className="font-sans font-light"> &middot; </span>
                                 {wizardGroup.stats.avgBackSteps.toFixed(1)}
                               </span>
                               <span className="my-auto flex min-h-[51px] items-center px-2 py-2 text-sm leading-tight tracking-tighter">
-                                Total and Average Back Steps
+                                Total and Avg Back Steps
                               </span>
                             </div>
 
-                            <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-rose-600 bg-rose-600/60 text-center text-white dark:border-rose-500 dark:bg-rose-500/40">
+                            <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-orange-600 bg-orange-600/60 text-center text-white dark:border-orange-600 dark:bg-orange-600/40">
                               <span className="w-full border-b px-2 py-2 font-mono text-xl font-bold">
                                 {wizardGroup.stats.totalErrors}
                                 <span className="font-sans font-light"> &middot; </span>
                                 {wizardGroup.stats.avgErrors.toFixed(1)}
                               </span>
                               <span className="my-auto flex min-h-[51px] items-center px-2 py-2 text-sm leading-tight tracking-tighter">
-                                Total and Average Errors
+                                Total and Avg Failed Steps
+                              </span>
+                            </div>
+
+                            <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-rose-600 bg-rose-600/60 text-center text-white dark:border-rose-500 dark:bg-rose-500/40">
+                              <span className="w-full border-b px-2 py-2 font-mono text-xl font-bold">
+                                {wizardGroup.stats.totalFailedSteps}
+                                <span className="font-sans font-light"> &middot; </span>
+                                {wizardGroup.stats.avgFailedSteps.toFixed(1)}
+                              </span>
+                              <span className="my-auto flex min-h-[51px] items-center px-2 py-2 text-sm leading-tight tracking-tighter">
+                                Total and Avg Errors
                               </span>
                             </div>
                           </div>
@@ -1128,27 +1194,6 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                               </div>
 
                               <div className="flex items-center gap-x-2">
-                                <span className="h-4 w-4 rounded-full bg-rose-600" />
-                                <span className="whitespace-nowrap text-sm tracking-tighter lg:tracking-normal">
-                                  Errors: <span className="font-normal">{selectedWizard.errorCount}</span>
-                                </span>
-                              </div>
-
-                              <div className="flex items-center gap-x-2">
-                                <span className="h-4 w-4 rounded-full bg-orange-600" />
-                                <span className="whitespace-nowrap text-sm tracking-tighter lg:tracking-normal">
-                                  Failed Steps: <span className="font-normal">{selectedWizard.failedStepCount}</span>
-                                </span>
-                              </div>
-
-                              <div className="flex items-center gap-x-2">
-                                <span className="h-4 w-4 rounded-full bg-amber-500" />
-                                <span className="whitespace-nowrap text-sm tracking-tighter lg:tracking-normal">
-                                  Backs: <span className="font-normal">{selectedWizard.backStepCount}</span>
-                                </span>
-                              </div>
-
-                              <div className="flex items-center gap-x-2">
                                 <span className="h-4 w-4 rounded-full bg-emerald-500" />
                                 <span className="whitespace-nowrap text-sm tracking-tighter lg:tracking-normal">
                                   Last Step Started:{' '}
@@ -1167,8 +1212,29 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                               <div className="flex items-center gap-x-2">
                                 <span className="h-4 w-4 rounded-full bg-violet-500" />
                                 <span className="whitespace-nowrap text-sm tracking-tighter lg:tracking-normal">
-                                  Maximum Possible Steps:{' '}
+                                  Max Possible Steps:{' '}
                                   <span className="font-normal">{selectedWizard.stepStatus.total}</span>
+                                </span>
+                              </div>
+
+                              <div className="flex items-center gap-x-2">
+                                <span className="h-4 w-4 rounded-full bg-amber-500" />
+                                <span className="whitespace-nowrap text-sm tracking-tighter lg:tracking-normal">
+                                  Backs: <span className="font-normal">{selectedWizard.backStepCount}</span>
+                                </span>
+                              </div>
+
+                              <div className="flex items-center gap-x-2">
+                                <span className="h-4 w-4 rounded-full bg-orange-500" />
+                                <span className="whitespace-nowrap text-sm tracking-tighter lg:tracking-normal">
+                                  Errors: <span className="font-normal">{selectedWizard.errorCount}</span>
+                                </span>
+                              </div>
+
+                              <div className="flex items-center gap-x-2">
+                                <span className="h-4 w-4 rounded-full bg-rose-600" />
+                                <span className="whitespace-nowrap text-sm tracking-tighter lg:tracking-normal">
+                                  Failed Steps: <span className="font-normal">{selectedWizard.failedStepCount}</span>
                                 </span>
                               </div>
                             </div>
