@@ -14,6 +14,7 @@ import type {
 
 export enum WizardAction {
   Start = 'Start',
+  Close = 'Close',
   Complete = 'Complete',
   Cancel = 'Cancel',
   Error = 'Error',
@@ -130,24 +131,20 @@ export const evaluateWizards = (wizards: ITrackerEventGroup[]): IWizard[] => {
     // ignore wizard with no events
     if (wizard.events.length === 0) continue;
 
-    let score: number | null = 100;
-    let formulaStr = '';
-    let timespan = findComponentTimespan(wizard.events);
     let totalSteps = -1;
     let visibleSteps = -1;
     let currentStep = 0;
-    let closed = false;
-    let cancelled = false;
-    let completed = false;
-    let discarded = timespan < 10; // if the wizard was open for 10 seconds it was probably intended
 
     let errorCount = 0;
     let backStepCount = 0;
     let failedStepCount = 0;
 
+    let closed = false;
+    let cancelled = false;
+    let completed = false;
+
     // parse events
     wizard.events.forEach((event, eventIdx) => {
-      // steps changed
       if (event.action.includes(WizardAction.UpdateSteps)) {
         let stepStatus = updateSteps(event.action);
         if (stepStatus) {
@@ -155,21 +152,13 @@ export const evaluateWizards = (wizards: ITrackerEventGroup[]): IWizard[] => {
           visibleSteps = stepStatus.visible;
           currentStep = stepStatus.current;
         }
-      }
-      // error
-      else if (event.action.includes(WizardAction.Error)) {
+      } else if (event.action.includes(WizardAction.Error)) {
         errorCount++;
-      }
-      // step fail
-      else if (event.action.includes(WizardAction.FailStep)) {
+      } else if (event.action.includes(WizardAction.FailStep)) {
         failedStepCount++;
-      }
-      // back to previous step
-      else if (event.action.includes(WizardAction.BackStep)) {
+      } else if (event.action.includes(WizardAction.BackStep)) {
         backStepCount++;
-      }
-      // close wizard
-      else if (event.action.includes(WizardAction.Cancel)) {
+      } else if (event.action.includes(WizardAction.Close)) {
         closed = true;
         let stepStatus = updateSteps(event.action);
         if (stepStatus) {
@@ -177,9 +166,7 @@ export const evaluateWizards = (wizards: ITrackerEventGroup[]): IWizard[] => {
           visibleSteps = stepStatus.visible;
           currentStep = stepStatus.current;
         }
-      }
-      // cancel wizard (close with confirm dialog)
-      else if (event.action.includes(WizardAction.Cancel)) {
+      } else if (event.action.includes(WizardAction.Cancel)) {
         cancelled = true;
         let stepStatus = updateSteps(event.action);
         if (stepStatus) {
@@ -187,9 +174,7 @@ export const evaluateWizards = (wizards: ITrackerEventGroup[]): IWizard[] => {
           visibleSteps = stepStatus.visible;
           currentStep = stepStatus.current;
         }
-      }
-      // complete wizard
-      else if (event.action.includes(WizardAction.Complete)) {
+      } else if (event.action.includes(WizardAction.Complete)) {
         completed = true;
         let stepStatus = updateSteps(event.action);
         if (stepStatus) {
@@ -200,25 +185,47 @@ export const evaluateWizards = (wizards: ITrackerEventGroup[]): IWizard[] => {
       }
     });
 
+    // scoring constants
+    const timeThreshold = 10; // 10 seconds
+    const failedStepPenalty = 15; // 15 points
+    const errorPenalty = 10; // 10 points
+    const backStepPenalty = 5; // 5 points
+    const negativeActionPenalty = 3; // 3 points
+    const cancelStaticPenalty = 20; // 20 points
+    const secondsToPenalty = 6.0; // 6.0 seconds per point
+
+    // auxiliar calculations
+    const timespan = findComponentTimespan(wizard.events);
+    const negativeActions = errorCount + failedStepCount + backStepCount;
+    const discarded = negativeActions === 0 && timespan < timeThreshold;
+    
     // calculate score
-    score = score - failedStepCount * 15 - errorCount * 10 - backStepCount * 5;
-    formulaStr = `${score} - ${failedStepCount}*15 - ${errorCount}*10 - ${backStepCount}*5`;
+    let score: number | null = 100;
+    score = score - failedStepCount * failedStepPenalty - errorCount * errorPenalty - backStepCount * backStepPenalty;
+
+    // generate scoring formula string
+    let formulaStr = `${score}`;
+    formulaStr += ` - ${failedStepCount}*${failedStepPenalty}`;
+    formulaStr += ` - ${errorCount}*${errorPenalty}`;
+    formulaStr += ` - ${backStepCount}*${backStepPenalty}`;
 
     // penalty for not completing
     if (!completed) {
-      if (!discarded) {
-        const negativeActions = errorCount + failedStepCount + backStepCount;
-        score = score - 20 - 3 * negativeActions - timespan / 6;
-        formulaStr += ` - 3*${negativeActions} - ${timespan.toFixed(0)} / 6`;
-      } else {
+      if (discarded) {
         score = null;
         formulaStr = 'N/A';
+      } else {
+        score = score - cancelStaticPenalty - negativeActionPenalty * negativeActions - timespan / secondsToPenalty;
+        formulaStr += ` - ${cancelStaticPenalty}`;
+        formulaStr += ` - ${negativeActionPenalty}*${negativeActions}`;
+        formulaStr += ` - ${timespan.toFixed(0)}/${secondsToPenalty}`;
       }
     }
 
     if (score !== null) {
       formulaStr += ` = ${score.toFixed(0)}`; // save score before corrections
 
+      // apply corrections
       if (score < 40 && completed) score = 40; // prevent too low score if completed
       else if (score < 0) score = 0; // prevent negative score
     }

@@ -41,7 +41,7 @@ export default function ServiceNotice({}: Props) {
       className={classNames(
         'relative w-full rounded-md border p-4',
         serviceStatus === 'available' && 'border-emerald-400 bg-emerald-50/60 dark:bg-emerald-700/30',
-        serviceStatus === 'unavailable' && 'border-rose-400 bg-rose-50/60 dark:bg-rose-700/30',
+        serviceStatus === 'unavailable' && 'border-rose-400 bg-rose-200/50 dark:bg-rose-700/25',
         serviceStatus === null && 'border-gray-400 bg-gray-50/60 dark:bg-gray-50/90',
         dismissed ? 'hidden' : 'block'
       )}

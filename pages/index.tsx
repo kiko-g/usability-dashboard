@@ -38,14 +38,14 @@ export default function Hub() {
     },
     {
       title: 'Wizard Interactions',
-      text: 'Take a look at how your users are using the wizards: grouped wizards insights with time spent on wizards, errors, previous step clicks, completion rates, individual wizard inspection, and more.',
+      text: 'Take a look at how your users are using the wizards: grouped wizards insights with time spent on wizards, errors, previous step clicks, completion rates, ux scores, individual wizard inspection, and more.',
       href: '/wizards',
       icon: MapIcon,
       iconClasses: 'bg-orange-50 group-hover:bg-orange-600 group-hover:text-white text-orange-600',
     },
     {
       title: 'Execution Views Interactions',
-      text: 'Take a look at how your users are using the execution views: grouped execution views insights with time spent on execution views, errors, previous step clicks, completion rates, individual execution view inspection, and more.',
+      text: 'Take a look at how your users are using the execution views: grouped execution views insights with time spent on execution views, errors, previous step clicks, completion rates, scores, individual execution view inspection, and more.',
       href: '/executions',
       icon: ViewColumnsIcon,
       iconClasses: 'bg-sky-50 group-hover:bg-sky-600 group-hover:text-white text-sky-600',
@@ -91,7 +91,7 @@ export default function Hub() {
               <span className="mt-3 block font-lexend text-base font-semibold leading-6 text-gray-900 dark:text-white">
                 {action.title}
               </span>
-              <span className="mt-3 text-sm text-gray-500 dark:text-gray-200">{action.text}</span>
+              <span className="mt-3 text-sm tracking-tight text-gray-500 dark:text-gray-200">{action.text}</span>
               <span
                 className="pointer-events-none absolute right-6 top-6 text-gray-300 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-white"
                 aria-hidden="true"
