@@ -111,6 +111,7 @@ export default function Buttons() {
 }
 
 function ButtonKPIs({ data }: { data: ButtonType[] }) {
+  const totalClicks = data.reduce((result, button) => result + button.buttonClicks.length, 0);
   if (data.length === 0) return null;
 
   return (
@@ -150,7 +151,16 @@ function ButtonKPIs({ data }: { data: ButtonType[] }) {
                       <span
                         className={classNames(
                           open ? 'border-slate-600 bg-slate-600' : 'border-slate-600 bg-slate-600/60',
-                          'inline-flex min-h-[2rem] min-w-[2rem] items-center justify-center rounded-full border  px-2 py-1 text-xs font-medium text-white shadow'
+                          'inline-flex min-h-[2rem] min-w-[2rem] items-center justify-center rounded border  px-2 py-1 text-xs font-medium text-white shadow'
+                        )}
+                      >
+                        {((100 * button.clickCount) / totalClicks).toFixed(0)}%
+                      </span>
+
+                      <span
+                        className={classNames(
+                          open ? 'border-slate-600 bg-slate-600' : 'border-slate-600 bg-slate-600/60',
+                          'inline-flex min-h-[2rem] min-w-[2rem] items-center justify-center rounded border  px-2 py-1 text-xs font-medium text-white shadow'
                         )}
                       >
                         {button.clickCount}
