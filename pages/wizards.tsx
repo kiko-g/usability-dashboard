@@ -2,10 +2,12 @@ import React, { Fragment } from 'react';
 import Link from 'next/link';
 import classNames from 'classnames';
 import { Dialog, Listbox, Transition } from '@headlessui/react';
-import type { ITrackerEventGroup, IWizardGroup } from '@/@types';
+import type { ITrackerEventGroup, IWizardGroup, ScoringApproach } from '@/@types';
+import { WizardStats, StepCompletionStats, ErrorStatsType } from '@/@types/wizards-frontend';
 
 import { Layout } from '@/components/layout';
-import { CircularProgressBadge, Loading, NotFound, CodeBlock } from '@/components/utils';
+import { WizardFormula } from '@/components/wizard';
+import { CircularProgressBadge, Loading, NotFound } from '@/components/utils';
 
 import { standardDeviation } from '@/utils';
 import { mockWizardData as mockData } from '@/utils/mock';
@@ -26,47 +28,19 @@ import {
   MagnifyingGlassPlusIcon,
   XCircleIcon,
   ScaleIcon,
+  EllipsisHorizontalCircleIcon,
 } from '@heroicons/react/24/outline';
-
-type WizardStats = {
-  avgScore: number;
-  minTime: number;
-  maxTime: number;
-  avgTime: number;
-  stdDevTime: number | null;
-  total: number;
-  completed: number;
-  cancelled: number;
-  discarded: number;
-  notCompleted: number;
-  completedRatio: number;
-};
-
-type StepCompletionStats = {
-  activated: number;
-  successful: number;
-  failed: number;
-  minSuccessfulStepTime: number;
-  maxSuccessfulStepTime: number;
-  avgSuccessfulStepTime: number;
-  stdDevSuccessfulStepTime: number | null;
-};
-
-type ErrorStatsType = {
-  avgBack: number;
-  avgError: number;
-  avgFailedSteps: number;
-  totalBackSteps: number;
-  totalErrors: number;
-  totalFailedSteps: number;
-};
 
 export default function Wizards() {
   const [error, setError] = React.useState<boolean>(false);
   const [loading, setLoading] = React.useState<boolean>(true);
   const [willFetch, setWillFetch] = React.useState<boolean>(true);
+
   const [rawData, setRawData] = React.useState<ITrackerEventGroup[]>([]);
   const [processedData, setProcessedData] = React.useState<IWizardGroup[]>([]);
+
+  const scoringApproaches = ['A', 'B'];
+  const [scoringApproach, setScoringApproach] = React.useState<ScoringApproach>('A');
 
   // fetch data
   React.useEffect(() => {
@@ -124,6 +98,49 @@ export default function Wizards() {
                 <CircleStackIcon className="h-6 w-6" />
               </button>
             )}
+
+            <Listbox value={scoringApproach} onChange={setScoringApproach}>
+              <div className="relative z-30 flex w-min items-center justify-center">
+                <Listbox.Button as="button" title="Switch Scoring Approach" className="hover:opacity-80">
+                  <EllipsisHorizontalCircleIcon className="h-6 w-6" aria-hidden="true" />
+                </Listbox.Button>
+                <Transition
+                  as={Fragment}
+                  leave="transition ease-in duration-100"
+                  leaveFrom="opacity-100"
+                  leaveTo="opacity-0"
+                >
+                  <Listbox.Options className="absolute right-0 top-6 w-36 overflow-auto rounded border border-gray-300 bg-gray-100 py-2 shadow xl:w-36">
+                    {scoringApproaches.map((approach: string, optionIdx: number) => (
+                      <Listbox.Option
+                        key={`option-${optionIdx}`}
+                        className={({ active }) =>
+                          `relative cursor-pointer select-none py-1.5 pl-10 pr-5 text-sm font-normal tracking-tight ${
+                            active
+                              ? 'bg-primary/10 text-primary dark:bg-secondary/10 dark:text-secondary'
+                              : 'text-gray-800'
+                          }`
+                        }
+                        value={approach}
+                      >
+                        <span
+                          className={`block whitespace-nowrap ${
+                            approach === scoringApproach ? 'font-semibold' : 'font-normal'
+                          }`}
+                        >
+                          Formula {approach}
+                        </span>
+                        {scoringApproach === approach ? (
+                          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-teal-500">
+                            <CheckCircleSolidIcon className="h-5 w-5" aria-hidden="true" />
+                          </span>
+                        ) : null}
+                      </Listbox.Option>
+                    ))}
+                  </Listbox.Options>
+                </Transition>
+              </div>
+            </Listbox>
 
             {/* Score information button */}
             <ScoreCalculcationApproachDialog content={<InformationCircleIcon className="h-6 w-6" />} />
@@ -207,8 +224,6 @@ function WizardKPIs({ data }: { data: IWizardGroup[] }) {
 
     const completed = data.reduce((acc, item) => acc + item.stats.completed, 0);
     const notCompleted = data.reduce((acc, item) => acc + item.stats.notCompleted, 0);
-    const discarded = data.reduce((acc, item) => acc + item.wizards.filter((wizard) => wizard.discarded).length, 0);
-    const cancelled = notCompleted - discarded;
     const total = completed + notCompleted;
 
     const totalTime = data.reduce((acc, item) => acc + item.stats.avgTimespan * item.stats.total, 0);
@@ -220,12 +235,14 @@ function WizardKPIs({ data }: { data: IWizardGroup[] }) {
     const avgTime = totalCount > 0 ? totalTime / totalCount : 0;
     const stdDevTime = standardDeviation(timespans);
 
-    const allScoresSum = data.reduce((acc, item) => {
-      let localSum: number = 0;
-      for (const score of item.stats.scores) if (score !== null) localSum += score;
-      return acc + localSum;
-    }, 0);
-    const avgScore = allScoresSum / (total - discarded);
+    const allScores = data.map((group) => group.wizards.map((w) => w.score)).flat();
+    const allScoreNumbers = allScores.filter((score) => score !== null) as number[];
+
+    const discarded = allScores.length - allScoreNumbers.length;
+    const cancelled = notCompleted - discarded;
+
+    const allScoresSum = allScoreNumbers.reduce((acc, score) => acc + score, 0);
+    const avgScore = allScoresSum / allScoreNumbers.length;
 
     return {
       avgScore,
@@ -334,8 +351,8 @@ function WizardKPIs({ data }: { data: IWizardGroup[] }) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-1 flex-col gap-4 self-stretch xl:flex-row">
-        <WizardCompletionRateCard wizardStats={wizardStats} />
         <WizardAverageUXScoreCard score={wizardStats.avgScore} />
+        <WizardCompletionRateCard wizardStats={wizardStats} />
 
         <div className="flex flex-1 flex-col items-start justify-start gap-4 self-stretch">
           <WizardGeneralStatsCard wizardStats={wizardStats} />
@@ -410,9 +427,10 @@ function WizardAverageUXScoreCard({ score }: { score: number }) {
       {/* Adjusted max-w value */}
       <h3 className="font-medium text-gray-700 dark:text-gray-100">Wizard Average UX Score</h3>
       <p className="mt-1 min-h-[5rem] text-sm tracking-tight">
-        Ratio of wizards that were submitted successfully vs. all the wizards started in the platform. Score is
-        calculated based on <ScoreCalculcationApproachDialog />.
+        Average of score of all the <strong>non discarded</strong> wizards. Score is calculated based on{' '}
+        <ScoreCalculcationApproachDialog />.
       </p>
+
       {/* Circular Progress */}
       <div className="mt-2 flex items-center justify-center p-4">
         <svg viewBox={`0 0 ${diameter} ${diameter}`} xmlns="http://www.w3.org/2000/svg">
@@ -924,7 +942,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
       </button>
 
       <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={closeModal}>
+        <Dialog as="div" className="relative z-50" onClose={closeModal}>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -1276,7 +1294,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                       </div>
                     ) : null}
 
-                    <Formula />
+                    <WizardFormula />
                   </div>
 
                   {/* Footer buttons */}
@@ -1336,7 +1354,7 @@ function ScoreCalculcationApproachDialog({ content }: { content?: any }) {
       </button>
 
       <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={closeModal}>
+        <Dialog as="div" className="relative z-50" onClose={closeModal}>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -1369,7 +1387,7 @@ function ScoreCalculcationApproachDialog({ content }: { content?: any }) {
                       Wizard Scoring Approach
                     </Dialog.Title>
 
-                    <Formula />
+                    <WizardFormula />
                   </div>
 
                   <div className="flex items-center justify-end">
@@ -1389,41 +1407,5 @@ function ScoreCalculcationApproachDialog({ content }: { content?: any }) {
         </Dialog>
       </Transition>
     </>
-  );
-}
-
-function Formula() {
-  return (
-    <div className="mb-1 mt-2 text-sm leading-normal tracking-tight text-gray-700 dark:text-white">
-      <p>
-        The score is calculated based on <strong>whether the wizard was completed</strong> the amount of{' '}
-        <strong>wizard errors</strong>, <strong>failed steps</strong> and{' '}
-        <strong>back to previous step button clicks</strong>. We deduct point to a wizard based on negative actions. If
-        there are no negative actions and the timespan was under 10 seconds assume that the user was{' '}
-        <span className="font-bold underline decoration-amber-400">
-          not evidently attempting to complete the wizard
-        </span>
-        . Therefore we do not provide a score:
-      </p>
-      <CodeBlock>score = null</CodeBlock>
-
-      <p>Otherwise, we start by establishing a baseline score:</p>
-      <CodeBlock>score = 100 - 15*failedSteps - 10*errors - 5*backSteps</CodeBlock>
-
-      <p>
-        If the <span className="font-bold underline decoration-rose-500">wizard was cancelled/abandoned</span> we deduct
-        extra points. We deduct <span className="font-bold underline decoration-rose-500">20 points</span>, extra points
-        for the <span className="font-bold underline decoration-rose-500">negative actions</span> and for the{' '}
-        <span className="font-bold underline decoration-rose-500">elapsed time</span> (1.0 points per 6 seconds):
-      </p>
-      <CodeBlock>score = score - 20 - 3*(errors + stepErrors + backStepCount) - timespan/6</CodeBlock>
-
-      <p>
-        The <span className="font-bold underline decoration-rose-500">minimum score is 0</span>, so if the score drops
-        below that, we assign it a score of 0. In case the score is below 40 and the wizard was completed, we{' '}
-        <span className="font-bold underline decoration-emerald-500">assign a score of 40</span> to the wizard,
-        rewarding the completion.
-      </p>
-    </div>
   );
 }

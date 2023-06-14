@@ -131,8 +131,8 @@ export const evaluateWizards = (wizards: ITrackerEventGroup[]): IWizard[] => {
     // ignore wizard with no events
     if (wizard.events.length === 0) continue;
 
-    let totalSteps = -1;
-    let visibleSteps = -1;
+    let totalSteps = 1;
+    let visibleSteps = 1;
     let currentStep = 0;
 
     let errorCount = 0;
@@ -198,7 +198,7 @@ export const evaluateWizards = (wizards: ITrackerEventGroup[]): IWizard[] => {
     const timespan = findComponentTimespan(wizard.events);
     const negativeActions = errorCount + failedStepCount + backStepCount;
     const discarded = negativeActions === 0 && timespan < timeThreshold;
-    
+
     // calculate score
     let score: number | null = 100;
     score = score - failedStepCount * failedStepPenalty - errorCount * errorPenalty - backStepCount * backStepPenalty;
@@ -241,9 +241,9 @@ export const evaluateWizards = (wizards: ITrackerEventGroup[]): IWizard[] => {
       failedStepCount,
       backStepCount,
       stepStatus: {
-        total: totalSteps,
-        visible: visibleSteps,
-        current: currentStep,
+        total: totalSteps < 1 ? 1 : totalSteps,
+        visible: visibleSteps < 1 ? 1 : visibleSteps,
+        current: currentStep < 0 ? 0 : currentStep,
       },
     };
     result.push(evaluatedWizard);

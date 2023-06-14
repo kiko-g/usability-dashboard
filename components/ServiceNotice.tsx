@@ -12,6 +12,7 @@ type AvailabilityType = 'available' | 'unavailable' | null;
 
 export default function ServiceNotice({}: Props) {
   const [message, setMessage] = useState<string>('');
+  const [details, setDetails] = useState<boolean>(false);
   const [dismissed, setDismissed] = useState<boolean>(false);
   const [serviceStatus, setServiceStatus] = useState<AvailabilityType>(null);
 
@@ -41,7 +42,7 @@ export default function ServiceNotice({}: Props) {
       className={classNames(
         'relative w-full rounded-md border p-4',
         serviceStatus === 'available' && 'border-emerald-400 bg-emerald-50/60 dark:bg-emerald-700/30',
-        serviceStatus === 'unavailable' && 'border-rose-400 bg-rose-200/50 dark:bg-rose-700/25',
+        serviceStatus === 'unavailable' && 'border-rose-400 bg-rose-100/70 dark:bg-rose-700/25',
         serviceStatus === null && 'border-gray-400 bg-gray-50/60 dark:bg-gray-50/90',
         dismissed ? 'hidden' : 'block'
       )}
@@ -51,10 +52,7 @@ export default function ServiceNotice({}: Props) {
           <CodeBracketIcon className="h-5 w-5" />
         </Link>
 
-        <button
-          onClick={() => setDismissed(true)}
-          className="rounded p-1 transition hover:bg-rose-700 hover:text-white"
-        >
+        <button onClick={() => setDismissed(true)} className="rounded transition hover:text-rose-600">
           <XMarkIcon className="h-5 w-5" />
         </button>
       </div>
@@ -78,25 +76,35 @@ export default function ServiceNotice({}: Props) {
           <div className="flex-shrink-0">
             <ShieldExclamationIcon className="h-5 w-5 text-rose-400" aria-hidden="true" />
           </div>
-          <div className="ml-3">
-            <h3 className="text-sm font-medium text-rose-800 dark:text-white">
+          <div className={classNames('ml-3', details ? '' : 'flex gap-2')}>
+            <h3 className={classNames('text-sm font-medium text-rose-800 dark:text-white', details ? 'mb-1' : '')}>
               The Matomo API service is <strong>not</strong> responding
             </h3>
-            <div className="mt-1 text-sm text-rose-700 dark:text-gray-100">
-              <ul role="list" className="list-disc space-y-0.5 pl-4">
-                <li>
-                  Matomo API said: <span className="font-bold underline">{message}</span>
-                </li>
-                <li>Check your auth token (Matomo Dashboard, Gear Icon, Personal, Security, Create Auth Token)</li>
-                <li>
-                  Check the ports and the <code>NEXT_PUBLIC_MATOMO_SITE_URL</code> value in your <code>.env</code> file
-                </li>
-                <li>
-                  You can use the mock data to get a feeling of what the dashboard should look like. Click the{' '}
-                  <strong>database</strong> icon on the top right of the page to activate mock data.
-                </li>
-              </ul>
-            </div>
+            {details ? (
+              <div className="text-sm text-rose-700 dark:text-gray-100">
+                <ul role="list" className="list-disc space-y-0.5 pl-4">
+                  <li>
+                    Matomo API said: <span className="font-bold underline">{message}</span>
+                  </li>
+                  <li>Check your auth token (Matomo Dashboard, Gear Icon, Personal, Security, Create Auth Token)</li>
+                  <li>
+                    Check the ports and the <code>NEXT_PUBLIC_MATOMO_SITE_URL</code> value in your <code>.env</code>{' '}
+                    file
+                  </li>
+                  <li>
+                    You can use the mock data to get a feeling of what the dashboard should look like. Click the{' '}
+                    <strong>database</strong> icon on the top right of the page to activate mock data.
+                  </li>
+                </ul>
+              </div>
+            ) : (
+              <button
+                onClick={() => setDetails(true)}
+                className="rounded bg-white px-1.5 py-[0.15rem] text-xs font-medium text-rose-800 transition hover:bg-rose-700 hover:text-white dark:bg-rose-800 dark:text-white dark:hover:bg-rose-700 dark:hover:text-white"
+              >
+                Why?
+              </button>
+            )}
           </div>
         </div>
       )}

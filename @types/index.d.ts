@@ -29,6 +29,8 @@ export interface ITrackerEventGroup {
   events: ITrackerEvent[];
 }
 
+export type ScoringApproach = 'A' | 'B';
+
 // Wizards
 export interface IWizardStepsStatus {
   total: number;
