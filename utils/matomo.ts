@@ -28,9 +28,11 @@ export enum WizardAction {
 
 export enum ExecutionViewAction {
   Start = 'Start',
+  Close = 'Close',
   Complete = 'Complete',
   Cancel = 'Cancel',
   Error = 'Error',
+  FailTab = 'Tab Fail',
   TabChange = 'Tab Change',
 }
 
@@ -372,52 +374,88 @@ export const evaluateExecutionViews = (executionViews: ITrackerEventGroup[]): IE
   for (const executionView of executionViews) {
     if (executionView.events.length === 0) continue;
 
-    let score = 100;
-    let completed = false;
-    let cancelled = false;
     let errorCount = 0;
-    let tabChangeCount = 0;
-    let timespan = findComponentTimespan(executionView.events);
+    let changeTabCount = 0;
+    let failedTabCount = 0;
+
+    let closed = false;
+    let cancelled = false;
+    let completed = false;
 
     executionView.events.forEach((event, index) => {
-      // error penalty
       if (event.action.includes(ExecutionViewAction.Error)) {
         errorCount++;
-      }
-      // process tab change
-      else if (event.action.includes(ExecutionViewAction.TabChange)) {
-        tabChangeCount++;
-      }
-      // cancel wizard penalty
-      else if (event.action.includes(ExecutionViewAction.Cancel)) {
+      } else if (event.action.includes(ExecutionViewAction.FailTab)) {
+        failedTabCount++;
+      } else if (event.action.includes(ExecutionViewAction.TabChange)) {
+        changeTabCount++;
+      } else if (event.action.includes(ExecutionViewAction.Cancel)) {
         cancelled = true;
       }
-      // complete wizard bonus
-      else if (event.action.includes(ExecutionViewAction.Complete)) {
+      else if (event.action.includes(ExecutionViewAction.Close)) {
+        closed = true;
+      } else if (event.action.includes(ExecutionViewAction.Complete)) {
         completed = true;
       }
     });
 
-    score = score - 10 * errorCount - 5 * tabChangeCount;
+    // scoring constants
+    const timeThreshold = 10; // 10 seconds
+    const failedTabPenalty = 15; // 15 points
+    const errorPenalty = 10; // 10 points
+    const changeTabPenalty = 5; // 5 points
+    const negativeActionPenalty = 3; // 3 points
+    const cancelStaticPenalty = 20; // 20 points
+    const secondsToPenalty = 6.0; // 6.0 seconds per point
 
-    // prevent the absence of complete or cancel action
-    if (!completed || cancelled) {
-      if (timespan > 20) score -= timespan / 20 - 4 * errorCount;
-      else score -= 5;
+    // auxiliar calculations
+    const timespan = findComponentTimespan(executionView.events);
+    const negativeActions = errorCount + failedTabCount + changeTabCount;
+    const discarded = negativeActions === 0 && timespan < timeThreshold;
+
+    // calculate score
+    let score: number | null = 100;
+    score = score - failedTabCount * failedTabPenalty - errorCount * errorPenalty - changeTabCount * changeTabPenalty;
+
+    // generate scoring formula string
+    let formulaStr = `${score}`;
+    formulaStr += ` - ${failedTabCount}*${failedTabPenalty}`;
+    formulaStr += ` - ${errorCount}*${errorPenalty}`;
+    formulaStr += ` - ${changeTabCount}*${changeTabPenalty}`;
+
+    // penalty for not completing
+    if (!completed) {
+      if (discarded) {
+        score = null;
+        formulaStr = 'N/A';
+      } else {
+        score = score - cancelStaticPenalty - negativeActionPenalty * negativeActions - timespan / secondsToPenalty;
+        formulaStr += ` - ${cancelStaticPenalty}`;
+        formulaStr += ` - ${negativeActionPenalty}*${negativeActions}`;
+        formulaStr += ` - ${timespan.toFixed(0)}/${secondsToPenalty}`;
+      }
     }
 
-    if (score < 40 && completed) score = 40; // prevent too low score if completed
-    else if (score < 0) score = 0; // prevent negative score
+    if (score !== null) {
+      // save score string before corrections
+      formulaStr += ` = ${score.toFixed(0)}`; 
+
+      // apply corrections
+      if (score < 40 && completed) score = 40;
+      else if (score < 0) score = 0;
+    }
 
     const evaluatedExecutionView: IExecutionView = {
       ...executionView,
       score,
+      formulaStr,
       timespan,
       completed,
+      discarded,
       errorCount,
-      tabChangeCount,
+      changeTabCount,
+      failedTabCount
     };
-
     result.push(evaluatedExecutionView);
   }
 
@@ -447,22 +485,27 @@ export const groupExecutionViews = (executionViews: IExecutionView[]): IExecutio
           timespans: [],
           avgErrors: 0,
           avgTabChanges: 0,
+          avgFailedTabs: 0,
           totalErrors: 0,
           totalTabChanges: 0,
+          totalFailedTabs: 0,
         },
         executionViews: [],
       };
       groupedExecutionViews.push(group);
     }
 
-    group.stats.avgScore += executionView.score;
-    group.stats.scores.push(executionView.score);
+    if (executionView.score !== null && group.stats.avgScore !== null) {
+      group.stats.avgScore += executionView.score;
+      group.stats.scores.push(executionView.score);
+    }
 
     group.stats.avgTimespan += executionView.timespan;
     group.stats.timespans.push(executionView.timespan);
 
     group.stats.totalErrors += executionView.errorCount;
-    group.stats.total += executionView.tabChangeCount;
+    group.stats.totalTabChanges += executionView.changeTabCount;
+    group.stats.totalFailedTabs += executionView.failedTabCount;
     executionView.completed ? group.stats.completed++ : group.stats.notCompleted++;
 
     group.executionViews.push(executionView);
@@ -477,14 +520,22 @@ export const groupExecutionViews = (executionViews: IExecutionView[]): IExecutio
     group.stats.avgErrors = group.stats.totalErrors / totalCount;
     group.stats.avgTabChanges = group.stats.totalTabChanges / totalCount;
 
-    group.stats.avgScore /= totalCount;
-    group.stats.stdDevScore = standardDeviation(group.stats.scores);
+    if (group.stats.avgScore === 0 || group.stats.avgScore === null) group.stats.avgScore = null;
+    else group.stats.avgScore /= totalCount;
+
+    const scoresFiltered = group.stats.scores.filter((score) => score !== null) as number[];
+    group.stats.stdDevScore = standardDeviation(scoresFiltered);
 
     group.stats.avgTimespan /= totalCount;
     group.stats.stdDevTimespan = standardDeviation(group.stats.timespans);
   }
 
-  return groupedExecutionViews.sort((a, b) => (a.stats.avgScore < b.stats.avgScore ? 1 : -1));
+  return groupedExecutionViews.sort((a, b) => {
+    if (a.stats.avgScore === null && b.stats.avgScore === null) return 0;
+    if (a.stats.avgScore === null) return 1;
+    if (b.stats.avgScore === null) return -1;
+    return a.stats.avgScore < b.stats.avgScore ? 1 : -1;
+  });
 };
 
 export const parseButtons = (body: string): ButtonType[] => {

@@ -80,11 +80,14 @@ export type WizardStats = {
 
 // Execution Views
 export interface IExecutionView extends ITrackerEventGroup {
-  score: number;
+  score: number | null;
+  formulaStr: string;
   timespan: number;
   completed: boolean;
+  discarded: boolean;
   errorCount: number;
-  tabChangeCount: number;
+  changeTabCount: number;
+  failedTabCount: number;
 }
 
 export interface IExecutionViewGroup {
@@ -98,7 +101,7 @@ export type ExecutionViewStats = {
   completed: number;
   notCompleted: number;
   completedRatio: number;
-  avgScore: number;
+  avgScore: number | null;
   stdDevScore: number | null;
   scores: number[];
   avgTimespan: number;
@@ -106,8 +109,10 @@ export type ExecutionViewStats = {
   timespans: number[];
   avgErrors: number;
   avgTabChanges: number;
+  avgFailedTabs: number;
   totalErrors: number;
   totalTabChanges: number;
+  totalFailedTabs: number;
 };
 
 // Buttons

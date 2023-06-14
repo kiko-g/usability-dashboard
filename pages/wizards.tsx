@@ -3,7 +3,7 @@ import Link from 'next/link';
 import classNames from 'classnames';
 import { Dialog, Listbox, Transition } from '@headlessui/react';
 import type { ITrackerEventGroup, IWizardGroup, ScoringApproach } from '@/@types';
-import { WizardStats, StepCompletionStats, ErrorStatsType } from '@/@types/wizards-frontend';
+import { WizardStats, WizardStepCompletionStats, WizardErrorStatsType } from '@/@types/frontend';
 
 import { Layout } from '@/components/layout';
 import { WizardFormula } from '@/components/wizard';
@@ -99,6 +99,7 @@ export default function Wizards() {
               </button>
             )}
 
+            {/* Choose Scoring Approach */}
             <Listbox value={scoringApproach} onChange={setScoringApproach}>
               <div className="relative z-30 flex w-min items-center justify-center">
                 <Listbox.Button as="button" title="Switch Scoring Approach" className="hover:opacity-80">
@@ -197,7 +198,7 @@ export default function Wizards() {
           </div>
         </div>
 
-        <WizardKPIs data={processedData} />
+        <KPIs data={processedData} />
         {loading && <Loading />}
         {error && <NotFound />}
       </article>
@@ -205,8 +206,8 @@ export default function Wizards() {
   );
 }
 
-function WizardKPIs({ data }: { data: IWizardGroup[] }) {
-  const wizardStats = React.useMemo<WizardStats>(() => {
+function KPIs({ data }: { data: IWizardGroup[] }) {
+  const stats = React.useMemo<WizardStats>(() => {
     if (data.length === 0)
       return {
         avgScore: 0,
@@ -317,7 +318,7 @@ function WizardKPIs({ data }: { data: IWizardGroup[] }) {
   }, [data]);
 
   // calculate average, minimum and maximum error and back step considering all wizards
-  const errorAndBackStepStats = React.useMemo(() => {
+  const negativeStats = React.useMemo(() => {
     let totalWizards = 0;
     let backStepCount = 0;
     let errorCount = 0;
@@ -351,13 +352,13 @@ function WizardKPIs({ data }: { data: IWizardGroup[] }) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-1 flex-col gap-4 self-stretch xl:flex-row">
-        <WizardAverageUXScoreCard wizardStats={wizardStats} />
-        <WizardCompletionRateCard wizardStats={wizardStats} />
+        <WizardAverageUXScoreCard stats={stats} />
+        <WizardCompletionRateCard stats={stats} />
 
         <div className="flex flex-1 flex-col items-start justify-start gap-4 self-stretch">
-          <WizardGeneralStatsCard wizardStats={wizardStats} />
+          <GeneralStatsCard stats={stats} />
           <StepCompletionStatsCard stats={stepStats} />
-          <ErrorStatsCard text="Negative Actions Stats" stats={errorAndBackStepStats} />
+          <ErrorStatsCard stats={negativeStats} />
         </div>
       </div>
       <WizardSortedList data={data} />
@@ -365,8 +366,8 @@ function WizardKPIs({ data }: { data: IWizardGroup[] }) {
   );
 }
 
-function WizardCompletionRateCard({ wizardStats }: { wizardStats: WizardStats }) {
-  const { completedRatio, completed, notCompleted } = wizardStats;
+function WizardCompletionRateCard({ stats }: { stats: WizardStats }) {
+  const { completedRatio, completed, notCompleted } = stats;
   const progress = Math.min(Math.max(completedRatio, 0), 1) * 100;
   const diameter = 120; // Adjusted diameter value
   const strokeWidth = 7; // Adjusted strokeWidth value
@@ -415,25 +416,23 @@ function WizardCompletionRateCard({ wizardStats }: { wizardStats: WizardStats })
   );
 }
 
-function WizardAverageUXScoreCard({ wizardStats }: { wizardStats: WizardStats }) {
+function WizardAverageUXScoreCard({ stats }: { stats: WizardStats }) {
   const diameter = 120; // Adjusted diameter value
   const strokeWidth = 7; // Adjusted strokeWidth value
   const radius = (diameter - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (wizardStats.avgScore / 100) * circumference;
+  const offset = circumference - (stats.avgScore / 100) * circumference;
 
   return (
     <div className="relative max-w-full rounded bg-white/80 p-4 dark:bg-white/10 xl:max-w-xs">
-      {/* Adjusted max-w value */}
       <div className="flex items-center gap-1.5">
         <h3 className="font-medium text-gray-700 dark:text-gray-100">Wizard Average UX Score</h3>
         <ScoreCalculcationApproachDialog content={<InformationCircleIcon className="h-5 w-5" />} />
       </div>
+
       <p className="mt-1 min-h-[5rem] text-sm tracking-tight">
         Average of the usability score given to all the{' '}
-        <strong className="underline decoration-blue-500">
-          {wizardStats.total - wizardStats.discarded} non discarded
-        </strong>{' '}
+        <strong className="underline decoration-blue-500">{stats.total - stats.discarded} non discarded</strong>{' '}
         wizards.
       </p>
 
@@ -461,7 +460,7 @@ function WizardAverageUXScoreCard({ wizardStats }: { wizardStats: WizardStats })
           />
         </svg>
         <div className="absolute flex w-full flex-col text-center">
-          <span className="text-4xl font-bold">{wizardStats.avgScore.toFixed(1)}</span>
+          <span className="text-4xl font-bold">{stats.avgScore.toFixed(1)}</span>
           <span className="text-xl">out of 100</span>
         </div>
       </div>
@@ -469,8 +468,8 @@ function WizardAverageUXScoreCard({ wizardStats }: { wizardStats: WizardStats })
   );
 }
 
-function WizardGeneralStatsCard({ wizardStats }: { wizardStats: WizardStats }) {
-  const { avgTime, minTime, maxTime, stdDevTime, cancelled, discarded, total, completed } = wizardStats;
+function GeneralStatsCard({ stats }: { stats: WizardStats }) {
+  const { avgTime, minTime, maxTime, stdDevTime, cancelled, discarded, total, completed } = stats;
   const completedRatio = ((100 * completed) / total).toFixed(1);
   const discardedRatio = ((100 * discarded) / total).toFixed(1);
   const cancelledRatio = ((100 * cancelled) / total).toFixed(1);
@@ -549,7 +548,7 @@ function WizardGeneralStatsCard({ wizardStats }: { wizardStats: WizardStats }) {
   );
 }
 
-function StepCompletionStatsCard({ stats }: { stats: StepCompletionStats }) {
+function StepCompletionStatsCard({ stats }: { stats: WizardStepCompletionStats }) {
   const {
     activated,
     successful,
@@ -645,12 +644,12 @@ function StepCompletionStatsCard({ stats }: { stats: StepCompletionStats }) {
   );
 }
 
-function ErrorStatsCard({ text, stats }: { text: string; stats: ErrorStatsType }) {
+function ErrorStatsCard({ stats }: { stats: WizardErrorStatsType }) {
   const { totalErrors, totalFailedSteps, totalBackSteps, avgError, avgBack, avgFailedSteps } = stats;
 
   return (
     <div className="relative self-stretch rounded bg-white/80 p-4 dark:bg-white/10">
-      <h2 className="mb-2 text-xl font-bold">{text}</h2>
+      <h2 className="mb-2 text-xl font-bold">Negative Actions Stats</h2>
       <div className="grid w-full grid-cols-1 grid-rows-none gap-x-0 xl:w-min xl:grid-flow-col xl:grid-cols-none xl:grid-rows-3 xl:gap-x-4">
         <div className="flex items-center gap-x-2">
           <span className="h-4 w-4 rounded-full bg-amber-400" />

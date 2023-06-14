@@ -2,10 +2,11 @@ import React, { Fragment } from 'react';
 import Link from 'next/link';
 import classNames from 'classnames';
 import { Dialog, Listbox, Transition } from '@headlessui/react';
-import type { IExecutionViewGroup, ITrackerEventGroup } from '@/@types';
+import type { IExecutionViewGroup, ITrackerEventGroup, ScoringApproach } from '@/@types';
 
-import { mockExecutionViewDataScored as mockData } from '@/utils/mock';
+import { standardDeviation } from '@/utils';
 import { evaluateAndGroupExecutionViews } from '@/utils/matomo';
+import { mockExecutionViewData as mockData } from '@/utils/mock';
 
 import { Layout } from '@/components/layout';
 import { CircularProgressBadge, Loading, NotFound } from '@/components/utils';
@@ -21,25 +22,25 @@ import {
   CircleStackIcon,
   CodeBracketIcon,
   DocumentTextIcon,
+  EllipsisHorizontalCircleIcon,
   InformationCircleIcon,
   MagnifyingGlassMinusIcon,
   MagnifyingGlassPlusIcon,
   ScaleIcon,
   XCircleIcon,
 } from '@heroicons/react/24/outline';
-
-type CompletionRate = {
-  completed: number;
-  notCompleted: number;
-  ratio: number;
-};
+import { ExecutionViewErrorStatsType, ExecutionViewStats } from '@/@types/frontend';
 
 export default function Executions() {
-  const [rawData, setRawData] = React.useState<ITrackerEventGroup[]>([]);
-  const [processedData, setProcessedData] = React.useState<IExecutionViewGroup[]>([]);
   const [error, setError] = React.useState<boolean>(false);
   const [loading, setLoading] = React.useState<boolean>(true);
   const [willFetch, setWillFetch] = React.useState<boolean>(true);
+
+  const [rawData, setRawData] = React.useState<ITrackerEventGroup[]>([]);
+  const [processedData, setProcessedData] = React.useState<IExecutionViewGroup[]>([]);
+
+  const scoringApproaches = ['A', 'B'];
+  const [scoringApproach, setScoringApproach] = React.useState<ScoringApproach>('A');
 
   React.useEffect(() => {
     if (!willFetch) return;
@@ -76,10 +77,11 @@ export default function Executions() {
         <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">Execution View Insights</h1>
         <div className="mb-2 flex w-full items-center justify-between gap-2">
           <p className="max-w-4xl grow text-lg font-normal">
-            Inspect how your users are using the <span className="font-bold underline">execution views</span> across the
-            platform.
+            Inspect how your users are using the <span className="font-bold underline">execution views</span> to perform
+            transactions across the platform.
           </p>
 
+          {/* Header Buttons */}
           <div className="flex items-center gap-2">
             {/* Use mock data button */}
             {error === false ? null : (
@@ -88,15 +90,61 @@ export default function Executions() {
                 className="hover:opacity-80"
                 onClick={() => {
                   setError(false);
-                  setProcessedData(mockData);
+                  setRawData(mockData);
+                  const processedDataResult = evaluateAndGroupExecutionViews(mockData);
+                  setProcessedData(processedDataResult);
                 }}
               >
                 <CircleStackIcon className="h-6 w-6" />
               </button>
             )}
 
+            {/* Choose Scoring Approach */}
+            <Listbox value={scoringApproach} onChange={setScoringApproach}>
+              <div className="relative z-30 flex w-min items-center justify-center">
+                <Listbox.Button as="button" title="Switch Scoring Approach" className="hover:opacity-80">
+                  <EllipsisHorizontalCircleIcon className="h-6 w-6" aria-hidden="true" />
+                </Listbox.Button>
+                <Transition
+                  as={Fragment}
+                  leave="transition ease-in duration-100"
+                  leaveFrom="opacity-100"
+                  leaveTo="opacity-0"
+                >
+                  <Listbox.Options className="absolute right-0 top-6 w-36 overflow-auto rounded border border-gray-300 bg-gray-100 py-2 shadow xl:w-36">
+                    {scoringApproaches.map((approach: string, optionIdx: number) => (
+                      <Listbox.Option
+                        key={`option-${optionIdx}`}
+                        className={({ active }) =>
+                          `relative cursor-pointer select-none py-1.5 pl-10 pr-5 text-sm font-normal tracking-tight ${
+                            active
+                              ? 'bg-primary/10 text-primary dark:bg-secondary/10 dark:text-secondary'
+                              : 'text-gray-800'
+                          }`
+                        }
+                        value={approach}
+                      >
+                        <span
+                          className={`block whitespace-nowrap ${
+                            approach === scoringApproach ? 'font-semibold' : 'font-normal'
+                          }`}
+                        >
+                          Formula {approach}
+                        </span>
+                        {scoringApproach === approach ? (
+                          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-teal-500">
+                            <CheckCircleSolidIcon className="h-5 w-5" aria-hidden="true" />
+                          </span>
+                        ) : null}
+                      </Listbox.Option>
+                    ))}
+                  </Listbox.Options>
+                </Transition>
+              </div>
+            </Listbox>
+
             {/* Score information button */}
-            <ScoreCalculcationApproachDialog content={<InformationCircleIcon className="h-6 w-6" />} />
+            <ScoreCalculcationApproachDialog />
 
             {/* API route source button */}
             <Link
@@ -150,7 +198,7 @@ export default function Executions() {
           </div>
         </div>
 
-        <ExecutionViewKPIs data={processedData} />
+        <KPIs data={processedData} />
         {loading && <Loading />}
         {error && <NotFound />}
       </article>
@@ -158,72 +206,96 @@ export default function Executions() {
   );
 }
 
-// TODO: replace any with correct type
-function ExecutionViewKPIs({ data }: { data: IExecutionViewGroup[] }) {
-  // calculate average score considering all execution views
-  const avgScore = React.useMemo<number | null>(() => {
-    if (data.length === 0) return null;
-
-    const sum = data.reduce((acc, item) => acc + item.stats.avgScore, 0);
-    return data.length > 0 ? sum / data.length : 0;
-  }, [data]);
-
-  // calculate average completion rate considering all execution views
-  const completionRate = React.useMemo<CompletionRate | null>(() => {
-    if (data.length === 0) return null;
+function KPIs({ data }: { data: IExecutionViewGroup[] }) {
+  const stats = React.useMemo<ExecutionViewStats>(() => {
+    if (data.length === 0)
+      return {
+        avgScore: 0,
+        minTime: 0,
+        maxTime: 0,
+        avgTime: 0,
+        stdDevTime: null,
+        total: 0,
+        completed: 0,
+        cancelled: 0,
+        discarded: 0,
+        notCompleted: 0,
+        completedRatio: 0,
+      };
 
     const completed = data.reduce((acc, item) => acc + item.stats.completed, 0);
     const notCompleted = data.reduce((acc, item) => acc + item.stats.notCompleted, 0);
     const total = completed + notCompleted;
 
-    return {
-      completed: completed,
-      notCompleted: notCompleted,
-      ratio: total > 0 ? completed / total : 0,
-    };
-  }, [data]);
-
-  // calculate average, minimum and maximum time considering all execution views
-  const timeStats = React.useMemo(() => {
     const totalTime = data.reduce((acc, item) => acc + item.stats.avgTimespan * item.stats.total, 0);
     const totalCount = data.reduce((acc, item) => acc + item.stats.total, 0);
 
-    const timespans = data.flatMap((item) => item.executionViews.map((item) => item.timespan));
+    const timespans = data.flatMap((item) => item.executionViews.map((ev) => ev.timespan));
     const minTime = Math.min(...timespans);
     const maxTime = Math.max(...timespans);
-    const averageTime = totalCount > 0 ? totalTime / totalCount : 0;
+    const avgTime = totalCount > 0 ? totalTime / totalCount : 0;
+    const stdDevTime = standardDeviation(timespans);
 
-    return { avg: averageTime, min: minTime, max: maxTime };
+    const allScores = data.map((group) => group.executionViews.map((ev) => ev.score)).flat();
+    const allScoreNumbers = allScores.filter((score) => score !== null) as number[];
+
+    const discarded = allScores.length - allScoreNumbers.length;
+    const cancelled = notCompleted - discarded;
+
+    const allScoresSum = allScoreNumbers.reduce((acc, score) => acc + score, 0);
+    const avgScore = allScoresSum / allScoreNumbers.length;
+
+    return {
+      avgScore,
+      minTime,
+      maxTime,
+      avgTime,
+      stdDevTime,
+      total,
+      completed,
+      cancelled,
+      discarded,
+      notCompleted,
+      completedRatio: total > 0 ? completed / total : 0,
+    };
   }, [data]);
 
   // calculate average, minimum and maximum error and tab changes considering all execution views
-  const errorAndTabChangeStats = React.useMemo(() => {
-    let totalExecutionViews = 0;
+  const negativeStats = React.useMemo(() => {
+    let total = 0;
+    let errorCount = 0;
+    let failedTabCount = 0;
+    let tabChangeCount = 0;
 
     let totalErrors = 0;
     let totalTabChanges = 0;
-    let errorCount = 0;
-    let tabChangeStepCount = 0;
+    let totalFailedTabs = 0;
 
     data.forEach((item) => {
-      item.executionViews.forEach((executionView) => {
-        totalExecutionViews++;
-        totalErrors += executionView.errorCount;
-        totalTabChanges += executionView.tabChangeCount;
+      item.executionViews.forEach((ev) => {
+        total++;
+        totalErrors += ev.errorCount;
+        totalFailedTabs += ev.failedTabCount;
+        totalTabChanges += ev.changeTabCount;
 
-        if (executionView.errorCount > 0) {
-          errorCount++;
-        }
-        if (executionView.tabChangeCount > 0) {
-          tabChangeStepCount++;
-        }
+        if (ev.errorCount > 0) errorCount++;
+        if (ev.changeTabCount > 0) tabChangeCount++;
+        if (ev.failedTabCount > 0) failedTabCount++;
       });
     });
 
-    const avgError = errorCount > 0 ? totalErrors / totalExecutionViews : 0;
-    const avgTabChange = tabChangeStepCount > 0 ? totalTabChanges / totalExecutionViews : 0;
+    const avgError = errorCount > 0 ? totalErrors / total : 0;
+    const avgTabChanges = tabChangeCount > 0 ? totalTabChanges / total : 0;
+    const avgFailedTabs = failedTabCount > 0 ? totalFailedTabs / total : 0;
 
-    return { avgError, totalErrors, avgTabChange, totalTabChanges };
+    return {
+      totalErrors,
+      totalFailedTabs,
+      totalTabChanges,
+      avgError,
+      avgFailedTabs,
+      avgTabChanges,
+    };
   }, [data]);
 
   if (data.length === 0) return null;
@@ -231,12 +303,12 @@ function ExecutionViewKPIs({ data }: { data: IExecutionViewGroup[] }) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-1 flex-col gap-4 self-stretch lg:flex-row">
-        {completionRate === null ? null : <ExecutionViewCompletionRateCard completion={completionRate} />}
-        {avgScore === null ? null : <ExecutionViewAverageUXScoreCard score={avgScore} />}
+        <ExecutionViewCompletionRateCard stats={stats} />
+        <ExecutionViewAverageUXScoreCard stats={stats} />
 
         <div className="flex flex-1 flex-col items-start justify-start gap-4 self-stretch">
-          <TimeStatsCard stats={timeStats} />
-          <ErrorStatsCard text="Negative Actions Stats" stats={errorAndTabChangeStats} />
+          <GeneralStatsCard stats={stats} />
+          <ErrorStatsCard stats={negativeStats} />
         </div>
       </div>
       <ExecutionViewSortedList data={data} />
@@ -244,8 +316,8 @@ function ExecutionViewKPIs({ data }: { data: IExecutionViewGroup[] }) {
   );
 }
 
-function ExecutionViewCompletionRateCard({ completion }: { completion: CompletionRate }) {
-  const progress = Math.min(Math.max(completion.ratio, 0), 1) * 100;
+function ExecutionViewCompletionRateCard({ stats }: { stats: ExecutionViewStats }) {
+  const progress = Math.min(Math.max(stats.completedRatio, 0), 1) * 100;
   const diameter = 120; // Adjusted diameter value
   const strokeWidth = 7; // Adjusted strokeWidth value
   const radius = (diameter - strokeWidth) / 2;
@@ -285,7 +357,7 @@ function ExecutionViewCompletionRateCard({ completion }: { completion: Completio
         <div className="absolute flex w-full flex-col text-center">
           <span className="text-4xl font-bold">{`${progress.toFixed(1)}%`}</span>
           <span className="text-xl">
-            {completion.completed}/{completion.completed + completion.notCompleted}
+            {stats.completed}/{stats.total}
           </span>
         </div>
       </div>
@@ -293,22 +365,26 @@ function ExecutionViewCompletionRateCard({ completion }: { completion: Completio
   );
 }
 
-function ExecutionViewAverageUXScoreCard({ score }: { score: number }) {
+function ExecutionViewAverageUXScoreCard({ stats }: { stats: ExecutionViewStats }) {
   const diameter = 120; // Adjusted diameter value
   const strokeWidth = 7; // Adjusted strokeWidth value
   const radius = (diameter - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (score / 100) * circumference;
+  const offset = circumference - (stats.avgScore / 100) * circumference;
 
   return (
     <div className="relative max-w-full rounded bg-white/80 p-4 dark:bg-white/10 lg:max-w-xs">
-      {/* Adjusted max-w value */}
-      <h3 className="font-medium text-gray-700 dark:text-gray-100">Execution Views Average UX Score</h3>
+      <div className="flex items-center gap-1.5">
+        <h3 className="font-medium text-gray-700 dark:text-gray-100">Execution View Avg UX Score</h3>
+        <ScoreCalculcationApproachDialog content={<InformationCircleIcon className="h-5 w-5" />} />
+      </div>
+
       <p className="mt-1 min-h-[5rem] text-sm tracking-tight">
-        Ratio of execution views that were submitted successfully vs. all the execution views started in the platform.
-        Score is calculated based on <ScoreCalculcationApproachDialog />.
+        Average of the usability score given to all the{' '}
+        <strong className="underline decoration-blue-500">{stats.total - stats.discarded} non discarded</strong>{' '}
+        transactions.
       </p>
-      {/* Circular Progress */}
+
       <div className="mt-2 flex items-center justify-center p-4">
         <svg viewBox={`0 0 ${diameter} ${diameter}`} xmlns="http://www.w3.org/2000/svg">
           <circle
@@ -332,7 +408,7 @@ function ExecutionViewAverageUXScoreCard({ score }: { score: number }) {
           />
         </svg>
         <div className="absolute flex w-full flex-col text-center">
-          <span className="text-4xl font-bold">{score.toFixed(1)}</span>
+          <span className="text-4xl font-bold">{stats.avgScore.toFixed(1)}</span>
           <span className="text-xl">out of 100</span>
         </div>
       </div>
@@ -340,81 +416,132 @@ function ExecutionViewAverageUXScoreCard({ score }: { score: number }) {
   );
 }
 
-type AvgMinMax = {
-  avg: number;
-  min: number;
-  max: number;
-};
-
-function TimeStatsCard({ stats }: { stats: AvgMinMax }) {
-  const { avg, min, max } = stats;
+function GeneralStatsCard({ stats }: { stats: ExecutionViewStats }) {
+  const { avgTime, minTime, maxTime, stdDevTime, cancelled, discarded, total, completed } = stats;
+  const completedRatio = ((100 * completed) / total).toFixed(1);
+  const discardedRatio = ((100 * discarded) / total).toFixed(1);
+  const cancelledRatio = ((100 * cancelled) / total).toFixed(1);
 
   return (
-    <div className="relative flex flex-1 flex-col self-stretch rounded bg-white/80 p-4 dark:bg-white/10">
-      <h2 className="mb-2 text-xl font-bold">Execution View Time Stats</h2>
-      <div className="flex items-center gap-x-2">
-        <span className="h-4 w-4 rounded-full bg-blue-500" />
-        <span className="whitespace-nowrap text-sm font-semibold">
-          Average: <span className="font-normal">{avg.toFixed(2)}s</span>
-        </span>
-      </div>
+    <div className="relative self-stretch rounded bg-white/80 p-4 dark:bg-white/10">
+      <h2 className="mb-2 text-xl font-bold">Execution View General Stats</h2>
+      <div className="grid w-full grid-cols-1 grid-rows-none gap-x-0 xl:w-min xl:grid-flow-col xl:grid-cols-none xl:grid-rows-4 xl:gap-x-4">
+        <div className="flex items-center gap-x-2">
+          <span className="h-4 w-4 rounded-full bg-gray-400" />
+          <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
+            Total: <span className="font-normal">{total}</span>
+          </span>
+        </div>
 
-      <div className="flex items-center gap-x-2">
-        <span className="h-4 w-4 rounded-full bg-pink-500" />
-        <span className="whitespace-nowrap text-sm font-semibold">
-          Minimum: <span className="font-normal">{min.toFixed(2)}s</span>
-        </span>
-      </div>
+        <div className="flex items-center gap-x-2">
+          <span className="h-4 w-4 rounded-full bg-emerald-500" />
+          <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
+            Completed:{' '}
+            <span className="font-normal">
+              {completed} ({completedRatio}%)
+            </span>
+          </span>
+        </div>
 
-      <div className="flex items-center gap-x-2">
-        <span className="h-4 w-4 rounded-full bg-violet-500" />
-        <span className="whitespace-nowrap text-sm font-semibold">
-          Maximum: <span className="font-normal">{max.toFixed(2)}s</span>
-        </span>
+        <div className="flex items-center gap-x-2">
+          <span className="h-4 w-4 rounded-full bg-amber-400" />
+          <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
+            Discarded:{' '}
+            <span className="font-normal">
+              {discarded} ({discardedRatio}%)
+            </span>
+          </span>
+        </div>
+
+        <div className="flex items-center gap-x-2">
+          <span className="h-4 w-4 rounded-full bg-rose-600" />
+          <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
+            Cancelled:{' '}
+            <span className="font-normal">
+              {cancelled} ({cancelledRatio}%)
+            </span>
+          </span>
+        </div>
+
+        <div className="flex items-center gap-x-2">
+          <span className="h-4 w-4 rounded-full bg-blue-500" />
+          <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
+            Avg Time to complete transaction: <span className="font-normal">{avgTime.toFixed(2)}s</span>
+          </span>
+        </div>
+
+        <div className="flex items-center gap-x-2">
+          <span className="h-4 w-4 rounded-full bg-pink-500" />
+          <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
+            Min Time to complete transaction: <span className="font-normal">{minTime.toFixed(2)}s</span>
+          </span>
+        </div>
+
+        <div className="flex items-center gap-x-2">
+          <span className="h-4 w-4 rounded-full bg-violet-500" />
+          <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
+            Max Time to complete transaction: <span className="font-normal">{maxTime.toFixed(2)}s</span>
+          </span>
+        </div>
+
+        <div className="flex items-center gap-x-2">
+          <span className="h-4 w-4 rounded-full bg-lime-400" />
+          <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
+            Std Dev for completed transaction times:{' '}
+            <span className="font-normal">{stdDevTime === null ? 'N/A' : `${stdDevTime.toFixed(2)}s`}</span>
+          </span>
+        </div>
       </div>
     </div>
   );
 }
 
-type ErrorStatsCard = {
-  avgError: number;
-  totalErrors: number;
-  avgTabChange: number;
-  totalTabChanges: number;
-};
-
-function ErrorStatsCard({ text, stats }: { text: string; stats: ErrorStatsCard }) {
-  const { avgError, totalErrors, avgTabChange, totalTabChanges } = stats;
-
+function ErrorStatsCard({ stats }: { stats: ExecutionViewErrorStatsType }) {
   return (
-    <div className="relative flex flex-1 flex-col self-stretch rounded bg-white/80 p-4 dark:bg-white/10">
-      <h2 className="mb-2 text-xl font-bold">{text}</h2>
-      <div className="flex items-center gap-x-2">
-        <span className="h-4 w-4 rounded-full bg-rose-600" />
-        <span className="whitespace-nowrap text-sm font-semibold">
-          Total Errors: <span className="font-normal">{totalErrors}</span>
-        </span>
-      </div>
+    <div className="relative self-stretch rounded bg-white/80 p-4 dark:bg-white/10">
+      <h2 className="mb-2 text-xl font-bold">Negative Actions Stats</h2>
+      <div className="grid w-full grid-cols-1 grid-rows-none gap-x-0 xl:w-min xl:grid-flow-col xl:grid-cols-none xl:grid-rows-3 xl:gap-x-4">
+        <div className="flex items-center gap-x-2">
+          <span className="h-4 w-4 rounded-full bg-amber-400" />
+          <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
+            Total Tab Changes: <span className="font-normal">{stats.totalTabChanges}</span>
+          </span>
+        </div>
 
-      <div className="flex items-center gap-x-2">
-        <span className="h-4 w-4 rounded-full bg-orange-500" />
-        <span className="whitespace-nowrap text-sm font-semibold">
-          Total Tab Changes: <span className="font-normal">{totalTabChanges}</span>
-        </span>
-      </div>
+        <div className="flex items-center gap-x-2">
+          <span className="h-4 w-4 rounded-full bg-orange-500" />
+          <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
+            Total Errors: <span className="font-normal">{stats.totalErrors}</span>
+          </span>
+        </div>
 
-      <div className="flex items-center gap-x-2">
-        <span className="h-4 w-4 rounded-full bg-rose-600" />
-        <span className="whitespace-nowrap text-sm font-semibold">
-          Average Errors: <span className="font-normal">{avgError.toFixed(2)} per Execution View</span>
-        </span>
-      </div>
+        <div className="flex items-center gap-x-2">
+          <span className="h-4 w-4 rounded-full bg-rose-600" />
+          <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
+            Total Failed Tabs: <span className="font-normal">{stats.totalFailedTabs}</span>
+          </span>
+        </div>
 
-      <div className="flex items-center gap-x-2">
-        <span className="h-4 w-4 rounded-full bg-orange-500" />
-        <span className="whitespace-nowrap text-sm font-semibold">
-          Average Tab Changes: <span className="font-normal">{avgTabChange.toFixed(2)} per execution view</span>
-        </span>
+        <div className="flex items-center gap-x-2">
+          <span className="h-4 w-4 rounded-full bg-amber-400" />
+          <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
+            Avg Tab Changes: <span className="font-normal">{stats.avgTabChanges.toFixed(2)} p/ transaction</span>
+          </span>
+        </div>
+
+        <div className="flex items-center gap-x-2">
+          <span className="h-4 w-4 rounded-full bg-orange-500" />
+          <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
+            Avg Errors: <span className="font-normal">{stats.avgError.toFixed(2)} p/ transaction</span>
+          </span>
+        </div>
+
+        <div className="flex items-center gap-x-2">
+          <span className="h-4 w-4 rounded-full bg-rose-600" />
+          <span className="whitespace-nowrap text-sm font-semibold tracking-tighter">
+            Avg Failed Tabs: <span className="font-normal">{stats.avgFailedTabs.toFixed(2)} p/ transaction</span>
+          </span>
+        </div>
       </div>
     </div>
   );
@@ -422,6 +549,8 @@ function ErrorStatsCard({ text, stats }: { text: string; stats: ErrorStatsCard }
 
 function ExecutionViewSortedList({ data }: { data: IExecutionViewGroup[] }) {
   const options = [
+    'Alphabetic (A to Z)',
+    'Alphabetic (Z to A)',
     'Low Score First',
     'High Score First',
     'Low Completion First',
@@ -432,10 +561,24 @@ function ExecutionViewSortedList({ data }: { data: IExecutionViewGroup[] }) {
 
   const getSortFunction = (picked: any) => {
     switch (picked) {
+      case 'Alphabetic (A to Z)':
+        return (a: IExecutionViewGroup, b: IExecutionViewGroup) => a.name.localeCompare(b.name);
+      case 'Alphabetic (Z to A)':
+        return (a: IExecutionViewGroup, b: IExecutionViewGroup) => b.name.localeCompare(a.name);
       case 'Low Score First':
-        return (a: IExecutionViewGroup, b: IExecutionViewGroup) => a.stats.avgScore - b.stats.avgScore;
+        return (a: IExecutionViewGroup, b: IExecutionViewGroup) => {
+          if (a.stats.avgScore === null && b.stats.avgScore === null) return 0;
+          if (a.stats.avgScore === null) return 1;
+          if (b.stats.avgScore === null) return -1;
+          return a.stats.avgScore < b.stats.avgScore ? -1 : 1;
+        };
       case 'High Score First':
-        return (a: IExecutionViewGroup, b: IExecutionViewGroup) => b.stats.avgScore - a.stats.avgScore;
+        return (a: IExecutionViewGroup, b: IExecutionViewGroup) => {
+          if (a.stats.avgScore === null && b.stats.avgScore === null) return 0;
+          if (a.stats.avgScore === null) return 1;
+          if (b.stats.avgScore === null) return -1;
+          return a.stats.avgScore > b.stats.avgScore ? -1 : 1;
+        };
       case 'Low Completion First':
         return (a: IExecutionViewGroup, b: IExecutionViewGroup) => a.stats.completedRatio - b.stats.completedRatio;
       case 'High Completion First':
@@ -445,7 +588,7 @@ function ExecutionViewSortedList({ data }: { data: IExecutionViewGroup[] }) {
       case 'High Frequency First':
         return (a: IExecutionViewGroup, b: IExecutionViewGroup) => b.stats.total - a.stats.total;
       default:
-        return (a: IExecutionViewGroup, b: IExecutionViewGroup) => a.stats.avgScore - b.stats.avgScore;
+        return (a: IExecutionViewGroup, b: IExecutionViewGroup) => a.name.localeCompare(b.name);
     }
   };
 
@@ -619,7 +762,7 @@ function ExecutionViewGroupFocus({ executionViewGroup }: { executionViewGroup: I
             title="Average UX Score"
             className="flex h-7 w-7 items-center justify-center rounded-full border border-blue-600 bg-blue-600/70 text-white group-hover:bg-blue-600 lg:h-10 lg:w-10"
           >
-            {executionViewGroup.stats.avgScore.toFixed(1)}
+            {executionViewGroup.stats.avgScore === null ? 'N/A' : executionViewGroup.stats.avgScore.toFixed(1)}
           </span>
           <span
             title="Total ExecutionViews Opened"
@@ -738,7 +881,10 @@ function ExecutionViewGroupFocus({ executionViewGroup }: { executionViewGroup: I
                             <li>
                               The average score was{' '}
                               <strong>
-                                {executionViewGroup.stats.avgScore.toFixed(2)} out of a possible 100 points
+                                {executionViewGroup.stats.avgScore === null
+                                  ? 'N/A'
+                                  : executionViewGroup.stats.avgScore.toFixed(2)}{' '}
+                                out of a possible 100 points
                               </strong>
                               . This score is calculated based on the amount of executionView errors, step errors and
                               tab changes, where we deduct point to a executionView based on negative actions.
@@ -904,7 +1050,7 @@ function ExecutionViewGroupFocus({ executionViewGroup }: { executionViewGroup: I
                                 <span className="h-4 w-4 rounded-full bg-amber-600" />
                                 <span className="whitespace-nowrap text-sm tracking-tighter lg:tracking-normal">
                                   Tab Changes:{' '}
-                                  <span className="font-normal">{selectedExecutionView.tabChangeCount}</span>
+                                  <span className="font-normal">{selectedExecutionView.changeTabCount}</span>
                                 </span>
                               </div>
 
@@ -1005,7 +1151,7 @@ function ScoreCalculcationApproachDialog({ content }: { content?: any }) {
   return (
     <>
       <button type="button" onClick={openModal} className="underline hover:opacity-80">
-        {content ? content : 'this approach'}
+        {content ? content : <InformationCircleIcon className="h-6 w-6" />}
       </button>
 
       <Transition appear show={isOpen} as={Fragment}>
