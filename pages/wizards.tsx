@@ -143,7 +143,7 @@ export default function Wizards() {
             </Listbox>
 
             {/* Score information button */}
-            <ScoreCalculcationApproachDialog content={<InformationCircleIcon className="h-6 w-6" />} />
+            <ScoreCalculcationApproachDialog />
 
             {/* API route source button */}
             <Link
@@ -351,7 +351,7 @@ function WizardKPIs({ data }: { data: IWizardGroup[] }) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-1 flex-col gap-4 self-stretch xl:flex-row">
-        <WizardAverageUXScoreCard score={wizardStats.avgScore} />
+        <WizardAverageUXScoreCard wizardStats={wizardStats} />
         <WizardCompletionRateCard wizardStats={wizardStats} />
 
         <div className="flex flex-1 flex-col items-start justify-start gap-4 self-stretch">
@@ -415,20 +415,26 @@ function WizardCompletionRateCard({ wizardStats }: { wizardStats: WizardStats })
   );
 }
 
-function WizardAverageUXScoreCard({ score }: { score: number }) {
+function WizardAverageUXScoreCard({ wizardStats }: { wizardStats: WizardStats }) {
   const diameter = 120; // Adjusted diameter value
   const strokeWidth = 7; // Adjusted strokeWidth value
   const radius = (diameter - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (score / 100) * circumference;
+  const offset = circumference - (wizardStats.avgScore / 100) * circumference;
 
   return (
     <div className="relative max-w-full rounded bg-white/80 p-4 dark:bg-white/10 xl:max-w-xs">
       {/* Adjusted max-w value */}
-      <h3 className="font-medium text-gray-700 dark:text-gray-100">Wizard Average UX Score</h3>
+      <div className="flex items-center gap-1.5">
+        <h3 className="font-medium text-gray-700 dark:text-gray-100">Wizard Average UX Score</h3>
+        <ScoreCalculcationApproachDialog content={<InformationCircleIcon className="h-5 w-5" />} />
+      </div>
       <p className="mt-1 min-h-[5rem] text-sm tracking-tight">
-        Average of score of all the <strong>non discarded</strong> wizards. Score is calculated based on{' '}
-        <ScoreCalculcationApproachDialog />.
+        Average of the usability score given to all the{' '}
+        <strong className="underline decoration-blue-500">
+          {wizardStats.total - wizardStats.discarded} non discarded
+        </strong>{' '}
+        wizards.
       </p>
 
       {/* Circular Progress */}
@@ -455,7 +461,7 @@ function WizardAverageUXScoreCard({ score }: { score: number }) {
           />
         </svg>
         <div className="absolute flex w-full flex-col text-center">
-          <span className="text-4xl font-bold">{score.toFixed(1)}</span>
+          <span className="text-4xl font-bold">{wizardStats.avgScore.toFixed(1)}</span>
           <span className="text-xl">out of 100</span>
         </div>
       </div>
@@ -1350,7 +1356,7 @@ function ScoreCalculcationApproachDialog({ content }: { content?: any }) {
   return (
     <>
       <button type="button" onClick={openModal} className="underline hover:opacity-80">
-        {content ? content : 'this approach'}
+        {content ? content : <InformationCircleIcon className="h-6 w-6" />}
       </button>
 
       <Transition appear show={isOpen} as={Fragment}>
