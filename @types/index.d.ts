@@ -122,6 +122,12 @@ export type ButtonClick = {
   time: string;
 };
 
+export type ButtonClickGroup = {
+  path: string;
+  count: number;
+  times: string[];
+};
+
 export type ButtonType = {
   name: string;
   clickCount: number;

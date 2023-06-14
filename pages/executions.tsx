@@ -5,7 +5,7 @@ import { Dialog, Listbox, Transition } from '@headlessui/react';
 import type { IExecutionViewGroup, ITrackerEventGroup, ScoringApproach } from '@/@types';
 
 import { standardDeviation } from '@/utils';
-import { evaluateAndGroupExecutionViews } from '@/utils/matomo';
+import { ExecutionViewAction, evaluateAndGroupExecutionViews } from '@/utils/matomo';
 import { mockExecutionViewData as mockData } from '@/utils/mock';
 
 import { Layout } from '@/components/layout';
@@ -29,7 +29,7 @@ import {
   ScaleIcon,
   XCircleIcon,
 } from '@heroicons/react/24/outline';
-import { ExecutionViewErrorStatsType, ExecutionViewStats } from '@/@types/frontend';
+import { ExecutionViewErrorStatsType, ExecutionViewStats, ExecutionViewTabCompletionStats } from '@/@types/frontend';
 
 export default function Executions() {
   const [error, setError] = React.useState<boolean>(false);
@@ -210,7 +210,7 @@ function KPIs({ data }: { data: IExecutionViewGroup[] }) {
   const stats = React.useMemo<ExecutionViewStats>(() => {
     if (data.length === 0)
       return {
-        avgScore: 0,
+        avgScore: null,
         minTime: 0,
         maxTime: 0,
         avgTime: 0,
@@ -243,7 +243,7 @@ function KPIs({ data }: { data: IExecutionViewGroup[] }) {
     const cancelled = notCompleted - discarded;
 
     const allScoresSum = allScoreNumbers.reduce((acc, score) => acc + score, 0);
-    const avgScore = allScoresSum / allScoreNumbers.length;
+    const avgScore = allScoresSum === 0 ? null : allScoresSum / allScoreNumbers.length;
 
     return {
       avgScore,
@@ -260,8 +260,7 @@ function KPIs({ data }: { data: IExecutionViewGroup[] }) {
     };
   }, [data]);
 
-  // calculate average, minimum and maximum error and tab changes considering all execution views
-  const negativeStats = React.useMemo(() => {
+  const negativeStats = React.useMemo<ExecutionViewErrorStatsType>(() => {
     let total = 0;
     let errorCount = 0;
     let failedTabCount = 0;
@@ -304,7 +303,7 @@ function KPIs({ data }: { data: IExecutionViewGroup[] }) {
     <div className="flex flex-col gap-4">
       <div className="flex flex-1 flex-col gap-4 self-stretch lg:flex-row">
         <ExecutionViewCompletionRateCard stats={stats} />
-        <ExecutionViewAverageUXScoreCard stats={stats} />
+        <AverageUXScoreCard stats={stats} />
 
         <div className="flex flex-1 flex-col items-start justify-start gap-4 self-stretch">
           <GeneralStatsCard stats={stats} />
@@ -365,12 +364,12 @@ function ExecutionViewCompletionRateCard({ stats }: { stats: ExecutionViewStats 
   );
 }
 
-function ExecutionViewAverageUXScoreCard({ stats }: { stats: ExecutionViewStats }) {
+function AverageUXScoreCard({ stats }: { stats: ExecutionViewStats }) {
   const diameter = 120; // Adjusted diameter value
   const strokeWidth = 7; // Adjusted strokeWidth value
   const radius = (diameter - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (stats.avgScore / 100) * circumference;
+  const offset = stats.avgScore === null ? circumference : circumference - (stats.avgScore / 100) * circumference;
 
   return (
     <div className="relative max-w-full rounded bg-white/80 p-4 dark:bg-white/10 lg:max-w-xs">
@@ -408,7 +407,7 @@ function ExecutionViewAverageUXScoreCard({ stats }: { stats: ExecutionViewStats 
           />
         </svg>
         <div className="absolute flex w-full flex-col text-center">
-          <span className="text-4xl font-bold">{stats.avgScore.toFixed(1)}</span>
+          <span className="text-4xl font-bold">{stats.avgScore === null ? 'N/A' : stats.avgScore.toFixed(1)}</span>
           <span className="text-xl">out of 100</span>
         </div>
       </div>

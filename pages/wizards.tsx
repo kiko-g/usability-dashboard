@@ -210,7 +210,7 @@ function KPIs({ data }: { data: IWizardGroup[] }) {
   const stats = React.useMemo<WizardStats>(() => {
     if (data.length === 0)
       return {
-        avgScore: 0,
+        avgScore: null,
         minTime: 0,
         maxTime: 0,
         avgTime: 0,
@@ -243,7 +243,7 @@ function KPIs({ data }: { data: IWizardGroup[] }) {
     const cancelled = notCompleted - discarded;
 
     const allScoresSum = allScoreNumbers.reduce((acc, score) => acc + score, 0);
-    const avgScore = allScoresSum / allScoreNumbers.length;
+    const avgScore = allScoresSum === 0 ? null : allScoresSum / allScoreNumbers.length;
 
     return {
       avgScore,
@@ -260,8 +260,7 @@ function KPIs({ data }: { data: IWizardGroup[] }) {
     };
   }, [data]);
 
-  // calculate step stats considering all steps from all wizards
-  const stepStats = React.useMemo(() => {
+  const stepStats = React.useMemo<WizardStepCompletionStats>(() => {
     let activatedStepsTotal = 0;
     let successStepsTotal = 0;
     let failedStepTotal = 0;
@@ -317,8 +316,7 @@ function KPIs({ data }: { data: IWizardGroup[] }) {
     };
   }, [data]);
 
-  // calculate average, minimum and maximum error and back step considering all wizards
-  const negativeStats = React.useMemo(() => {
+  const negativeStats = React.useMemo<WizardErrorStatsType>(() => {
     let totalWizards = 0;
     let backStepCount = 0;
     let errorCount = 0;
@@ -421,7 +419,7 @@ function WizardAverageUXScoreCard({ stats }: { stats: WizardStats }) {
   const strokeWidth = 7; // Adjusted strokeWidth value
   const radius = (diameter - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (stats.avgScore / 100) * circumference;
+  const offset = stats.avgScore === null ? circumference : circumference - (stats.avgScore / 100) * circumference;
 
   return (
     <div className="relative max-w-full rounded bg-white/80 p-4 dark:bg-white/10 xl:max-w-xs">
@@ -460,7 +458,7 @@ function WizardAverageUXScoreCard({ stats }: { stats: WizardStats }) {
           />
         </svg>
         <div className="absolute flex w-full flex-col text-center">
-          <span className="text-4xl font-bold">{stats.avgScore.toFixed(1)}</span>
+          <span className="text-4xl font-bold">{stats.avgScore === null ? 'N/A' : stats.avgScore.toFixed(1)}</span>
           <span className="text-xl">out of 100</span>
         </div>
       </div>

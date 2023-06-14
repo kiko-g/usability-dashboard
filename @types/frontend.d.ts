@@ -1,6 +1,6 @@
 // Wizard
 export type WizardStats = {
-  avgScore: number;
+  avgScore: number | null;
   minTime: number;
   maxTime: number;
   avgTime: number;
@@ -34,7 +34,7 @@ export type WizardErrorStatsType = {
 
 // Execution View
 export type ExecutionViewStats = {
-  avgScore: number;
+  avgScore: number | null;
   minTime: number;
   maxTime: number;
   avgTime: number;

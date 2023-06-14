@@ -9,6 +9,7 @@ import { Layout } from '@/components/layout';
 import { Loading, NotFound } from '@/components/utils';
 
 import { ArrowPathIcon, CircleStackIcon, CodeBracketIcon } from '@heroicons/react/24/outline';
+import { ChevronDownIcon } from '@heroicons/react/24/solid';
 
 export default function Buttons() {
   const [data, setData] = React.useState<ButtonType[]>([]); // TODO: replace any with correct type
@@ -52,16 +53,18 @@ export default function Buttons() {
           </p>
 
           <div className="flex items-center gap-2">
-            <button
-              title="Use mock data"
-              className="hover:opacity-80"
-              onClick={() => {
-                setError(false);
-                setData(mockData);
-              }}
-            >
-              <CircleStackIcon className="h-6 w-6" />
-            </button>
+            {error === false ? null : (
+              <button
+                title="Use mock data"
+                className="hover:opacity-80"
+                onClick={() => {
+                  setError(false);
+                  setData(mockData);
+                }}
+              >
+                <CircleStackIcon className="h-6 w-6" />
+              </button>
+            )}
 
             <Link
               target="_blank"
@@ -107,7 +110,6 @@ export default function Buttons() {
   );
 }
 
-// TODO: replace any with correct type
 function ButtonKPIs({ data }: { data: ButtonType[] }) {
   if (data.length === 0) return null;
 
@@ -115,44 +117,90 @@ function ButtonKPIs({ data }: { data: ButtonType[] }) {
     <div className="w-full space-y-3 rounded-xl bg-white p-3 dark:bg-darker">
       {data
         .sort((a, b) => (a.buttonClicks > b.buttonClicks ? -1 : 1))
-        .map((button, buttonIdx) => (
-          <Disclosure key={`button-${buttonIdx}`}>
-            {({ open }) => (
-              <>
-                <Disclosure.Button
-                  className={classNames(
-                    open
-                      ? 'bg-teal-700/80 text-white hover:opacity-90 dark:bg-secondary/80'
-                      : 'bg-slate-100 text-slate-900 hover:bg-slate-200 dark:text-white',
-                    'group flex w-full items-center justify-between rounded-lg px-4 py-2 text-left text-sm font-medium tracking-tighter shadow transition dark:bg-secondary/20 dark:hover:bg-secondary/60'
-                  )}
-                >
-                  <span>{button.name}</span>
-                  <span className="flex items-center gap-2">
-                    <span
-                      className={classNames(
-                        open ? 'border-slate-600 bg-slate-600' : 'border-slate-600 bg-slate-600/60',
-                        'inline-flex min-h-[2rem] min-w-[2rem] items-center justify-center rounded-full border  px-2 py-1 text-xs font-medium text-white shadow'
-                      )}
-                    >
-                      {button.clickCount}
+        .map((button, buttonIdx) => {
+          // group by where each click occurred
+          const pathOccurrences: { [path: string]: number } = button.buttonClicks.reduce<{ [path: string]: number }>(
+            (result, click) => {
+              const { path } = click;
+              if (!result[path]) result[path] = 0;
+              result[path]++;
+              return result;
+            },
+            {}
+          );
+
+          const uniquePaths = Object.keys(pathOccurrences).sort((a, b) =>
+            pathOccurrences[a] > pathOccurrences[b] ? -1 : 1
+          );
+
+          return (
+            <Disclosure key={`button-${buttonIdx}`}>
+              {({ open }) => (
+                <>
+                  <Disclosure.Button
+                    className={classNames(
+                      open
+                        ? 'bg-teal-700/80 text-white hover:opacity-90 dark:bg-secondary/80'
+                        : 'bg-slate-100 text-slate-900 hover:bg-slate-200 dark:text-white',
+                      'group flex w-full items-center justify-between rounded-lg px-4 py-2 text-left text-sm font-medium tracking-tighter shadow transition dark:bg-secondary/20 dark:hover:bg-secondary/60'
+                    )}
+                  >
+                    <span>{button.name}</span>
+                    <span className="flex items-center gap-2">
+                      <span
+                        className={classNames(
+                          open ? 'border-slate-600 bg-slate-600' : 'border-slate-600 bg-slate-600/60',
+                          'inline-flex min-h-[2rem] min-w-[2rem] items-center justify-center rounded-full border  px-2 py-1 text-xs font-medium text-white shadow'
+                        )}
+                      >
+                        {button.clickCount}
+                      </span>
                     </span>
-                  </span>
-                </Disclosure.Button>
-                <Disclosure.Panel className="rounded-lg bg-slate-100 px-3 py-3 dark:bg-white/10">
-                  {button.buttonClicks.map((click, clickIdx) => (
-                    <p
-                      key={`click-${clickIdx}`}
-                      className="font-mono text-xs tracking-tighter text-slate-700 dark:text-white"
-                    >
-                      {click.path} &middot; {click.time}
-                    </p>
-                  ))}
-                </Disclosure.Panel>
-              </>
-            )}
-          </Disclosure>
-        ))}
+                  </Disclosure.Button>
+                  <Disclosure.Panel className="z-20 rounded-lg bg-slate-100 px-3 py-3 dark:bg-white/10">
+                    <div className="flex flex-col">
+                      {uniquePaths.map((path, pathIdx) => (
+                        <div className="flex w-full flex-col space-y-1" key={`path-${pathIdx}`}>
+                          <div
+                            className={classNames(
+                              'w-full self-stretch transition',
+                              'flex items-center justify-between gap-x-8 px-1 py-1 font-mono text-xs tracking-tighter text-slate-700 dark:text-white',
+                              pathIdx !== uniquePaths.length - 1
+                                ? 'border-b border-primary/40 dark:border-secondary/40'
+                                : ''
+                            )}
+                          >
+                            <span className="flex items-center gap-x-1">
+                              {/* <ChevronDownIcon className="h-4 w-4" /> */}
+                              <span className="truncate whitespace-nowrap tracking-tighter">{path}</span>
+                            </span>
+                            <span>{pathOccurrences[path]}</span>
+                          </div>
+
+                          <ul className="hidden">
+                            {button.buttonClicks
+                              .filter((b) => b.path === path)
+                              .map((click, clickIdx) => {
+                                return (
+                                  <li
+                                    key={`button-${buttonIdx}-path-${pathIdx}-click-${clickIdx}`}
+                                    className="flex items-center justify-between gap-1 font-mono text-xxs tracking-tighter"
+                                  >
+                                    <span>{click.time}</span>
+                                    <span>{click.component}</span>
+                                  </li>
+                                );
+                              })}
+                          </ul>
+                        </div>
+                      ))}
+                    </div>
+                  </Disclosure.Panel>
+                </>
+              )}
+            </Disclosure>
+          );
+        })}
     </div>
   );
 }
