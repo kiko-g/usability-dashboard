@@ -1,6 +1,10 @@
 # CMF MES Usability Dashboard
 
-With the idea of delving into the behavior of CMF's MES users, we have created this a dashboard with the data collected from the analytics and usability study.
+With the idea of delving into the behavior of CMF's MES users, we have created this dashboard with the data collected from the analytics and usability study. The dashboard can be seen below and is built with the help of **Matomo** and **NextJS**. We use the Matomo API to process events captured within MES and showcase what the default Matomo Dashboard cannot on our [custom dashboard deployed here](https://usability-dashboard-mes.vercel.app/). Although this dashboard would need to be deployed alongside Matomo and its MySQL database, it is still deployed as a standalone to allow for a demo. You can use the "mock data" on visits, buttons, wizards and execution view pages by clicking the three circle stack icon on the top right, once the fetching of data has failed.
+
+## Demo
+
+https://github.com/kiko-g/usability-dashboard-mes/assets/40745490/659c8170-4f10-42ec-a67f-03f66dc2e3e7
 
 ## Running the project
 
@@ -10,13 +14,13 @@ With the idea of delving into the behavior of CMF's MES users, we have created t
 docker compose up -d --build
 ```
 
-2. The target website should be running in parellel to this, which for this project we expect it to be MES, whether it is locally or in a custom development environment. You should provide the information of the domain of the targetted website the **configuration of the Matomo Dashboard setup** which should be available at `http://localhost:8089`.
+2. The target website should be running in parallel to this, which, for this particular project, we expect it to be MES, whether it is locally or in a custom development environment. You should provide the information of the domain of the targetted website and the **configuration of the Matomo Dashboard setup**, which should be available at `http://localhost:8089`.
 
-3. After doing this you should see a complaint about the trusted host setup on the Matomo Dashboard. To fix this open a bash shell on the root of this project and run `bash hosts.sh`.
+3. After doing this, you should see a complaint about the trusted host setup on the Matomo Dashboard. To fix this, open a bash shell on the root of this project and run `bash hosts.sh`.
 
 4. You may need to troubleshoot a few things in the setup:
 
-- You will probably need to replace the Matomo API Token once you are setting up the containers for the first time. Go to the Matomo Dashboard: click the `gear icon`, then `personal`, `security`. Scroll down to **create auth token** and copy it into your `.env`.
+- You will probably need to replace the Matomo API Token once you set up the containers for the first time. Go to the Matomo Dashboard: click the `gear icon`, then `personal`, `security`. Scroll down to **create auth token** and copy it into your `.env`.
 - Remember to change the content of the `matomoTrackerConfig` variable in `src/app/app.module.ts` on the `CoreHTML` that is being used in CMF's MES. This should match the ports that we have chosen on this side.
 
 ## Environment Variables
