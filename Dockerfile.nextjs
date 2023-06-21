@@ -17,7 +17,7 @@ RUN npm install
 COPY . ./
 
 # Expose custom port in the container
-EXPOSE $PORT
+EXPOSE 31087
 
 # Run the app
 CMD [ "npm", "run", "dev" ]
