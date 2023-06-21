@@ -4,19 +4,10 @@ FROM matomo:latest
 RUN apt-get update && apt-get install nano -y
 
 # Copy hosts script
-COPY hosts.sh .
-
-# Define shell function for catconf
-RUN echo "catconf() { cat config/config.ini.php; }" >> /root/.bashrc
-
-# Define shell function for nanoconf
-RUN echo "catconf() { nano config/config.ini.php; }" >> /root/.bashrc
-
-# Define shell function for fixhosts
-RUN echo "fixhosts() { bash hosts.sh; }" >> /root/.bashrc
+COPY hosts.sh /scripts/
 
 # We need to modify the config.ini.php file after we have finished the Matomo setup
-# You can either manually change it inside the container:
+# Manually inside the container:
 #
 # nano config/config.ini.php
 #
