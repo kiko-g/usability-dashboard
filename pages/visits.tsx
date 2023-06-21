@@ -433,10 +433,7 @@ function PageTransitionsMatomoLink() {
     <Link
       target="_blank"
       title="Check Page Transitions on the Matomo Dashboard"
-      href={
-        process.env.NEXT_PUBLIC_MATOMO_DASHBOARD_URL ||
-        'http://localhost:8089/index.php?module=CoreHome&action=index&idSite=1&period=day&date=today#?idSite=1&period=day&date=yesterday&category=General_Actions&subcategory=Transitions_Transitions'
-      }
+      href={`${process.env.NEXT_PUBLIC_MATOMO_DASHBOARD_URL}/index.php?module=CoreHome&action=index&idSite=1&period=day&date=today#?idSite=1&period=day&date=yesterday&category=General_Actions&subcategory=Transitions_Transitions`}
       className="group flex items-center justify-between gap-3 rounded-lg border border-transparent bg-white p-6 transition hover:bg-gray-100 dark:border-secondary/50 dark:bg-secondary/20 dark:hover:bg-secondary/50"
     >
       <div className="flex items-center justify-center gap-3">

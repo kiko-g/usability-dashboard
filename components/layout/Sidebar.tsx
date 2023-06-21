@@ -100,7 +100,7 @@ export function Sidebar({ location }: SidebarProps) {
           </Link>
           <Link
             target="_blank"
-            href={process.env.NEXT_PUBLIC_MATOMO_DASHBOARD_URL || 'http://localhost:8089'}
+            href={process.env.NEXT_PUBLIC_MATOMO_DASHBOARD_URL}
             title="Access Matomo Dashboard"
             aria-label="Access Matomo Dashboard"
             className="github transition"
@@ -193,7 +193,7 @@ export function MobileNav({ title, location }: MobileNavProps) {
                 </Link>
                 <Link
                   target="_blank"
-                  href={process.env.NEXT_PUBLIC_MATOMO_DASHBOARD_URL || 'http://localhost:8089'}
+                  href={process.env.NEXT_PUBLIC_MATOMO_DASHBOARD_URL}
                   title="Access Matomo Dashboard"
                   aria-label="Access Matomo Dashboard"
                   className="github transition"

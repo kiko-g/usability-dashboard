@@ -2,9 +2,9 @@ import mysql from 'mysql2';
 
 export const estabilishMySQLConnection = () => {
   return mysql.createConnection({
-    user: process.env.NEXT_PUBLIC_MYSQL_USER!,
-    password: process.env.NEXT_PUBLIC_MYSQL_PASSWORD!,
-    database: process.env.NEXT_PUBLIC_MYSQL_DATABASE!,
+    user: process.env.NEXT_PUBLIC_MYSQL_USER,
+    password: process.env.NEXT_PUBLIC_MYSQL_PASSWORD,
+    database: process.env.NEXT_PUBLIC_MYSQL_DATABASE,
   });
 };
 
