@@ -3,18 +3,28 @@ FROM matomo:latest
 # Update packages and install nano
 RUN apt-get update && apt-get install nano -y
 
+# Copy hosts script
+COPY hosts.sh .
+
+# Define shell function for catconf
+RUN echo "catconf() { cat config/config.ini.php; }" >> /root/.bashrc
+
+# Define shell function for nanoconf
+RUN echo "catconf() { nano config/config.ini.php; }" >> /root/.bashrc
+
+# Define shell function for fixhosts
+RUN echo "fixhosts() { bash hosts.sh; }" >> /root/.bashrc
+
 # We need to modify the config.ini.php file after we have finished the Matomo setup
-# You can either manually change it:
-# 
-# docker exec -it <container_id> /bin/bash;
+# You can either manually change it inside the container:
+#
 # nano config/config.ini.php
 #
 # ...
-# [General]
-# salt = ...
-# trusted_hosts[] = "localhost:31089" (or vmdsdev01:31089)
+# trusted_hosts[] = "localhost:31089"
+# trusted_hosts[] = "vmdsdev01:31089"
 # ...
 #
 # or you can run the hosts.sh script
-#
-# bash hosts.sh
+# bash hosts.sh docker (to enter the container as well)
+# bash hosts.sh (if inside the container already)
