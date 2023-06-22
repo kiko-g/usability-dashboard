@@ -41,13 +41,13 @@ export default function ServiceNotice({}: Props) {
     <div
       className={classNames(
         'relative w-full rounded-md border p-4',
-        serviceStatus === 'available' && 'border-emerald-400 bg-emerald-50/60 dark:bg-emerald-700/30',
+        serviceStatus === 'available' && 'border-emerald-400 bg-emerald-50/60 dark:bg-emerald-700/50',
         serviceStatus === 'unavailable' && 'border-rose-400 bg-rose-100/70 dark:bg-rose-700/25',
         serviceStatus === null && 'border-gray-400 bg-gray-50/60 dark:bg-gray-50/90',
         dismissed ? 'hidden' : 'block'
       )}
     >
-      <div className="absolute right-4 top-4 flex items-center justify-center gap-1">
+      <div className="absolute right-4 top-4 hidden items-center justify-center gap-1 lg:flex">
         <Link target="_blank" title="Inspect JSON data" href="/api/matomo/ping" className="hover:opacity-80">
           <CodeBracketIcon className="h-5 w-5" />
         </Link>
@@ -60,11 +60,11 @@ export default function ServiceNotice({}: Props) {
       {serviceStatus === 'available' && (
         <div className="flex">
           <div className="flex-shrink-0">
-            <CheckCircleIcon className="h-5 w-5 text-emerald-400" aria-hidden="true" />
+            <CheckCircleIcon className="h-5 w-5 text-emerald-400 dark:text-white" aria-hidden="true" />
           </div>
           <div className="ml-3">
-            <h3 className="text-sm font-medium text-emerald-800">Matomo Service is available</h3>
-            <div className="mt-2 text-sm text-emerald-700">
+            <h3 className="text-sm font-medium text-emerald-800 dark:text-gray-200">Matomo Service is available</h3>
+            <div className="mt-2 text-sm text-emerald-700 dark:text-gray-300">
               <p>The Matomo API, our data source, is up and running as expected.</p>
             </div>
           </div>
@@ -76,7 +76,7 @@ export default function ServiceNotice({}: Props) {
           <div className="flex-shrink-0">
             <ShieldExclamationIcon className="h-5 w-5 text-rose-400" aria-hidden="true" />
           </div>
-          <div className={classNames('ml-3', details ? '' : 'flex gap-2')}>
+          <div className={classNames('ml-3', details ? '' : 'flex flex-col gap-2 lg:flex-row')}>
             <h3 className={classNames('text-sm font-medium text-rose-800 dark:text-white', details ? 'mb-1' : '')}>
               The Matomo API service is <strong>not</strong> responding
             </h3>
