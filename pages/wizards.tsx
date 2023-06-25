@@ -6,7 +6,8 @@ import type { ITrackerEventGroup, IWizardGroup, ScoringApproach } from '@/@types
 import { WizardStats, WizardStepCompletionStats, WizardErrorStatsType } from '@/@types/frontend';
 
 import { Layout } from '@/components/layout';
-import { WizardFormula } from '@/components/wizard';
+import { WizardFormula } from '@/components/WizardFormula';
+import { SelectFormula } from '@/components/SelectFormula';
 import { CircularProgressBadge, Loading, NotFound } from '@/components/utils';
 
 import { standardDeviation } from '@/utils';
@@ -39,7 +40,7 @@ export default function Wizards() {
   const [rawData, setRawData] = React.useState<ITrackerEventGroup[]>([]);
   const [processedData, setProcessedData] = React.useState<IWizardGroup[]>([]);
 
-  const scoringApproaches = ['A', 'B'];
+  const scoringApproaches = ['A', 'B'] as ScoringApproach[];
   const [scoringApproach, setScoringApproach] = React.useState<ScoringApproach>('A');
 
   // fetch data
@@ -100,51 +101,13 @@ export default function Wizards() {
             )}
 
             {/* Choose Scoring Approach */}
-            <Listbox value={scoringApproach} onChange={setScoringApproach}>
-              <div className="relative z-30 flex w-min items-center justify-center">
-                <Listbox.Button as="button" title="Switch Scoring Approach" className="hover:opacity-80">
-                  <EllipsisHorizontalCircleIcon className="h-6 w-6" aria-hidden="true" />
-                </Listbox.Button>
-                <Transition
-                  as={Fragment}
-                  leave="transition ease-in duration-100"
-                  leaveFrom="opacity-100"
-                  leaveTo="opacity-0"
-                >
-                  <Listbox.Options className="absolute right-0 top-6 w-36 overflow-auto rounded border border-gray-300 bg-gray-100 py-2 shadow xl:w-36">
-                    {scoringApproaches.map((approach: string, optionIdx: number) => (
-                      <Listbox.Option
-                        key={`option-${optionIdx}`}
-                        className={({ active }) =>
-                          `relative cursor-pointer select-none py-1.5 pl-10 pr-5 text-sm font-normal tracking-tight ${
-                            active
-                              ? 'bg-primary/10 text-primary dark:bg-secondary/10 dark:text-secondary'
-                              : 'text-gray-800'
-                          }`
-                        }
-                        value={approach}
-                      >
-                        <span
-                          className={`block whitespace-nowrap ${
-                            approach === scoringApproach ? 'font-semibold' : 'font-normal'
-                          }`}
-                        >
-                          Formula {approach}
-                        </span>
-                        {scoringApproach === approach ? (
-                          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-teal-500">
-                            <CheckCircleSolidIcon className="h-5 w-5" aria-hidden="true" />
-                          </span>
-                        ) : null}
-                      </Listbox.Option>
-                    ))}
-                  </Listbox.Options>
-                </Transition>
-              </div>
-            </Listbox>
+            <SelectFormula
+              scoringApproaches={scoringApproaches}
+              scoringApproachHook={[scoringApproach, setScoringApproach]}
+            />
 
             {/* Score information button */}
-            <ScoreCalculcationApproachDialog />
+            <ScoreCalculcationApproachDialog scoringApproach={scoringApproach} />
 
             {/* API route source button */}
             <Link
@@ -198,7 +161,7 @@ export default function Wizards() {
           </div>
         </div>
 
-        <KPIs data={processedData} />
+        <KPIs data={processedData} scoringApproach={scoringApproach} />
         {loading && <Loading />}
         {error && <NotFound />}
       </article>
@@ -206,7 +169,7 @@ export default function Wizards() {
   );
 }
 
-function KPIs({ data }: { data: IWizardGroup[] }) {
+function KPIs({ data, scoringApproach }: { data: IWizardGroup[]; scoringApproach?: ScoringApproach }) {
   const stats = React.useMemo<WizardStats>(() => {
     if (data.length === 0)
       return {
@@ -359,7 +322,7 @@ function KPIs({ data }: { data: IWizardGroup[] }) {
           <ErrorStatsCard stats={negativeStats} />
         </div>
       </div>
-      <WizardSortedList data={data} />
+      <WizardSortedList data={data} scoringApproach={scoringApproach} />
     </div>
   );
 }
@@ -695,7 +658,7 @@ function ErrorStatsCard({ stats }: { stats: WizardErrorStatsType }) {
   );
 }
 
-function WizardSortedList({ data }: { data: IWizardGroup[] }) {
+function WizardSortedList({ data, scoringApproach }: { data: IWizardGroup[]; scoringApproach?: ScoringApproach }) {
   const options = [
     'Alphabetic (A to Z)',
     'Alphabetic (Z to A)',
@@ -850,7 +813,7 @@ function WizardSortedList({ data }: { data: IWizardGroup[] }) {
         {/* Wizard List */}
         {sortedData.map((wizardGroup, wizardGroupIdx) => (
           <li key={wizardGroupIdx}>
-            <WizardGroupFocus wizardGroup={wizardGroup} />
+            <WizardGroupFocus wizardGroup={wizardGroup} scoringApproach={scoringApproach} />
           </li>
         ))}
       </ul>
@@ -858,7 +821,13 @@ function WizardSortedList({ data }: { data: IWizardGroup[] }) {
   );
 }
 
-function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
+function WizardGroupFocus({
+  wizardGroup,
+  scoringApproach,
+}: {
+  wizardGroup: IWizardGroup;
+  scoringApproach?: ScoringApproach;
+}) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [inspect, setInspect] = React.useState(true);
   const [textView, setTextView] = React.useState(false);
@@ -969,7 +938,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="flex h-screen w-full transform flex-col justify-between gap-4 overflow-scroll bg-white p-5 text-left align-middle shadow-xl transition-all dark:bg-navy md:max-w-3xl">
+                <Dialog.Panel className="flex h-screen w-full transform flex-col justify-between gap-4 overflow-scroll bg-white p-5 text-left align-middle shadow-xl transition-all dark:bg-navy md:min-w-[36rem] md:max-w-3xl">
                   <div className="flex flex-col items-start justify-center font-normal text-gray-700 dark:text-white">
                     <div className="flex w-full items-center justify-between gap-2">
                       <Dialog.Title as="h3" className="text-lg font-bold leading-6 text-gray-800 dark:text-white">
@@ -1297,7 +1266,7 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
                       </div>
                     ) : null}
 
-                    <WizardFormula />
+                    <WizardFormula formula={scoringApproach} />
                   </div>
 
                   {/* Footer buttons */}
@@ -1339,7 +1308,13 @@ function WizardGroupFocus({ wizardGroup }: { wizardGroup: IWizardGroup }) {
   );
 }
 
-function ScoreCalculcationApproachDialog({ content }: { content?: any }) {
+function ScoreCalculcationApproachDialog({
+  content,
+  scoringApproach,
+}: {
+  content?: any;
+  scoringApproach?: ScoringApproach;
+}) {
   const [isOpen, setIsOpen] = React.useState(false);
 
   function closeModal() {
@@ -1381,16 +1356,16 @@ function ScoreCalculcationApproachDialog({ content }: { content?: any }) {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="flex h-screen w-full transform flex-col justify-between gap-4 overflow-scroll bg-white p-6 text-left align-middle shadow-xl transition-all dark:bg-navy md:max-w-3xl">
+                <Dialog.Panel className="flex h-screen w-full transform flex-col justify-between gap-4 overflow-scroll bg-white p-6 text-left align-middle shadow-xl transition-all dark:bg-navy md:min-w-[36rem] md:max-w-3xl">
                   <div>
                     <Dialog.Title
                       as="h3"
                       className="mb-3 font-sans text-lg font-bold leading-6 text-gray-800 dark:text-white"
                     >
-                      Wizard Scoring Approach
+                      Wizard Scoring Approach <span className="font-normal">(Formula {scoringApproach})</span>
                     </Dialog.Title>
 
-                    <WizardFormula />
+                    <WizardFormula formula={scoringApproach} />
                   </div>
 
                   <div className="flex items-center justify-end">

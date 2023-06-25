@@ -1,9 +1,12 @@
 import React from 'react';
 import Link from 'next/link';
 import classNames from 'classnames';
-import { DarkModeSwitch } from './';
 import { Disclosure } from '@headlessui/react';
+
+import { DarkModeSwitch } from './';
 import GithubIcon from '@/components/utils/GithubIcon';
+import MatomoIcon from '@/components/utils/MatomoIcon';
+
 import {
   CursorArrowRippleIcon,
   HomeIcon,
@@ -13,8 +16,8 @@ import {
   MapIcon,
   FingerPrintIcon,
   RectangleGroupIcon,
+  InformationCircleIcon,
 } from '@heroicons/react/24/outline';
-import MatomoIcon from '@/components/utils/MatomoIcon';
 
 const navigations = [
   {
@@ -47,6 +50,11 @@ const navigations = [
     name: 'Execution Views',
     href: '/executions',
     icon: RectangleGroupIcon,
+  },
+  {
+    name: 'About',
+    href: '/about',
+    icon: InformationCircleIcon,
   },
 ];
 

@@ -30,6 +30,8 @@ import {
   XCircleIcon,
 } from '@heroicons/react/24/outline';
 import { ExecutionViewErrorStatsType, ExecutionViewStats, ExecutionViewTabCompletionStats } from '@/@types/frontend';
+import { SelectFormula } from '@/components/SelectFormula';
+import { ExecutionViewFormula } from '@/components/ExecutionViewFormula';
 
 export default function Executions() {
   const [error, setError] = React.useState<boolean>(false);
@@ -39,7 +41,7 @@ export default function Executions() {
   const [rawData, setRawData] = React.useState<ITrackerEventGroup[]>([]);
   const [processedData, setProcessedData] = React.useState<IExecutionViewGroup[]>([]);
 
-  const scoringApproaches = ['A', 'B'];
+  const scoringApproaches = ['A', 'B'] as ScoringApproach[];
   const [scoringApproach, setScoringApproach] = React.useState<ScoringApproach>('A');
 
   React.useEffect(() => {
@@ -100,51 +102,13 @@ export default function Executions() {
             )}
 
             {/* Choose Scoring Approach */}
-            <Listbox value={scoringApproach} onChange={setScoringApproach}>
-              <div className="relative z-30 flex w-min items-center justify-center">
-                <Listbox.Button as="button" title="Switch Scoring Approach" className="hover:opacity-80">
-                  <EllipsisHorizontalCircleIcon className="h-6 w-6" aria-hidden="true" />
-                </Listbox.Button>
-                <Transition
-                  as={Fragment}
-                  leave="transition ease-in duration-100"
-                  leaveFrom="opacity-100"
-                  leaveTo="opacity-0"
-                >
-                  <Listbox.Options className="absolute right-0 top-6 w-36 overflow-auto rounded border border-gray-300 bg-gray-100 py-2 shadow xl:w-36">
-                    {scoringApproaches.map((approach: string, optionIdx: number) => (
-                      <Listbox.Option
-                        key={`option-${optionIdx}`}
-                        className={({ active }) =>
-                          `relative cursor-pointer select-none py-1.5 pl-10 pr-5 text-sm font-normal tracking-tight ${
-                            active
-                              ? 'bg-primary/10 text-primary dark:bg-secondary/10 dark:text-secondary'
-                              : 'text-gray-800'
-                          }`
-                        }
-                        value={approach}
-                      >
-                        <span
-                          className={`block whitespace-nowrap ${
-                            approach === scoringApproach ? 'font-semibold' : 'font-normal'
-                          }`}
-                        >
-                          Formula {approach}
-                        </span>
-                        {scoringApproach === approach ? (
-                          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-teal-500">
-                            <CheckCircleSolidIcon className="h-5 w-5" aria-hidden="true" />
-                          </span>
-                        ) : null}
-                      </Listbox.Option>
-                    ))}
-                  </Listbox.Options>
-                </Transition>
-              </div>
-            </Listbox>
+            <SelectFormula
+              scoringApproaches={scoringApproaches}
+              scoringApproachHook={[scoringApproach, setScoringApproach]}
+            />
 
             {/* Score information button */}
-            <ScoreCalculcationApproachDialog />
+            <ScoreCalculcationApproachDialog scoringApproach={scoringApproach} />
 
             {/* API route source button */}
             <Link
@@ -198,7 +162,7 @@ export default function Executions() {
           </div>
         </div>
 
-        <KPIs data={processedData} />
+        <KPIs data={processedData} scoringApproach={scoringApproach} />
         {loading && <Loading />}
         {error && <NotFound />}
       </article>
@@ -206,7 +170,7 @@ export default function Executions() {
   );
 }
 
-function KPIs({ data }: { data: IExecutionViewGroup[] }) {
+function KPIs({ data, scoringApproach }: { data: IExecutionViewGroup[]; scoringApproach?: ScoringApproach }) {
   const stats = React.useMemo<ExecutionViewStats>(() => {
     if (data.length === 0)
       return {
@@ -310,7 +274,7 @@ function KPIs({ data }: { data: IExecutionViewGroup[] }) {
           <ErrorStatsCard stats={negativeStats} />
         </div>
       </div>
-      <ExecutionViewSortedList data={data} />
+      <ExecutionViewSortedList data={data} scoringApproach={scoringApproach} />
     </div>
   );
 }
@@ -546,7 +510,13 @@ function ErrorStatsCard({ stats }: { stats: ExecutionViewErrorStatsType }) {
   );
 }
 
-function ExecutionViewSortedList({ data }: { data: IExecutionViewGroup[] }) {
+function ExecutionViewSortedList({
+  data,
+  scoringApproach,
+}: {
+  data: IExecutionViewGroup[];
+  scoringApproach?: ScoringApproach;
+}) {
   const options = [
     'Alphabetic (A to Z)',
     'Alphabetic (Z to A)',
@@ -690,7 +660,7 @@ function ExecutionViewSortedList({ data }: { data: IExecutionViewGroup[] }) {
         </li>
         {sortedData.map((executionViewGroup, executionViewGroupIdx) => (
           <li key={executionViewGroupIdx}>
-            <ExecutionViewGroupFocus executionViewGroup={executionViewGroup} />
+            <ExecutionViewGroupFocus executionViewGroup={executionViewGroup} scoringApproach={scoringApproach} />
           </li>
         ))}
       </ul>
@@ -698,7 +668,13 @@ function ExecutionViewSortedList({ data }: { data: IExecutionViewGroup[] }) {
   );
 }
 
-function ExecutionViewGroupFocus({ executionViewGroup }: { executionViewGroup: IExecutionViewGroup }) {
+function ExecutionViewGroupFocus({
+  executionViewGroup,
+  scoringApproach,
+}: {
+  executionViewGroup: IExecutionViewGroup;
+  scoringApproach?: ScoringApproach;
+}) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [inspect, setInspect] = React.useState(false);
   const [textView, setTextView] = React.useState(false);
@@ -887,13 +863,13 @@ function ExecutionViewGroupFocus({ executionViewGroup }: { executionViewGroup: I
                               </strong>
                               . This score is calculated based on the amount of executionView errors, step errors and
                               tab changes, where we deduct point to a executionView based on negative actions.
-                              <Formula />
+                              <ExecutionViewFormula formula={scoringApproach} />
                             </li>
                           </ul>
                         </>
                       ) : (
                         <>
-                          <p className="mb-2 text-sm">Here are some key stats for executionViews of this category</p>
+                          <p className="mb-2 text-sm">Here are some key stats for execution views of this category</p>
 
                           <div className="flex flex-wrap gap-x-4 gap-y-4">
                             <div className="flex w-full max-w-[8rem] flex-col items-center justify-center rounded-xl border border-blue-600 bg-blue-600/60 text-center text-white dark:border-blue-500 dark:bg-blue-500/40">
@@ -1002,7 +978,7 @@ function ExecutionViewGroupFocus({ executionViewGroup }: { executionViewGroup: I
                               This score is calculated based on the amount of executionView errors, step errors and tab
                               changes, where we deduct point to a executionView based on negative actions.
                             </p>
-                            <Formula />
+                            <ExecutionViewFormula formula={scoringApproach} />
                           </div>
                         </>
                       )}
@@ -1136,7 +1112,13 @@ function ExecutionViewGroupFocus({ executionViewGroup }: { executionViewGroup: I
   );
 }
 
-function ScoreCalculcationApproachDialog({ content }: { content?: any }) {
+function ScoreCalculcationApproachDialog({
+  content,
+  scoringApproach,
+}: {
+  content?: any;
+  scoringApproach?: ScoringApproach;
+}) {
   const [isOpen, setIsOpen] = React.useState(false);
 
   function closeModal() {
@@ -1192,7 +1174,7 @@ function ScoreCalculcationApproachDialog({ content }: { content?: any }) {
                       <strong>execution views errors</strong>, <strong>step errors</strong> and{' '}
                       <strong>tab changes</strong> button clicks, where we deduct points to a execution view based on
                       negative actions. The initial score is 100, and we subtract from there as follows:
-                      <Formula />
+                      <ExecutionViewFormula formula={scoringApproach} />
                     </div>
                   </div>
 
@@ -1213,39 +1195,5 @@ function ScoreCalculcationApproachDialog({ content }: { content?: any }) {
         </Dialog>
       </Transition>
     </>
-  );
-}
-
-function Formula() {
-  return (
-    <div className="my-1 text-sm">
-      <p className="mb-1">First we establish a baseline score:</p>
-      <code className="mb-4 block bg-navy px-3 py-2 text-sm font-normal tracking-[-0.07rem] text-white dark:bg-white/10 dark:text-white">
-        score = 100 - 10*errors - 5*backSteps
-      </code>
-
-      <p className="mb-1 mt-3">
-        If the <strong>execution view was cancelled</strong> we deduct extra points. In case the user was evidently
-        attempting to complete it then the <strong>timespan should be greater than 10s</strong> and/or{' '}
-        <strong>there should be at least one negative action</strong>:
-      </p>
-      <code className="mb-4 block bg-navy px-3 py-2 text-sm font-normal tracking-[-0.07rem] text-white dark:bg-white/10 dark:text-white">
-        score = score - timespan/20 - 4*(errors + backStepCount)
-      </code>
-
-      <p className="mb-1 mt-3">
-        If there are <strong>no negative actions</strong> or the <strong>timespan was under 10 seconds</strong> we only
-        deduct a small amount:
-      </p>
-      <code className="mb-4 block bg-navy px-3 py-2 text-sm font-normal tracking-[-0.07rem] text-white dark:bg-white/10 dark:text-white">
-        score = score - 5
-      </code>
-
-      <p className="mt-3">
-        The <strong>minimum score is 0</strong>, so if the score drops below that, we directly assign it a score of 0.
-        In case the score is <strong>below 40 and the execution view was completed</strong> we directly assign a score
-        of 40 to the execution view, rewarding the completion.
-      </p>
-    </div>
   );
 }
