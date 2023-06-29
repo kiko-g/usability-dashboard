@@ -10,6 +10,7 @@ import type {
   IExecutionViewGroup,
   ButtonType,
   IWizardStepsStatus,
+  ScoringApproach,
 } from '@/@types';
 
 export enum WizardAction {
@@ -126,7 +127,7 @@ export const parseEvents = (body: string | any[], filterBy?: string): ITrackerEv
   return transformedGroupedEvents;
 };
 
-export const evaluateWizards = (wizards: ITrackerEventGroup[]): IWizard[] => {
+export const evaluateWizards = (wizards: ITrackerEventGroup[], formula: ScoringApproach = 'A'): IWizard[] => {
   const result: IWizard[] = [];
 
   for (const wizard of wizards) {
@@ -187,29 +188,30 @@ export const evaluateWizards = (wizards: ITrackerEventGroup[]): IWizard[] => {
       }
     });
 
-    // scoring constants
-    const timeThreshold = 10; // 10 seconds
-    const failedStepPenalty = 15; // 15 points
-    const errorPenalty = 10; // 10 points
-    const backStepPenalty = 5; // 5 points
-    const negativeActionPenalty = 3; // 3 points
-    const cancelStaticPenalty = 20; // 20 points
-    const secondsToPenalty = 6.0; // 6.0 seconds per point
-
-    // auxiliar calculations
+    // unbiased values
     const timespan = findComponentTimespan(wizard.events);
-    const negativeActions = errorCount + failedStepCount + backStepCount;
-    const discarded = negativeActions === 0 && timespan < timeThreshold;
 
-    // calculate score
+    // scoring constants for default formula
+    let timeThreshold = 10; // 10 seconds
+    let failedStepPenalty = 15; // 15 points
+    let errorPenalty = 10; // 10 points
+    let backStepPenalty = 5; // 5 points
+    let negativeActionPenalty = 3; // 3 points
+    let cancelStaticPenalty = 20; // 20 points
+    let secondsToPenalty = 6.0; // 6.0 seconds per point
+    let negativeActions = errorCount + failedStepCount + backStepCount;
+    let minimumScoreIfCompleted = 40;
+    let discarded = negativeActions === 0 && timespan < timeThreshold;
     let score: number | null = 100;
-    score = score - failedStepCount * failedStepPenalty - errorCount * errorPenalty - backStepCount * backStepPenalty;
-
-    // generate scoring formula string
     let formulaStr = `${score}`;
-    formulaStr += ` - ${failedStepCount}*${failedStepPenalty}`;
-    formulaStr += ` - ${errorCount}*${errorPenalty}`;
-    formulaStr += ` - ${backStepCount}*${backStepPenalty}`;
+
+    if (formula === 'B') {
+      negativeActionPenalty = 2; // 3 points
+      cancelStaticPenalty = 10; // 10 points
+      secondsToPenalty = 12.0; // 12.0 seconds per point
+    }
+
+    score = score - failedStepCount * failedStepPenalty - errorCount * errorPenalty - backStepCount * backStepPenalty;
 
     // penalty for not completing
     if (!completed) {
@@ -228,7 +230,7 @@ export const evaluateWizards = (wizards: ITrackerEventGroup[]): IWizard[] => {
       formulaStr += ` = ${score.toFixed(0)}`; // save score before corrections
 
       // apply corrections
-      if (score < 40 && completed) score = 40; // prevent too low score if completed
+      if (score < minimumScoreIfCompleted && completed) score = minimumScoreIfCompleted;
       else if (score < 0) score = 0; // prevent negative score
     }
 
@@ -391,8 +393,7 @@ export const evaluateExecutionViews = (executionViews: ITrackerEventGroup[]): IE
         changeTabCount++;
       } else if (event.action.includes(ExecutionViewAction.Cancel)) {
         cancelled = true;
-      }
-      else if (event.action.includes(ExecutionViewAction.Close)) {
+      } else if (event.action.includes(ExecutionViewAction.Close)) {
         closed = true;
       } else if (event.action.includes(ExecutionViewAction.Complete)) {
         completed = true;
@@ -438,7 +439,7 @@ export const evaluateExecutionViews = (executionViews: ITrackerEventGroup[]): IE
 
     if (score !== null) {
       // save score string before corrections
-      formulaStr += ` = ${score.toFixed(0)}`; 
+      formulaStr += ` = ${score.toFixed(0)}`;
 
       // apply corrections
       if (score < 40 && completed) score = 40;
@@ -454,7 +455,7 @@ export const evaluateExecutionViews = (executionViews: ITrackerEventGroup[]): IE
       discarded,
       errorCount,
       changeTabCount,
-      failedTabCount
+      failedTabCount,
     };
     result.push(evaluatedExecutionView);
   }
@@ -574,13 +575,16 @@ export const parseButtons = (body: string): ButtonType[] => {
 };
 
 // to be used in a frontend
-export const evaluateAndGroupWizards = (wizards: ITrackerEventGroup[], scoringType?: 'A' | 'B' | 'C') => {
-  const evaluatedWizards = evaluateWizards(wizards);
+export const evaluateAndGroupWizards = (wizards: ITrackerEventGroup[], formula: ScoringApproach = 'A') => {
+  const evaluatedWizards = evaluateWizards(wizards, formula);
   const groupedWizards = groupWizardsByType(evaluatedWizards);
   return groupedWizards;
 };
 
-export const evaluateAndGroupExecutionViews = (executionViews: ITrackerEventGroup[], scoringType?: 'A' | 'B' | 'C') => {
+export const evaluateAndGroupExecutionViews = (
+  executionViews: ITrackerEventGroup[],
+  formula: ScoringApproach = 'A'
+) => {
   const evaluatedExecutionViews = evaluateExecutionViews(executionViews);
   const groupedExecutionViews = groupExecutionViews(evaluatedExecutionViews);
   return groupedExecutionViews;

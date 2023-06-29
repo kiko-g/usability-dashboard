@@ -22,7 +22,7 @@ export default function About() {
         <div className="flex max-w-full flex-col justify-center gap-2">
           <h2 className="text-4xl font-bold tracking-tight sm:text-5xl">About</h2>
 
-          <DataAccessTable />
+          <DataAccessTable wizardFormula={wizardScoringApproach} />
 
           {/* Wizards */}
           <div className="mb-3 flex flex-col space-y-1">
@@ -83,7 +83,7 @@ type DataAccessEntry = {
   mockScored: any;
 };
 
-function DataAccessTable() {
+function DataAccessTable({ wizardFormula }: { wizardFormula: ScoringApproach }) {
   const events = {
     name: 'Events',
     api: '/api/matomo/events',
@@ -105,7 +105,7 @@ function DataAccessTable() {
     api: '/api/matomo/events/wizard',
     apiScored: '/api/matomo/events/scored/wizard',
     mock: mockWizardData,
-    mockScored: evaluateAndGroupWizards(mockWizardData),
+    mockScored: evaluateAndGroupWizards(mockWizardData, wizardFormula),
   };
 
   const buttons = {

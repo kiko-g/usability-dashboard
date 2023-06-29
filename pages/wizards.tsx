@@ -45,32 +45,37 @@ export default function Wizards() {
 
   // fetch data
   React.useEffect(() => {
-    if (!willFetch) return;
-
-    setError(false);
-    setLoading(true);
-
-    fetch('/api/matomo/events/wizard')
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(res.statusText);
-        }
-        return res.json();
-      })
-      .then((data: ITrackerEventGroup[]) => {
-        setLoading(false);
-        setWillFetch(false);
-        setRawData(data);
-        const evaluatedWizards = evaluateAndGroupWizards(data);
+    if (!willFetch) {
+      if (rawData.length > 0) {
+        const evaluatedWizards = evaluateAndGroupWizards(mockData, scoringApproach);
         setProcessedData(evaluatedWizards);
-      })
-      .catch((error) => {
-        setError(true);
-        setLoading(false);
-        setWillFetch(false);
-        console.error(error);
-      });
-  }, [willFetch]);
+      }
+    } else {
+      setError(false);
+      setLoading(true);
+
+      fetch('/api/matomo/events/wizard')
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error(res.statusText);
+          }
+          return res.json();
+        })
+        .then((data: ITrackerEventGroup[]) => {
+          setLoading(false);
+          setWillFetch(false);
+          setRawData(data);
+          const evaluatedWizards = evaluateAndGroupWizards(data, scoringApproach);
+          setProcessedData(evaluatedWizards);
+        })
+        .catch((error) => {
+          setError(true);
+          setLoading(false);
+          setWillFetch(false);
+          console.error(error);
+        });
+    }
+  }, [willFetch, scoringApproach, rawData]);
 
   return (
     <Layout location="Wizards">
@@ -92,7 +97,7 @@ export default function Wizards() {
                 onClick={() => {
                   setError(false);
                   setRawData(mockData);
-                  const processedDataResult = evaluateAndGroupWizards(mockData);
+                  const processedDataResult = evaluateAndGroupWizards(mockData, scoringApproach);
                   setProcessedData(processedDataResult);
                 }}
               >
