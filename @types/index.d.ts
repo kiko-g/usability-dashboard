@@ -29,7 +29,7 @@ export interface ITrackerEventGroup {
   events: ITrackerEvent[];
 }
 
-export type ScoringApproach = 'A' | 'B';
+export type ScoringApproach = 'A' | 'B' | 'C' | 'D';
 
 // Wizards
 export interface IWizardStepsStatus {

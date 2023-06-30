@@ -40,7 +40,7 @@ export default function Wizards() {
   const [rawData, setRawData] = React.useState<ITrackerEventGroup[]>([]);
   const [processedData, setProcessedData] = React.useState<IWizardGroup[]>([]);
 
-  const scoringApproaches = ['A', 'B'] as ScoringApproach[];
+  const scoringApproaches = ['A', 'B', 'C'] as ScoringApproach[];
   const [scoringApproach, setScoringApproach] = React.useState<ScoringApproach>('A');
 
   // fetch data
