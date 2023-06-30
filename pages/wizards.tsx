@@ -174,7 +174,7 @@ export default function Wizards() {
   );
 }
 
-function KPIs({ data, scoringApproach }: { data: IWizardGroup[]; scoringApproach?: ScoringApproach }) {
+function KPIs({ data, scoringApproach }: { data: IWizardGroup[]; scoringApproach: ScoringApproach }) {
   const stats = React.useMemo<WizardStats>(() => {
     if (data.length === 0)
       return {
@@ -318,7 +318,7 @@ function KPIs({ data, scoringApproach }: { data: IWizardGroup[]; scoringApproach
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-1 flex-col gap-4 self-stretch xl:flex-row">
-        <WizardAverageUXScoreCard stats={stats} />
+        <WizardAverageUXScoreCard stats={stats} scoringApproach={scoringApproach} />
         <WizardCompletionRateCard stats={stats} />
 
         <div className="flex flex-1 flex-col items-start justify-start gap-4 self-stretch">
@@ -345,7 +345,7 @@ function WizardCompletionRateCard({ stats }: { stats: WizardStats }) {
     <div className="relative max-w-full rounded bg-white/80 p-4 dark:bg-white/10 xl:max-w-xs">
       {/* Adjusted max-w value */}
       <h3 className="font-medium text-gray-700 dark:text-gray-100">Wizard Completion Rate</h3>
-      <p className="mt-1 min-h-[5rem] text-sm tracking-tight">
+      <p className="mt-1 min-h-[5rem] text-sm">
         Ratio of wizards that were submitted successfully vs. all the wizards started in the platform.
       </p>
       {/* Circular Progress */}
@@ -382,7 +382,13 @@ function WizardCompletionRateCard({ stats }: { stats: WizardStats }) {
   );
 }
 
-function WizardAverageUXScoreCard({ stats }: { stats: WizardStats }) {
+function WizardAverageUXScoreCard({
+  stats,
+  scoringApproach,
+}: {
+  stats: WizardStats;
+  scoringApproach: ScoringApproach;
+}) {
   const diameter = 120; // Adjusted diameter value
   const strokeWidth = 7; // Adjusted strokeWidth value
   const radius = (diameter - strokeWidth) / 2;
@@ -396,10 +402,10 @@ function WizardAverageUXScoreCard({ stats }: { stats: WizardStats }) {
         <ScoreCalculcationApproachDialog content={<InformationCircleIcon className="h-5 w-5" />} />
       </div>
 
-      <p className="mt-1 min-h-[5rem] text-sm tracking-tight">
+      <p className="mt-1 min-h-[5rem] text-sm">
         Average of the usability score given to all the{' '}
         <strong className="underline decoration-blue-500">{stats.total - stats.discarded} non discarded</strong>{' '}
-        wizards.
+        wizards, according to <strong className="underline decoration-blue-500">formula {scoringApproach}</strong>.
       </p>
 
       {/* Circular Progress */}

@@ -131,7 +131,7 @@ function DataAccessTable({ wizardFormula }: { wizardFormula: ScoringApproach }) 
       <div className="flex items-center justify-between gap-2">
         <h4 className="text-xl font-bold tracking-tight sm:text-2xl">Inspect Data</h4>
       </div>
-      <ul className="mb-4 flex flex-col rounded border border-secondary/50 bg-white/80 p-4">
+      <ul className="mb-4 flex flex-col rounded border border-secondary/50 bg-white/80 p-4 dark:bg-secondary/20">
         {dataAccessEntries.map((item) => (
           <li key={`data-access-entry-${item.name}`} className="flex items-center space-x-2">
             <span className="w-40 whitespace-nowrap tracking-tight">{item.name}</span>
