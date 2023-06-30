@@ -41,7 +41,7 @@ export default function Executions() {
   const [rawData, setRawData] = React.useState<ITrackerEventGroup[]>([]);
   const [processedData, setProcessedData] = React.useState<IExecutionViewGroup[]>([]);
 
-  const scoringApproaches = ['A', 'B'] as ScoringApproach[];
+  const scoringApproaches = ['A'] as ScoringApproach[];
   const [scoringApproach, setScoringApproach] = React.useState<ScoringApproach>('A');
 
   React.useEffect(() => {

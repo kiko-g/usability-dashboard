@@ -1692,6 +1692,530 @@ export const mockWizardData: ITrackerEventGroup[] = [
       },
     ],
   },
+  {
+    component: 'wizard-1687950467766148',
+    name: 'Dispatch and Track-In Material',
+    events: [
+      {
+        time: '2023-06-28T11:07:47.806Z',
+        path: '/apps/MES/Entity/Material/2306230000120000144/View/Details',
+        action: 'New Steps: {"current":0,"total":16,"visible":1}',
+      },
+      {
+        time: '2023-06-28T11:07:47.808Z',
+        path: '/apps/MES/Entity/Material/2306230000120000144/View/Details',
+        action: 'Start',
+      },
+      {
+        time: '2023-06-28T11:07:48.525Z',
+        path: '/apps/MES/Entity/Material/2306230000120000144/View/Details',
+        action: 'Activate Step: cmf.mes.material.trackin.step.dispatch',
+      },
+    ],
+  },
+  {
+    component: 'wizard-1687956300732231',
+    name: 'Clone Material',
+    events: [
+      {
+        time: '2023-06-28T12:45:00.751Z',
+        path: '/apps/MES/Entity/Material/2306230000120000144/View/Details',
+        action: 'New Steps: {"current":0,"total":0,"visible":0}',
+      },
+      {
+        time: '2023-06-28T12:45:00.752Z',
+        path: '/apps/MES/Entity/Material/2306230000120000144/View/Details',
+        action: 'Start',
+      },
+      {
+        time: '2023-06-28T12:45:00.776Z',
+        path: '/apps/MES/Entity/Material/2306230000120000144/View/Details',
+        action: 'New Steps: {"current":0,"total":2,"visible":1}',
+      },
+      {
+        time: '2023-06-28T12:45:00.884Z',
+        path: '/apps/MES/Entity/Material/2306230000120000144/View/Details',
+        action: 'Activate Step: cmf.core.businessControls.wizardCloneEntity.step.details',
+      },
+      {
+        time: '2023-06-28T12:45:33.019Z',
+        path: '/apps/MES/Entity/Material/2306230000120000144/View/Details',
+        action: 'Success Step: cmf.core.businessControls.wizardCloneEntity.step.details',
+      },
+      {
+        time: '2023-06-28T12:45:53.991Z',
+        path: '/apps/MES/Entity/Material/2306230000120000144/View/Details',
+        action: 'Complete: {"current":1,"total":3,"visible":2}',
+      },
+      {
+        time: '2023-06-28T12:45:54.013Z',
+        path: '/apps/MES/Entity/Material/2306230000120000144/View/Details',
+        action: 'Activate Step: cmf-core-controls-wizardStep-232',
+      },
+      {
+        time: '2023-06-28T12:45:57.251Z',
+        path: '/apps/MES/Entity/Material/2306230000120000144/View/Details',
+        action: 'Close: {"current":0,"total":3,"visible":1}',
+      },
+    ],
+  },
+  {
+    component: 'wizard-1687957049808231',
+    name: 'Dispatch and Track-In Material',
+    events: [
+      {
+        time: '2023-06-28T12:57:29.835Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'New Steps: {"current":0,"total":16,"visible":1}',
+      },
+      {
+        time: '2023-06-28T12:57:29.837Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Start',
+      },
+      {
+        time: '2023-06-28T12:57:30.661Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Activate Step: cmf.mes.material.trackin.step.dispatch',
+      },
+      {
+        time: '2023-06-28T12:57:34.979Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Success Step: cmf.mes.material.trackin.step.dispatch',
+      },
+      {
+        time: '2023-06-28T12:57:38.122Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Close: {"current":0,"total":16,"visible":0}',
+      },
+      {
+        time: '2023-06-28T12:57:38.125Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Complete: {"current":0,"total":16,"visible":0}',
+      },
+    ],
+  },
+  {
+    component: 'wizard-1687957066179276',
+    name: 'Track-Out and Move-Next Material',
+    events: [
+      {
+        time: '2023-06-28T12:57:46.182Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'New Steps: {"current":0,"total":13,"visible":2}',
+      },
+      {
+        time: '2023-06-28T12:57:46.183Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Start',
+      },
+      {
+        time: '2023-06-28T12:57:47.508Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Activate Step: cmf.mes.material.trackout.step.resourceState',
+      },
+      {
+        time: '2023-06-28T12:57:49.993Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Next Step: cmf.mes.material.trackout.step.moveNext',
+      },
+      {
+        time: '2023-06-28T12:57:49.995Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Success Step: cmf.mes.material.trackout.step.resourceState',
+      },
+      {
+        time: '2023-06-28T12:57:50.019Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Activate Step: cmf.mes.material.trackout.step.moveNext',
+      },
+      {
+        time: '2023-06-28T12:57:58.308Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Success Step: cmf.mes.material.trackout.step.moveNext',
+      },
+      {
+        time: '2023-06-28T12:58:00.717Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Complete: {"current":2,"total":14,"visible":3}',
+      },
+      {
+        time: '2023-06-28T12:58:00.733Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Activate Step: cmf-core-controls-wizardStep-278',
+      },
+      {
+        time: '2023-06-28T12:58:02.629Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Close: {"current":0,"total":14,"visible":1}',
+      },
+    ],
+  },
+  {
+    component: 'wizard-1687957084210329',
+    name: 'Dispatch and Track-In Material',
+    events: [
+      {
+        time: '2023-06-28T12:58:04.213Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'New Steps: {"current":0,"total":16,"visible":1}',
+      },
+      {
+        time: '2023-06-28T12:58:04.214Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Start',
+      },
+      {
+        time: '2023-06-28T12:58:04.966Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Activate Step: cmf.mes.material.trackin.step.dispatch',
+      },
+      {
+        time: '2023-06-28T12:59:04.650Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Next Step: cmf.mes.material.trackin.step.bom.lineFlow',
+      },
+      {
+        time: '2023-06-28T12:59:04.653Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Success Step: cmf.mes.material.trackin.step.dispatch',
+      },
+      {
+        time: '2023-06-28T12:59:04.711Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Activate Step: cmf.mes.material.trackin.step.bom.lineFlow',
+      },
+      {
+        time: '2023-06-28T12:59:07.240Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Next Step: cmf.mes.material.trackin.step.recipe.lineFlow',
+      },
+      {
+        time: '2023-06-28T12:59:07.243Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Success Step: cmf.mes.material.trackin.step.bom.lineFlow',
+      },
+      {
+        time: '2023-06-28T12:59:07.269Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Activate Step: cmf.mes.material.trackin.step.recipe.lineFlow',
+      },
+      {
+        time: '2023-06-28T12:59:14.138Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Success Step: cmf.mes.material.trackin.step.recipe.lineFlow',
+      },
+      {
+        time: '2023-06-28T12:59:17.852Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Error',
+      },
+      {
+        time: '2023-06-28T12:59:17.864Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Activate Step: cmf-core-controls-wizardStep-330',
+      },
+    ],
+  },
+  {
+    component: 'wizard-1687961532100580',
+    name: 'Perform Setup For Material at Resource',
+    events: [
+      {
+        time: '2023-06-28T14:12:12.131Z',
+        path: '/apps/MES/Entity/Resource/2306230000120001099/ResourceView',
+        action: 'New Steps: {"current":0,"total":11,"visible":1}',
+      },
+      {
+        time: '2023-06-28T14:12:12.132Z',
+        path: '/apps/MES/Entity/Resource/2306230000120001099/ResourceView',
+        action: 'Start',
+      },
+      {
+        time: '2023-06-28T14:12:22.422Z',
+        path: '/apps/MES/Entity/Resource/2306230000120001099/ResourceView',
+        action: 'Activate Step: cmf.mes.resource.performsetup.step.resource',
+      },
+      {
+        time: '2023-06-28T14:12:25.905Z',
+        path: '/apps/MES/Entity/Resource/2306230000120001099/ResourceView',
+        action: 'Next Step: cmf.mes.resource.performsetup.step.durables.lineFlow',
+      },
+      {
+        time: '2023-06-28T14:12:25.907Z',
+        path: '/apps/MES/Entity/Resource/2306230000120001099/ResourceView',
+        action: 'Success Step: cmf.mes.resource.performsetup.step.resource',
+      },
+      {
+        time: '2023-06-28T14:12:25.945Z',
+        path: '/apps/MES/Entity/Resource/2306230000120001099/ResourceView',
+        action: 'Activate Step: cmf.mes.resource.performsetup.step.durables.lineFlow',
+      },
+      {
+        time: '2023-06-28T14:12:30.914Z',
+        path: '/apps/MES/Entity/Resource/2306230000120001099/ResourceView',
+        action: 'Next Step: cmf.mes.resource.performsetup.step.bom.lineFlow',
+      },
+      {
+        time: '2023-06-28T14:12:30.917Z',
+        path: '/apps/MES/Entity/Resource/2306230000120001099/ResourceView',
+        action: 'Success Step: cmf.mes.resource.performsetup.step.durables.lineFlow',
+      },
+      {
+        time: '2023-06-28T14:12:30.950Z',
+        path: '/apps/MES/Entity/Resource/2306230000120001099/ResourceView',
+        action: 'Activate Step: cmf.mes.resource.performsetup.step.bom.lineFlow',
+      },
+      {
+        time: '2023-06-28T14:12:34.385Z',
+        path: '/apps/MES/Entity/Resource/2306230000120001099/ResourceView',
+        action: 'Next Step: cmf.mes.material.performsetup.step.recipe.lineFlow',
+      },
+      {
+        time: '2023-06-28T14:12:34.388Z',
+        path: '/apps/MES/Entity/Resource/2306230000120001099/ResourceView',
+        action: 'Success Step: cmf.mes.resource.performsetup.step.bom.lineFlow',
+      },
+      {
+        time: '2023-06-28T14:12:34.441Z',
+        path: '/apps/MES/Entity/Resource/2306230000120001099/ResourceView',
+        action: 'Activate Step: cmf.mes.material.performsetup.step.recipe.lineFlow',
+      },
+      {
+        time: '2023-06-28T14:12:35.710Z',
+        path: '/apps/MES/Entity/Resource/2306230000120001099/ResourceView',
+        action: 'Success Step: cmf.mes.material.performsetup.step.recipe.lineFlow',
+      },
+      {
+        time: '2023-06-28T14:12:37.939Z',
+        path: '/apps/MES/Entity/Resource/2306230000120001099/ResourceView',
+        action: 'Close: {"current":0,"total":11,"visible":0}',
+      },
+      {
+        time: '2023-06-28T14:12:37.942Z',
+        path: '/apps/MES/Entity/Resource/2306230000120001099/ResourceView',
+        action: 'Complete: {"current":0,"total":11,"visible":0}',
+      },
+    ],
+  },
+  {
+    component: 'wizard-1687962017135236',
+    name: 'Dispatch and Track-In Material',
+    events: [
+      {
+        time: '2023-06-28T14:20:17.160Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'New Steps: {"current":0,"total":16,"visible":1}',
+      },
+      {
+        time: '2023-06-28T14:20:17.161Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Start',
+      },
+      {
+        time: '2023-06-28T14:20:20.166Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Activate Step: cmf.mes.material.trackin.step.dispatch',
+      },
+      {
+        time: '2023-06-28T14:20:29.186Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Next Step: cmf.mes.material.trackin.step.bom.lineFlow',
+      },
+      {
+        time: '2023-06-28T14:20:29.189Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Success Step: cmf.mes.material.trackin.step.dispatch',
+      },
+      {
+        time: '2023-06-28T14:20:29.262Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Activate Step: cmf.mes.material.trackin.step.bom.lineFlow',
+      },
+      {
+        time: '2023-06-28T14:20:31.741Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Next Step: cmf.mes.material.trackin.step.recipe.lineFlow',
+      },
+      {
+        time: '2023-06-28T14:20:31.744Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Success Step: cmf.mes.material.trackin.step.bom.lineFlow',
+      },
+      {
+        time: '2023-06-28T14:20:31.770Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Activate Step: cmf.mes.material.trackin.step.recipe.lineFlow',
+      },
+      {
+        time: '2023-06-28T14:20:42.970Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Success Step: cmf.mes.material.trackin.step.recipe.lineFlow',
+      },
+    ],
+  },
+  {
+    component: 'wizard-1687962540905153',
+    name: 'Dispatch and Track-In Material',
+    events: [
+      {
+        time: '2023-06-28T14:29:00.936Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'New Steps: {"current":0,"total":16,"visible":1}',
+      },
+      {
+        time: '2023-06-28T14:29:00.937Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Start',
+      },
+      {
+        time: '2023-06-28T14:29:01.528Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Activate Step: cmf.mes.material.trackin.step.dispatch',
+      },
+      {
+        time: '2023-06-28T14:29:06.150Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Next Step: cmf.mes.material.trackin.step.bom.lineFlow',
+      },
+      {
+        time: '2023-06-28T14:29:06.153Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Success Step: cmf.mes.material.trackin.step.dispatch',
+      },
+      {
+        time: '2023-06-28T14:29:06.223Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Activate Step: cmf.mes.material.trackin.step.bom.lineFlow',
+      },
+      {
+        time: '2023-06-28T14:29:07.911Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Next Step: cmf.mes.material.trackin.step.recipe.lineFlow',
+      },
+      {
+        time: '2023-06-28T14:29:07.914Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Success Step: cmf.mes.material.trackin.step.bom.lineFlow',
+      },
+      {
+        time: '2023-06-28T14:29:07.938Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Activate Step: cmf.mes.material.trackin.step.recipe.lineFlow',
+      },
+      {
+        time: '2023-06-28T14:29:14.316Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Fail Step: cmf.mes.material.trackin.step.recipe.lineFlow',
+      },
+      {
+        time: '2023-06-28T14:29:14.333Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Activate Step: cmf.mes.material.trackin.step.recipe.lineFlow',
+      },
+      {
+        time: '2023-06-28T14:29:17.747Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Success Step: cmf.mes.material.trackin.step.recipe.lineFlow',
+      },
+      {
+        time: '2023-06-28T14:29:21.612Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Error',
+      },
+      {
+        time: '2023-06-28T14:29:21.626Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Activate Step: cmf-core-controls-wizardStep-154',
+      },
+      {
+        time: '2023-06-28T14:29:40.957Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Back Step: cmf.mes.material.trackin.step.recipe.lineFlow',
+      },
+      {
+        time: '2023-06-28T14:29:40.973Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Activate Step: cmf.mes.material.trackin.step.recipe.lineFlow',
+      },
+      {
+        time: '2023-06-28T14:29:41.613Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Cancel: {"current":2,"total":17,"visible":4}',
+      },
+    ],
+  },
+  {
+    component: 'wizard-1687962638620681',
+    name: 'Dispatch and Track-In Material',
+    events: [
+      {
+        time: '2023-06-28T14:30:38.629Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'New Steps: {"current":0,"total":16,"visible":1}',
+      },
+      {
+        time: '2023-06-28T14:30:38.630Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Start',
+      },
+      {
+        time: '2023-06-28T14:30:39.315Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Activate Step: cmf.mes.material.trackin.step.dispatch',
+      },
+      {
+        time: '2023-06-28T14:30:45.341Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Next Step: cmf.mes.material.trackin.step.bom.lineFlow',
+      },
+      {
+        time: '2023-06-28T14:30:45.344Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Success Step: cmf.mes.material.trackin.step.dispatch',
+      },
+      {
+        time: '2023-06-28T14:30:45.375Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Activate Step: cmf.mes.material.trackin.step.bom.lineFlow',
+      },
+      {
+        time: '2023-06-28T14:30:50.315Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Next Step: cmf.mes.material.trackin.step.recipe.lineFlow',
+      },
+      {
+        time: '2023-06-28T14:30:50.318Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Success Step: cmf.mes.material.trackin.step.bom.lineFlow',
+      },
+      {
+        time: '2023-06-28T14:30:50.347Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Activate Step: cmf.mes.material.trackin.step.recipe.lineFlow',
+      },
+      {
+        time: '2023-06-28T14:30:53.076Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Success Step: cmf.mes.material.trackin.step.recipe.lineFlow',
+      },
+      {
+        time: '2023-06-28T14:30:56.016Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Error',
+      },
+      {
+        time: '2023-06-28T14:30:56.033Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Activate Step: cmf-core-controls-wizardStep-682',
+      },
+      {
+        time: '2023-06-28T14:31:00.615Z',
+        path: '/apps/MES/Entity/Material/2306280000140000001/View/Details',
+        action: 'Cancel: {"current":3,"total":17,"visible":4}',
+      },
+    ],
+  },
 ];
 
 export const mockExecutionViewData: ITrackerEventGroup[] = [
