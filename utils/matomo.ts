@@ -217,6 +217,7 @@ export const evaluateWizards = (wizards: ITrackerEventGroup[], formula: ScoringA
       failedStepPenalty = 10;
       negativeActionPenalty = 0;
       cancelStaticPenalty = 60;
+      minimumScoreIfCompleted = 50;
       secondsToPenalty = 600.0; // 600.0 seconds per point
     }
 

@@ -399,7 +399,10 @@ function WizardAverageUXScoreCard({
     <div className="relative max-w-full rounded bg-white/80 p-4 dark:bg-white/10 xl:max-w-xs">
       <div className="flex items-center gap-1.5">
         <h3 className="font-medium text-gray-700 dark:text-gray-100">Wizard Average UX Score</h3>
-        <ScoreCalculcationApproachDialog content={<InformationCircleIcon className="h-5 w-5" />} />
+        <ScoreCalculcationApproachDialog
+          content={<InformationCircleIcon className="h-5 w-5" />}
+          scoringApproach={scoringApproach}
+        />
       </div>
 
       <p className="mt-1 min-h-[5rem] text-sm">
@@ -669,7 +672,7 @@ function ErrorStatsCard({ stats }: { stats: WizardErrorStatsType }) {
   );
 }
 
-function WizardSortedList({ data, scoringApproach }: { data: IWizardGroup[]; scoringApproach?: ScoringApproach }) {
+function WizardSortedList({ data, scoringApproach }: { data: IWizardGroup[]; scoringApproach: ScoringApproach }) {
   const options = [
     'Alphabetic (A to Z)',
     'Alphabetic (Z to A)',
@@ -837,7 +840,7 @@ function WizardGroupFocus({
   scoringApproach,
 }: {
   wizardGroup: IWizardGroup;
-  scoringApproach?: ScoringApproach;
+  scoringApproach: ScoringApproach;
 }) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [inspect, setInspect] = React.useState(true);
@@ -1324,7 +1327,7 @@ function ScoreCalculcationApproachDialog({
   scoringApproach,
 }: {
   content?: any;
-  scoringApproach?: ScoringApproach;
+  scoringApproach: ScoringApproach;
 }) {
   const [isOpen, setIsOpen] = React.useState(false);
 
