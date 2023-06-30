@@ -10,10 +10,10 @@ import Link from 'next/link';
 import { evaluateAndGroupExecutionViews, evaluateAndGroupWizards } from '@/utils/matomo';
 
 export default function About() {
-  const wizardScoringApproaches = ['A', 'B'] as ScoringApproach[];
+  const wizardScoringApproaches = ['A', 'B', 'C'] as ScoringApproach[];
   const [wizardScoringApproach, setWizardScoringApproach] = React.useState<ScoringApproach>('A');
 
-  const executionViewScoringApproaches = ['A', 'B'] as ScoringApproach[];
+  const executionViewScoringApproaches = ['A'] as ScoringApproach[];
   const [executionViewScoringApproach, setExecutionViewScoringApproach] = React.useState<ScoringApproach>('A');
 
   return (
