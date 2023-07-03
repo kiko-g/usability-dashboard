@@ -222,6 +222,9 @@ export const evaluateWizards = (wizards: ITrackerEventGroup[], formula: ScoringA
     }
 
     score = score - failedStepCount * failedStepPenalty - errorCount * errorPenalty - backStepCount * backStepPenalty;
+    formulaStr += ` - ${failedStepPenalty}*${failedStepCount}`;
+    formulaStr += ` - ${errorPenalty}*${errorCount}`;
+    formulaStr += ` - ${backStepPenalty}*${backStepCount}`;
 
     // penalty for not completing
     if (!completed) {
