@@ -846,8 +846,13 @@ function WizardGroupFocus({
   const [inspect, setInspect] = React.useState(true);
   const [textView, setTextView] = React.useState(false);
   const [inspectIndex, setInspectIndex] = React.useState(0);
-  const selectedWizard = React.useMemo(() => wizardGroup.wizards[inspectIndex], [wizardGroup, inspectIndex]);
+  const selectedWizard = React.useMemo(
+    () => (wizardGroup.wizards[inspectIndex] ? wizardGroup.wizards[inspectIndex] : null),
+    [wizardGroup, inspectIndex]
+  );
   const stepCompletionRatio = React.useMemo(() => {
+    if (!selectedWizard) return 0;
+
     const completed = selectedWizard.completed;
     const stepsDone = selectedWizard.stepStatus.current + (completed ? 1 : 0);
     const visibleSteps = selectedWizard.stepStatus.visible;
@@ -1149,7 +1154,7 @@ function WizardGroupFocus({
                     )}
 
                     {/* Inspect wizards view */}
-                    {inspect ? (
+                    {inspect && selectedWizard !== null ? (
                       <div className="flex w-full gap-2 xl:gap-4">
                         {/* Wizard Inspect Card */}
                         <div className="flex-1 rounded-xl bg-navy text-white dark:bg-white/10">

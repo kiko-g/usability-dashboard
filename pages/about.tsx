@@ -94,16 +94,16 @@ function DataAccessTable({ wizardFormula }: { wizardFormula: ScoringApproach }) 
 
   const wizards = {
     name: 'Wizards',
-    api: '/api/matomo/events/execution-view',
-    apiScored: '/api/matomo/events/scored/execution-view',
+    api: '/api/matomo/events/wizard',
+    apiScored: '/api/matomo/events/scored/wizard',
     mock: mockWizardData,
     mockScored: evaluateAndGroupExecutionViews(mockExecutionViewData),
   };
 
   const executionsViews = {
     name: 'Execution Views',
-    api: '/api/matomo/events/wizard',
-    apiScored: '/api/matomo/events/scored/wizard',
+    api: '/api/matomo/events/execution-view',
+    apiScored: '/api/matomo/events/scored/execution-view',
     mock: mockWizardData,
     mockScored: evaluateAndGroupWizards(mockWizardData, wizardFormula),
   };
