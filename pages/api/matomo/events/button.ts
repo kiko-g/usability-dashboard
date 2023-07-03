@@ -23,6 +23,9 @@ export default async function getWizardEvents(req: NextApiRequest, res: NextApiR
     const buttons = parseButtons(response.data);
     return res.status(200).json(buttons);
   } catch (err) {
-    return res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({
+      error: 'Internal server error',
+      details: err,
+    });
   }
 }

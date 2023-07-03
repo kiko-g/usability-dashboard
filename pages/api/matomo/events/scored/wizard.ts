@@ -25,6 +25,9 @@ export default async function getWizardEvents(req: NextApiRequest, res: NextApiR
     const groupedWizards = groupWizardsByType(evaluatedWizards);
     return res.status(200).json(groupedWizards);
   } catch (err) {
-    return res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({
+      error: 'Internal server error',
+      details: err,
+    });
   }
 }

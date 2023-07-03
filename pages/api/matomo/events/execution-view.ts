@@ -23,6 +23,9 @@ export default async function getWizardEvents(req: NextApiRequest, res: NextApiR
     const executionViews = parseEvents(response.data, 'execution-view');
     return res.status(200).json(executionViews);
   } catch (err) {
-    return res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({
+      error: 'Internal server error',
+      details: err,
+    });
   }
 }

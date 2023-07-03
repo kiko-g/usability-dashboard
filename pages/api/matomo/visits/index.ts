@@ -81,10 +81,10 @@ export default async function getAllEvents(req: NextApiRequest, res: NextApiResp
     const overview = (await axios.get(overviewApiUrl)).data;
 
     return res.status(200).json({ os, screens, devices, browsers, pagesExpanded, pagesFlat, overview });
-  } catch (error) {
+  } catch (err) {
     return res.status(500).json({
       error: 'Internal server error',
-      details: error,
+      details: err,
     });
   }
 }
