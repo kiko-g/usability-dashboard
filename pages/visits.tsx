@@ -246,7 +246,9 @@ function PagesFrequencies({ twClasses, data }: { twClasses?: string; data: Visit
                   key={`frequency-${item.name}-${itemIdx}`}
                   className="flex items-center justify-between gap-3 rounded bg-slate-100 px-4 py-2.5 text-sm dark:bg-white/10"
                 >
-                  <span className="wrap truncate font-medium tracking-tighter">{item.name}</span>
+                  <span className="wrap truncate font-medium tracking-tighter">
+                    {item.name.replace('apps/MES', '')}
+                  </span>
                   <span className="whitespace-nowrap font-mono tracking-tighter">
                     ({percentage}%) <span className="font-bold">{item.value}</span>
                   </span>
