@@ -210,8 +210,8 @@ export const evaluateWizards = (wizards: ITrackerEventGroup[], formula: ScoringA
       cancelStaticPenalty = 0;
       secondsToPenalty = 60.0; // 60.0 seconds per point
     } else if (formula === 'C') {
+      timeThreshold = 5; // 5 seconds
       discarded = timespan < timeThreshold;
-      timeThreshold = 20; // 5 seconds
       errorPenalty = 10;
       backStepPenalty = 10;
       failedStepPenalty = 10;

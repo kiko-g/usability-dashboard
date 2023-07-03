@@ -1580,7 +1580,7 @@ export const mockWizardData: ITrackerEventGroup[] = [
         path: '/Entity/Rule',
         action: 'Activate Step: cmf-core-controls-wizardStep-607',
       },
-      { time: '2023-06-10T16:17:34.480Z', path: '/Entity/Rule', action: 'Cancel: {"current":0,"total":1,"visible":1}' },
+      { time: '2023-06-10T16:17:39.480Z', path: '/Entity/Rule', action: 'Cancel: {"current":0,"total":1,"visible":1}' },
     ],
   },
   {

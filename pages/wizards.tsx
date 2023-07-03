@@ -1163,6 +1163,8 @@ function WizardGroupFocus({
                                 'flex gap-1 rounded-full border p-1 text-sm text-white xl:rounded xl:p-1.5',
                                 selectedWizard.completed
                                   ? 'border-teal-600 bg-teal-600/80'
+                                  : selectedWizard.discarded
+                                  ? 'border-orange-400 bg-orange-400/80'
                                   : 'border-rose-600 bg-rose-600/80'
                               )}
                             >
@@ -1172,7 +1174,11 @@ function WizardGroupFocus({
                                 <XCircleIcon className="h-5 w-5" />
                               )}
                               <span className="hidden xl:flex">
-                                {selectedWizard.completed ? 'Completed' : 'Cancelled'}
+                                {selectedWizard.completed
+                                  ? 'Completed'
+                                  : selectedWizard.discarded
+                                  ? 'Discarded'
+                                  : 'Cancelled'}
                               </span>
                             </span>
                           </div>

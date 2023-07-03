@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { Layout } from '@/components/layout';
 import { ScoringApproach } from '@/@types';
 import { WizardFormula } from '@/components/WizardFormula';
@@ -6,7 +7,6 @@ import { SelectFormula } from '@/components/SelectFormula';
 import { ExecutionViewFormula } from '@/components/ExecutionViewFormula';
 import { mockVisitsData, mockButtonData, mockWizardData, mockExecutionViewData, mockEventsData } from '@/utils/mock';
 import { BeakerIcon, CodeBracketIcon, ScaleIcon } from '@heroicons/react/24/outline';
-import Link from 'next/link';
 import { evaluateAndGroupExecutionViews, evaluateAndGroupWizards } from '@/utils/matomo';
 
 export default function About() {
