@@ -58,10 +58,14 @@ export default async function getAllEvents(req: NextApiRequest, res: NextApiResp
       value: item.nb_visits,
     }));
 
-    const pagesExpanded = pagesExpandedResponse.data.map((item: any) => ({
-      name: item.label.startsWith('/') ? item.label.slice(1) : item.label,
-      value: item.nb_visits,
-    }));
+    const pagesExpanded = pagesExpandedResponse.data.map((item: any) => {
+      const value = item.nb_visits as number;
+      let label = item.label as string;
+      label.replace('apps/MES/', '');
+      const name = label.startsWith('/') ? label.slice(1) : label;
+
+      return { name, value };
+    });
 
     const pagesFlat = pageViewsFlatResponse.data.map((item: any) => {
       const value = item.nb_visits as number;
