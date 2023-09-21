@@ -1,8 +1,8 @@
-import React from 'react';
+import React from 'react'
 
 type Props = {
-  className?: string;
-};
+  className?: string
+}
 
 export default function GithubIcon({ className }: Props) {
   return (
@@ -13,5 +13,5 @@ export default function GithubIcon({ className }: Props) {
         clipRule="evenodd"
       />
     </svg>
-  );
+  )
 }

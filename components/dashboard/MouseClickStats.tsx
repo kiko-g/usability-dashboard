@@ -1,8 +1,8 @@
-import React from 'react';
+import React from 'react'
 
 type Props = {
-  stats: Record<string, string | number>;
-};
+  stats: Record<string, string | number>
+}
 
 export default function MouseClickStats({ stats }: Props) {
   return (
@@ -16,5 +16,5 @@ export default function MouseClickStats({ stats }: Props) {
         ))}
       </div>
     </div>
-  );
+  )
 }

@@ -14,25 +14,25 @@ export const strIncludes = (str: string, query: string, strict?: boolean) =>
         .replace(/\s+/g, '')
         .replace('.', '')
         .replace(':', '')
-        .includes(query.toLowerCase().replace(/\s+/g, ''));
+        .includes(query.toLowerCase().replace(/\s+/g, ''))
 
 export function standardDeviation(values: number[]): number | null {
   if (values.length < 2) {
-    return null;
+    return null
   }
 
-  const mean = values.reduce((a, b) => a + b, 0) / values.length;
-  const squaredDiffs = values.map((value) => Math.pow(value - mean, 2));
-  const avgSquaredDiff = squaredDiffs.reduce((a, b) => a + b, 0) / squaredDiffs.length;
+  const mean = values.reduce((a, b) => a + b, 0) / values.length
+  const squaredDiffs = values.map((value) => Math.pow(value - mean, 2))
+  const avgSquaredDiff = squaredDiffs.reduce((a, b) => a + b, 0) / squaredDiffs.length
 
-  return Math.sqrt(avgSquaredDiff);
+  return Math.sqrt(avgSquaredDiff)
 }
 
 export function isJson(str: string) {
   try {
-    JSON.parse(str);
+    JSON.parse(str)
   } catch (e) {
-    return false;
+    return false
   }
-  return true;
+  return true
 }

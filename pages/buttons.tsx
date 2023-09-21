@@ -1,46 +1,46 @@
-import React from 'react';
-import Link from 'next/link';
-import classNames from 'classnames';
-import type { ButtonType } from '@/@types';
-import { Disclosure } from '@headlessui/react';
-import { mockButtonData as mockData } from '@/utils/mock';
+import React from 'react'
+import Link from 'next/link'
+import classNames from 'classnames'
+import type { ButtonType } from '@/@types'
+import { Disclosure } from '@headlessui/react'
+import { mockButtonData as mockData } from '@/utils/mock'
 
-import { Layout } from '@/components/layout';
-import { Loading, NotFound } from '@/components/utils';
+import { Layout } from '@/components/layout'
+import { Loading, NotFound } from '@/components/utils'
 
-import { ArrowPathIcon, CircleStackIcon, CodeBracketIcon } from '@heroicons/react/24/outline';
-import { ChevronDownIcon } from '@heroicons/react/24/solid';
+import { ArrowPathIcon, CircleStackIcon, CodeBracketIcon } from '@heroicons/react/24/outline'
+import { ChevronDownIcon } from '@heroicons/react/24/solid'
 
 export default function Buttons() {
-  const [data, setData] = React.useState<ButtonType[]>([]); // TODO: replace any with correct type
-  const [error, setError] = React.useState<boolean>(false);
-  const [loading, setLoading] = React.useState<boolean>(true);
-  const [willFetch, setWillFetch] = React.useState<boolean>(true);
+  const [data, setData] = React.useState<ButtonType[]>([]) // TODO: replace any with correct type
+  const [error, setError] = React.useState<boolean>(false)
+  const [loading, setLoading] = React.useState<boolean>(true)
+  const [willFetch, setWillFetch] = React.useState<boolean>(true)
 
   React.useEffect(() => {
-    if (!willFetch) return;
+    if (!willFetch) return
 
-    setError(false);
-    setLoading(true);
+    setError(false)
+    setLoading(true)
 
     fetch('/api/matomo/events/button')
       .then((res) => {
         if (!res.ok) {
-          setError(true);
-          setLoading(false);
-          setWillFetch(false);
-          return null;
+          setError(true)
+          setLoading(false)
+          setWillFetch(false)
+          return null
         } else {
-          return res.json();
+          return res.json()
         }
       })
       .then((data: any) => {
         // TODO: replace any with correct type
-        setLoading(false);
-        setWillFetch(false);
-        setData(data === null ? [] : data);
-      });
-  }, [willFetch]);
+        setLoading(false)
+        setWillFetch(false)
+        setData(data === null ? [] : data)
+      })
+  }, [willFetch])
 
   return (
     <Layout location="Buttons">
@@ -58,8 +58,8 @@ export default function Buttons() {
                 title="Use mock data"
                 className="hover:opacity-80"
                 onClick={() => {
-                  setError(false);
-                  setData(mockData);
+                  setError(false)
+                  setData(mockData)
                 }}
               >
                 <CircleStackIcon className="h-6 w-6" />
@@ -80,9 +80,9 @@ export default function Buttons() {
               title="View JSON data"
               className="hover:opacity-80"
               onClick={() => {
-                const jsonString = JSON.stringify(data);
-                const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(jsonString)}`;
-                window.open(dataUri, '_blank');
+                const jsonString = JSON.stringify(data)
+                const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(jsonString)}`
+                window.open(dataUri, '_blank')
               }}
             >
               <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="h-6 w-6">
@@ -94,7 +94,7 @@ export default function Buttons() {
               title="Retry fetching data"
               className="hover:opacity-80"
               onClick={() => {
-                setWillFetch(true);
+                setWillFetch(true)
               }}
             >
               <ArrowPathIcon className="h-6 w-6" />
@@ -107,12 +107,12 @@ export default function Buttons() {
         {error && <NotFound />}
       </article>
     </Layout>
-  );
+  )
 }
 
 function ButtonKPIs({ data }: { data: ButtonType[] }) {
-  const totalClicks = data.reduce((result, button) => result + button.buttonClicks.length, 0);
-  if (data.length === 0) return null;
+  const totalClicks = data.reduce((result, button) => result + button.buttonClicks.length, 0)
+  if (data.length === 0) return null
 
   return (
     <div className="w-full space-y-3 rounded-xl bg-white p-3 dark:bg-darker">
@@ -122,17 +122,17 @@ function ButtonKPIs({ data }: { data: ButtonType[] }) {
           // group by where each click occurred
           const pathOccurrences: { [path: string]: number } = button.buttonClicks.reduce<{ [path: string]: number }>(
             (result, click) => {
-              const { path } = click;
-              if (!result[path]) result[path] = 0;
-              result[path]++;
-              return result;
+              const { path } = click
+              if (!result[path]) result[path] = 0
+              result[path]++
+              return result
             },
             {}
-          );
+          )
 
           const uniquePaths = Object.keys(pathOccurrences).sort((a, b) =>
             pathOccurrences[a] > pathOccurrences[b] ? -1 : 1
-          );
+          )
 
           return (
             <Disclosure key={`button-${buttonIdx}`}>
@@ -199,7 +199,7 @@ function ButtonKPIs({ data }: { data: ButtonType[] }) {
                                     <span>{click.time}</span>
                                     <span>{click.component}</span>
                                   </li>
-                                );
+                                )
                               })}
                           </ul>
                         </div>
@@ -209,8 +209,8 @@ function ButtonKPIs({ data }: { data: ButtonType[] }) {
                 </>
               )}
             </Disclosure>
-          );
+          )
         })}
     </div>
-  );
+  )
 }

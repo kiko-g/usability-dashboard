@@ -1,17 +1,17 @@
-import classNames from 'classnames';
+import classNames from 'classnames'
 
 type Props = {
-  progress: number | null;
-  color?: 'blue' | 'green' | 'red' | 'yellow' | 'orange';
-};
+  progress: number | null
+  color?: 'blue' | 'green' | 'red' | 'yellow' | 'orange'
+}
 
 export default function CircularProgressBadge({ progress, color }: Props) {
-  const diameter = 50;
-  const strokeWidth = 5;
-  const radius = (diameter - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const offset = progress === null ? circumference : circumference - (progress / 100) * circumference;
-  const score = progress === null ? 'N/A' : progress.toFixed(0);
+  const diameter = 50
+  const strokeWidth = 5
+  const radius = (diameter - strokeWidth) / 2
+  const circumference = 2 * Math.PI * radius
+  const offset = progress === null ? circumference : circumference - (progress / 100) * circumference
+  const score = progress === null ? 'N/A' : progress.toFixed(0)
 
   return (
     <div className="relative h-12 w-12">
@@ -56,5 +56,5 @@ export default function CircularProgressBadge({ progress, color }: Props) {
         <span className="text-xs lg:text-sm">{score}</span>
       </div>
     </div>
-  );
+  )
 }

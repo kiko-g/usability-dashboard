@@ -1,20 +1,20 @@
-import React, { Fragment } from 'react';
-import Link from 'next/link';
-import classNames from 'classnames';
-import { Dialog, Listbox, Transition } from '@headlessui/react';
-import type { ITrackerEventGroup, IWizardGroup, ScoringApproach } from '@/@types';
-import { WizardStats, WizardStepCompletionStats, WizardErrorStatsType } from '@/@types/frontend';
+import React, { Fragment } from 'react'
+import Link from 'next/link'
+import classNames from 'classnames'
+import { Dialog, Listbox, Transition } from '@headlessui/react'
+import type { ITrackerEventGroup, IWizardGroup, ScoringApproach } from '@/@types'
+import { WizardStats, WizardStepCompletionStats, WizardErrorStatsType } from '@/@types/frontend'
 
-import { Layout } from '@/components/layout';
-import { WizardFormula } from '@/components/WizardFormula';
-import { SelectFormula } from '@/components/SelectFormula';
-import { CircularProgressBadge, Loading, NotFound } from '@/components/utils';
+import { Layout } from '@/components/layout'
+import { WizardFormula } from '@/components/WizardFormula'
+import { SelectFormula } from '@/components/SelectFormula'
+import { CircularProgressBadge, Loading, NotFound } from '@/components/utils'
 
-import { standardDeviation } from '@/utils';
-import { mockWizardData as mockData } from '@/utils/mock';
-import { WizardAction, evaluateAndGroupWizards } from '@/utils/matomo';
+import { standardDeviation } from '@/utils'
+import { mockWizardData as mockData } from '@/utils/mock'
+import { WizardAction, evaluateAndGroupWizards } from '@/utils/matomo'
 
-import { CheckCircleIcon as CheckCircleSolidIcon } from '@heroicons/react/24/solid';
+import { CheckCircleIcon as CheckCircleSolidIcon } from '@heroicons/react/24/solid'
 import {
   ArrowPathIcon,
   InformationCircleIcon,
@@ -30,52 +30,52 @@ import {
   XCircleIcon,
   ScaleIcon,
   EllipsisHorizontalCircleIcon,
-} from '@heroicons/react/24/outline';
+} from '@heroicons/react/24/outline'
 
 export default function Wizards() {
-  const [error, setError] = React.useState<boolean>(false);
-  const [loading, setLoading] = React.useState<boolean>(true);
-  const [willFetch, setWillFetch] = React.useState<boolean>(true);
+  const [error, setError] = React.useState<boolean>(false)
+  const [loading, setLoading] = React.useState<boolean>(true)
+  const [willFetch, setWillFetch] = React.useState<boolean>(true)
 
-  const [rawData, setRawData] = React.useState<ITrackerEventGroup[]>([]);
-  const [processedData, setProcessedData] = React.useState<IWizardGroup[]>([]);
+  const [rawData, setRawData] = React.useState<ITrackerEventGroup[]>([])
+  const [processedData, setProcessedData] = React.useState<IWizardGroup[]>([])
 
-  const scoringApproaches = ['A', 'B', 'C'] as ScoringApproach[];
-  const [scoringApproach, setScoringApproach] = React.useState<ScoringApproach>('A');
+  const scoringApproaches = ['A', 'B', 'C'] as ScoringApproach[]
+  const [scoringApproach, setScoringApproach] = React.useState<ScoringApproach>('A')
 
   // fetch data
   React.useEffect(() => {
     if (!willFetch) {
       if (rawData.length > 0) {
-        const evaluatedWizards = evaluateAndGroupWizards(mockData, scoringApproach);
-        setProcessedData(evaluatedWizards);
+        const evaluatedWizards = evaluateAndGroupWizards(mockData, scoringApproach)
+        setProcessedData(evaluatedWizards)
       }
     } else {
-      setError(false);
-      setLoading(true);
+      setError(false)
+      setLoading(true)
 
       fetch('/api/matomo/events/wizard')
         .then((res) => {
           if (!res.ok) {
-            throw new Error(res.statusText);
+            throw new Error(res.statusText)
           }
-          return res.json();
+          return res.json()
         })
         .then((data: ITrackerEventGroup[]) => {
-          setLoading(false);
-          setWillFetch(false);
-          setRawData(data);
-          const evaluatedWizards = evaluateAndGroupWizards(data, scoringApproach);
-          setProcessedData(evaluatedWizards);
+          setLoading(false)
+          setWillFetch(false)
+          setRawData(data)
+          const evaluatedWizards = evaluateAndGroupWizards(data, scoringApproach)
+          setProcessedData(evaluatedWizards)
         })
         .catch((error) => {
-          setError(true);
-          setLoading(false);
-          setWillFetch(false);
-          console.error(error);
-        });
+          setError(true)
+          setLoading(false)
+          setWillFetch(false)
+          console.error(error)
+        })
     }
-  }, [willFetch, scoringApproach, rawData]);
+  }, [willFetch, scoringApproach, rawData])
 
   return (
     <Layout location="Wizards">
@@ -95,10 +95,10 @@ export default function Wizards() {
                 title="Use mock data"
                 className="hover:opacity-80"
                 onClick={() => {
-                  setError(false);
-                  setRawData(mockData);
-                  const processedDataResult = evaluateAndGroupWizards(mockData, scoringApproach);
-                  setProcessedData(processedDataResult);
+                  setError(false)
+                  setRawData(mockData)
+                  const processedDataResult = evaluateAndGroupWizards(mockData, scoringApproach)
+                  setProcessedData(processedDataResult)
                 }}
               >
                 <CircleStackIcon className="h-6 w-6" />
@@ -129,9 +129,9 @@ export default function Wizards() {
               title="View Raw JSON data"
               className="hover:opacity-80"
               onClick={() => {
-                const jsonString = JSON.stringify(rawData);
-                const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(jsonString)}`;
-                window.open(dataUri, '_blank');
+                const jsonString = JSON.stringify(rawData)
+                const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(jsonString)}`
+                window.open(dataUri, '_blank')
               }}
             >
               <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="h-6 w-6">
@@ -144,9 +144,9 @@ export default function Wizards() {
               title="View Processed JSON data"
               className="hover:opacity-80"
               onClick={() => {
-                const jsonString = JSON.stringify(processedData);
-                const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(jsonString)}`;
-                window.open(dataUri, '_blank');
+                const jsonString = JSON.stringify(processedData)
+                const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(jsonString)}`
+                window.open(dataUri, '_blank')
               }}
             >
               <ScaleIcon className="h-6 w-6" />
@@ -157,8 +157,8 @@ export default function Wizards() {
               title="Retry fetching data"
               className="hover:opacity-80"
               onClick={() => {
-                setError(false);
-                setWillFetch(true);
+                setError(false)
+                setWillFetch(true)
               }}
             >
               <ArrowPathIcon className="h-6 w-6" />
@@ -171,7 +171,7 @@ export default function Wizards() {
         {error && <NotFound />}
       </article>
     </Layout>
-  );
+  )
 }
 
 function KPIs({ data, scoringApproach }: { data: IWizardGroup[]; scoringApproach: ScoringApproach }) {
@@ -189,29 +189,29 @@ function KPIs({ data, scoringApproach }: { data: IWizardGroup[]; scoringApproach
         discarded: 0,
         notCompleted: 0,
         completedRatio: 0,
-      };
+      }
 
-    const completed = data.reduce((acc, item) => acc + item.stats.completed, 0);
-    const notCompleted = data.reduce((acc, item) => acc + item.stats.notCompleted, 0);
-    const total = completed + notCompleted;
+    const completed = data.reduce((acc, item) => acc + item.stats.completed, 0)
+    const notCompleted = data.reduce((acc, item) => acc + item.stats.notCompleted, 0)
+    const total = completed + notCompleted
 
-    const totalTime = data.reduce((acc, item) => acc + item.stats.avgTimespan * item.stats.total, 0);
-    const totalCount = data.reduce((acc, item) => acc + item.stats.total, 0);
+    const totalTime = data.reduce((acc, item) => acc + item.stats.avgTimespan * item.stats.total, 0)
+    const totalCount = data.reduce((acc, item) => acc + item.stats.total, 0)
 
-    const timespans = data.flatMap((item) => item.wizards.map((wizard) => wizard.timespan));
-    const minTime = Math.min(...timespans);
-    const maxTime = Math.max(...timespans);
-    const avgTime = totalCount > 0 ? totalTime / totalCount : 0;
-    const stdDevTime = standardDeviation(timespans);
+    const timespans = data.flatMap((item) => item.wizards.map((wizard) => wizard.timespan))
+    const minTime = Math.min(...timespans)
+    const maxTime = Math.max(...timespans)
+    const avgTime = totalCount > 0 ? totalTime / totalCount : 0
+    const stdDevTime = standardDeviation(timespans)
 
-    const allScores = data.map((group) => group.wizards.map((w) => w.score)).flat();
-    const allScoreNumbers = allScores.filter((score) => score !== null) as number[];
+    const allScores = data.map((group) => group.wizards.map((w) => w.score)).flat()
+    const allScoreNumbers = allScores.filter((score) => score !== null) as number[]
 
-    const discarded = allScores.length - allScoreNumbers.length;
-    const cancelled = notCompleted - discarded;
+    const discarded = allScores.length - allScoreNumbers.length
+    const cancelled = notCompleted - discarded
 
-    const allScoresSum = allScoreNumbers.reduce((acc, score) => acc + score, 0);
-    const avgScore = allScoresSum === 0 ? null : allScoresSum / allScoreNumbers.length;
+    const allScoresSum = allScoreNumbers.reduce((acc, score) => acc + score, 0)
+    const avgScore = allScoresSum === 0 ? null : allScoresSum / allScoreNumbers.length
 
     return {
       avgScore,
@@ -225,53 +225,53 @@ function KPIs({ data, scoringApproach }: { data: IWizardGroup[]; scoringApproach
       discarded,
       notCompleted,
       completedRatio: total > 0 ? completed / total : 0,
-    };
-  }, [data]);
+    }
+  }, [data])
 
   const stepStats = React.useMemo<WizardStepCompletionStats>(() => {
-    let activatedStepsTotal = 0;
-    let successStepsTotal = 0;
-    let failedStepTotal = 0;
-    let minSuccessfulStepTime = Infinity;
-    let maxSuccessfulStepTime = 0;
-    let totalSuccessfulStepTime = 0;
-    let successfulStepCount = 0;
-    let successfulStepTimes: number[] = [];
+    let activatedStepsTotal = 0
+    let successStepsTotal = 0
+    let failedStepTotal = 0
+    let minSuccessfulStepTime = Infinity
+    let maxSuccessfulStepTime = 0
+    let totalSuccessfulStepTime = 0
+    let successfulStepCount = 0
+    let successfulStepTimes: number[] = []
 
     data.forEach((wizardGroup) => {
       wizardGroup.wizards.forEach((wizard) => {
-        let isStepActivated = false;
-        let activatedTime: number | null = null;
+        let isStepActivated = false
+        let activatedTime: number | null = null
 
         wizard.events.forEach((event) => {
-          const action = event.action;
+          const action = event.action
           if (action.includes(WizardAction.ActivateStep)) {
-            isStepActivated = true;
-            activatedTime = new Date(event.time).getTime();
-            activatedStepsTotal++;
+            isStepActivated = true
+            activatedTime = new Date(event.time).getTime()
+            activatedStepsTotal++
           } else if (action.includes(WizardAction.SuccessStep) && isStepActivated) {
             if (activatedTime !== null) {
-              const successTime = new Date(event.time).getTime();
-              const stepTime = (successTime - activatedTime) / 1000; // convert to seconds
-              successfulStepTimes.push(stepTime);
-              totalSuccessfulStepTime += stepTime;
-              successfulStepCount++;
-              minSuccessfulStepTime = Math.min(minSuccessfulStepTime, stepTime);
-              maxSuccessfulStepTime = Math.max(maxSuccessfulStepTime, stepTime);
-              activatedTime = null;
+              const successTime = new Date(event.time).getTime()
+              const stepTime = (successTime - activatedTime) / 1000 // convert to seconds
+              successfulStepTimes.push(stepTime)
+              totalSuccessfulStepTime += stepTime
+              successfulStepCount++
+              minSuccessfulStepTime = Math.min(minSuccessfulStepTime, stepTime)
+              maxSuccessfulStepTime = Math.max(maxSuccessfulStepTime, stepTime)
+              activatedTime = null
             }
-            isStepActivated = false;
-            successStepsTotal++;
+            isStepActivated = false
+            successStepsTotal++
           } else if (action.includes(WizardAction.FailStep)) {
-            failedStepTotal++;
-            isStepActivated = false;
+            failedStepTotal++
+            isStepActivated = false
           }
-        });
-      });
-    });
+        })
+      })
+    })
 
-    const avgSuccessfulStepTime = successfulStepCount > 0 ? totalSuccessfulStepTime / successfulStepCount : 0;
-    const stdDevSuccessfulStepTime = standardDeviation(successfulStepTimes);
+    const avgSuccessfulStepTime = successfulStepCount > 0 ? totalSuccessfulStepTime / successfulStepCount : 0
+    const stdDevSuccessfulStepTime = standardDeviation(successfulStepTimes)
 
     return {
       activated: activatedStepsTotal,
@@ -281,39 +281,39 @@ function KPIs({ data, scoringApproach }: { data: IWizardGroup[]; scoringApproach
       maxSuccessfulStepTime,
       avgSuccessfulStepTime,
       stdDevSuccessfulStepTime,
-    };
-  }, [data]);
+    }
+  }, [data])
 
   const negativeStats = React.useMemo<WizardErrorStatsType>(() => {
-    let totalWizards = 0;
-    let backStepCount = 0;
-    let errorCount = 0;
-    let failedStepCount = 0;
-    let totalErrors = 0;
-    let totalFailedSteps = 0;
-    let totalBackSteps = 0;
+    let totalWizards = 0
+    let backStepCount = 0
+    let errorCount = 0
+    let failedStepCount = 0
+    let totalErrors = 0
+    let totalFailedSteps = 0
+    let totalBackSteps = 0
 
     data.forEach((item) => {
       item.wizards.forEach((wizard) => {
-        totalWizards++;
-        totalErrors += wizard.errorCount;
-        totalFailedSteps += wizard.failedStepCount;
-        totalBackSteps += wizard.backStepCount;
+        totalWizards++
+        totalErrors += wizard.errorCount
+        totalFailedSteps += wizard.failedStepCount
+        totalBackSteps += wizard.backStepCount
 
-        if (wizard.errorCount > 0) errorCount++;
-        if (wizard.backStepCount > 0) backStepCount++;
-        if (wizard.failedStepCount > 0) failedStepCount++;
-      });
-    });
+        if (wizard.errorCount > 0) errorCount++
+        if (wizard.backStepCount > 0) backStepCount++
+        if (wizard.failedStepCount > 0) failedStepCount++
+      })
+    })
 
-    const avgError = errorCount > 0 ? totalErrors / totalWizards : 0;
-    const avgBack = backStepCount > 0 ? totalBackSteps / totalWizards : 0;
-    const avgFailedSteps = failedStepCount > 0 ? totalFailedSteps / totalWizards : 0;
+    const avgError = errorCount > 0 ? totalErrors / totalWizards : 0
+    const avgBack = backStepCount > 0 ? totalBackSteps / totalWizards : 0
+    const avgFailedSteps = failedStepCount > 0 ? totalFailedSteps / totalWizards : 0
 
-    return { totalErrors, totalFailedSteps, totalBackSteps, avgError, avgFailedSteps, avgBack };
-  }, [data]);
+    return { totalErrors, totalFailedSteps, totalBackSteps, avgError, avgFailedSteps, avgBack }
+  }, [data])
 
-  if (data.length === 0) return null;
+  if (data.length === 0) return null
 
   return (
     <div className="flex flex-col gap-4">
@@ -329,17 +329,17 @@ function KPIs({ data, scoringApproach }: { data: IWizardGroup[]; scoringApproach
       </div>
       <WizardSortedList data={data} scoringApproach={scoringApproach} />
     </div>
-  );
+  )
 }
 
 function WizardCompletionRateCard({ stats }: { stats: WizardStats }) {
-  const { completedRatio, completed, notCompleted } = stats;
-  const progress = Math.min(Math.max(completedRatio, 0), 1) * 100;
-  const diameter = 120; // Adjusted diameter value
-  const strokeWidth = 7; // Adjusted strokeWidth value
-  const radius = (diameter - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (progress / 100) * circumference;
+  const { completedRatio, completed, notCompleted } = stats
+  const progress = Math.min(Math.max(completedRatio, 0), 1) * 100
+  const diameter = 120 // Adjusted diameter value
+  const strokeWidth = 7 // Adjusted strokeWidth value
+  const radius = (diameter - strokeWidth) / 2
+  const circumference = 2 * Math.PI * radius
+  const offset = circumference - (progress / 100) * circumference
 
   return (
     <div className="relative max-w-full rounded bg-white/80 p-4 dark:bg-white/10 xl:max-w-xs">
@@ -379,21 +379,21 @@ function WizardCompletionRateCard({ stats }: { stats: WizardStats }) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 function WizardAverageUXScoreCard({
   stats,
   scoringApproach,
 }: {
-  stats: WizardStats;
-  scoringApproach: ScoringApproach;
+  stats: WizardStats
+  scoringApproach: ScoringApproach
 }) {
-  const diameter = 120; // Adjusted diameter value
-  const strokeWidth = 7; // Adjusted strokeWidth value
-  const radius = (diameter - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const offset = stats.avgScore === null ? circumference : circumference - (stats.avgScore / 100) * circumference;
+  const diameter = 120 // Adjusted diameter value
+  const strokeWidth = 7 // Adjusted strokeWidth value
+  const radius = (diameter - strokeWidth) / 2
+  const circumference = 2 * Math.PI * radius
+  const offset = stats.avgScore === null ? circumference : circumference - (stats.avgScore / 100) * circumference
 
   return (
     <div className="relative max-w-full rounded bg-white/80 p-4 dark:bg-white/10 xl:max-w-xs">
@@ -440,14 +440,14 @@ function WizardAverageUXScoreCard({
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 function GeneralStatsCard({ stats }: { stats: WizardStats }) {
-  const { avgTime, minTime, maxTime, stdDevTime, cancelled, discarded, total, completed } = stats;
-  const completedRatio = ((100 * completed) / total).toFixed(1);
-  const discardedRatio = ((100 * discarded) / total).toFixed(1);
-  const cancelledRatio = ((100 * cancelled) / total).toFixed(1);
+  const { avgTime, minTime, maxTime, stdDevTime, cancelled, discarded, total, completed } = stats
+  const completedRatio = ((100 * completed) / total).toFixed(1)
+  const discardedRatio = ((100 * discarded) / total).toFixed(1)
+  const cancelledRatio = ((100 * cancelled) / total).toFixed(1)
 
   return (
     <div className="relative self-stretch rounded bg-white/80 p-4 dark:bg-white/10">
@@ -520,7 +520,7 @@ function GeneralStatsCard({ stats }: { stats: WizardStats }) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 function StepCompletionStatsCard({ stats }: { stats: WizardStepCompletionStats }) {
@@ -532,12 +532,12 @@ function StepCompletionStatsCard({ stats }: { stats: WizardStepCompletionStats }
     maxSuccessfulStepTime,
     avgSuccessfulStepTime,
     stdDevSuccessfulStepTime,
-  } = stats;
+  } = stats
 
-  const cancelled = activated - successful - failed;
-  const failedRatio = ((100 * failed) / activated).toFixed(1);
-  const successfulRatio = ((100 * successful) / activated).toFixed(1);
-  const cancelledRatio = ((100 * cancelled) / activated).toFixed(1);
+  const cancelled = activated - successful - failed
+  const failedRatio = ((100 * failed) / activated).toFixed(1)
+  const successfulRatio = ((100 * successful) / activated).toFixed(1)
+  const cancelledRatio = ((100 * cancelled) / activated).toFixed(1)
 
   return (
     <div className="relative self-stretch rounded bg-white/80 p-4 dark:bg-white/10">
@@ -616,11 +616,11 @@ function StepCompletionStatsCard({ stats }: { stats: WizardStepCompletionStats }
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 function ErrorStatsCard({ stats }: { stats: WizardErrorStatsType }) {
-  const { totalErrors, totalFailedSteps, totalBackSteps, avgError, avgBack, avgFailedSteps } = stats;
+  const { totalErrors, totalFailedSteps, totalBackSteps, avgError, avgBack, avgFailedSteps } = stats
 
   return (
     <div className="relative self-stretch rounded bg-white/80 p-4 dark:bg-white/10">
@@ -669,7 +669,7 @@ function ErrorStatsCard({ stats }: { stats: WizardErrorStatsType }) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 function WizardSortedList({ data, scoringApproach }: { data: IWizardGroup[]; scoringApproach: ScoringApproach }) {
@@ -682,46 +682,46 @@ function WizardSortedList({ data, scoringApproach }: { data: IWizardGroup[]; sco
     'High Completion First',
     'Low Frequency First',
     'High Frequency First',
-  ];
+  ]
 
   const getSortFunction = (picked: any) => {
     switch (picked) {
       case 'Alphabetic (A to Z)':
-        return (a: IWizardGroup, b: IWizardGroup) => a.name.localeCompare(b.name);
+        return (a: IWizardGroup, b: IWizardGroup) => a.name.localeCompare(b.name)
       case 'Alphabetic (Z to A)':
-        return (a: IWizardGroup, b: IWizardGroup) => b.name.localeCompare(a.name);
+        return (a: IWizardGroup, b: IWizardGroup) => b.name.localeCompare(a.name)
       case 'Low Score First':
         return (a: IWizardGroup, b: IWizardGroup) => {
-          if (a.stats.avgScore === null && b.stats.avgScore === null) return 0;
-          if (a.stats.avgScore === null) return 1;
-          if (b.stats.avgScore === null) return -1;
-          return a.stats.avgScore < b.stats.avgScore ? -1 : 1;
-        };
+          if (a.stats.avgScore === null && b.stats.avgScore === null) return 0
+          if (a.stats.avgScore === null) return 1
+          if (b.stats.avgScore === null) return -1
+          return a.stats.avgScore < b.stats.avgScore ? -1 : 1
+        }
       case 'High Score First':
         return (a: IWizardGroup, b: IWizardGroup) => {
-          if (a.stats.avgScore === null && b.stats.avgScore === null) return 0;
-          if (a.stats.avgScore === null) return 1;
-          if (b.stats.avgScore === null) return -1;
-          return a.stats.avgScore > b.stats.avgScore ? -1 : 1;
-        };
+          if (a.stats.avgScore === null && b.stats.avgScore === null) return 0
+          if (a.stats.avgScore === null) return 1
+          if (b.stats.avgScore === null) return -1
+          return a.stats.avgScore > b.stats.avgScore ? -1 : 1
+        }
       case 'Low Completion First':
-        return (a: IWizardGroup, b: IWizardGroup) => a.stats.completedRatio - b.stats.completedRatio;
+        return (a: IWizardGroup, b: IWizardGroup) => a.stats.completedRatio - b.stats.completedRatio
       case 'High Completion First':
-        return (a: IWizardGroup, b: IWizardGroup) => b.stats.completedRatio - a.stats.completedRatio;
+        return (a: IWizardGroup, b: IWizardGroup) => b.stats.completedRatio - a.stats.completedRatio
       case 'Low Frequency First':
-        return (a: IWizardGroup, b: IWizardGroup) => a.stats.total - b.stats.total;
+        return (a: IWizardGroup, b: IWizardGroup) => a.stats.total - b.stats.total
       case 'High Frequency First':
-        return (a: IWizardGroup, b: IWizardGroup) => b.stats.total - a.stats.total;
+        return (a: IWizardGroup, b: IWizardGroup) => b.stats.total - a.stats.total
       default:
-        return (a: IWizardGroup, b: IWizardGroup) => a.name.localeCompare(b.name);
+        return (a: IWizardGroup, b: IWizardGroup) => a.name.localeCompare(b.name)
     }
-  };
+  }
 
-  const [picked, setPicked] = React.useState(options[2]);
+  const [picked, setPicked] = React.useState(options[2])
   const sortedData = React.useMemo(() => {
-    const sortFunction = getSortFunction(picked);
-    return [...data].sort(sortFunction);
-  }, [data, picked]);
+    const sortFunction = getSortFunction(picked)
+    return [...data].sort(sortFunction)
+  }, [data, picked])
 
   return (
     <div className="relative w-full rounded bg-white/80 p-4 dark:bg-white/10">
@@ -832,53 +832,53 @@ function WizardSortedList({ data, scoringApproach }: { data: IWizardGroup[]; sco
         ))}
       </ul>
     </div>
-  );
+  )
 }
 
 function WizardGroupFocus({
   wizardGroup,
   scoringApproach,
 }: {
-  wizardGroup: IWizardGroup;
-  scoringApproach: ScoringApproach;
+  wizardGroup: IWizardGroup
+  scoringApproach: ScoringApproach
 }) {
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [inspect, setInspect] = React.useState(true);
-  const [textView, setTextView] = React.useState(false);
-  const [inspectIndex, setInspectIndex] = React.useState(0);
+  const [isOpen, setIsOpen] = React.useState(false)
+  const [inspect, setInspect] = React.useState(true)
+  const [textView, setTextView] = React.useState(false)
+  const [inspectIndex, setInspectIndex] = React.useState(0)
   const selectedWizard = React.useMemo(
     () => (wizardGroup.wizards[inspectIndex] ? wizardGroup.wizards[inspectIndex] : null),
     [wizardGroup, inspectIndex]
-  );
+  )
   const stepCompletionRatio = React.useMemo(() => {
-    if (!selectedWizard) return 0;
+    if (!selectedWizard) return 0
 
-    const completed = selectedWizard.completed;
-    const stepsDone = selectedWizard.stepStatus.current + (completed ? 1 : 0);
-    const visibleSteps = selectedWizard.stepStatus.visible;
+    const completed = selectedWizard.completed
+    const stepsDone = selectedWizard.stepStatus.current + (completed ? 1 : 0)
+    const visibleSteps = selectedWizard.stepStatus.visible
 
-    return 100 * (stepsDone / visibleSteps);
-  }, [selectedWizard]);
+    return 100 * (stepsDone / visibleSteps)
+  }, [selectedWizard])
 
   const { avgError, avgBack } = React.useMemo(() => {
-    const totalWizards = wizardGroup.wizards.length;
-    const totalErrors = wizardGroup.stats.totalErrors;
-    const totalBackSteps = wizardGroup.stats.totalBackSteps;
+    const totalWizards = wizardGroup.wizards.length
+    const totalErrors = wizardGroup.stats.totalErrors
+    const totalBackSteps = wizardGroup.stats.totalBackSteps
 
-    const avgError = totalErrors > 0 ? totalErrors / totalWizards : 0;
-    const avgBack = totalBackSteps > 0 ? totalBackSteps / totalWizards : 0;
+    const avgError = totalErrors > 0 ? totalErrors / totalWizards : 0
+    const avgBack = totalBackSteps > 0 ? totalBackSteps / totalWizards : 0
 
-    return { avgError, avgBack };
-  }, [wizardGroup]);
+    return { avgError, avgBack }
+  }, [wizardGroup])
 
-  const wizardGroupDiscards = wizardGroup.wizards.reduce((acc, w) => acc + (w.discarded ? 1 : 0), 0);
+  const wizardGroupDiscards = wizardGroup.wizards.reduce((acc, w) => acc + (w.discarded ? 1 : 0), 0)
 
   function closeModal() {
-    setIsOpen(false);
+    setIsOpen(false)
   }
 
   function openModal() {
-    setIsOpen(true);
+    setIsOpen(true)
   }
 
   return (
@@ -1330,24 +1330,24 @@ function WizardGroupFocus({
         </Dialog>
       </Transition>
     </>
-  );
+  )
 }
 
 function ScoreCalculcationApproachDialog({
   content,
   scoringApproach,
 }: {
-  content?: any;
-  scoringApproach: ScoringApproach;
+  content?: any
+  scoringApproach: ScoringApproach
 }) {
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = React.useState(false)
 
   function closeModal() {
-    setIsOpen(false);
+    setIsOpen(false)
   }
 
   function openModal() {
-    setIsOpen(true);
+    setIsOpen(true)
   }
 
   return (
@@ -1410,5 +1410,5 @@ function ScoreCalculcationApproachDialog({
         </Dialog>
       </Transition>
     </>
-  );
+  )
 }

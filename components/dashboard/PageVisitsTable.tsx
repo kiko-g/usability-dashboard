@@ -1,17 +1,17 @@
-import React from 'react';
-import classNames from 'classnames';
-import type { PageViewsAPI } from '@/@types';
-import { TableInteractButtons } from '@/components/utils';
+import React from 'react'
+import classNames from 'classnames'
+import type { PageViewsAPI } from '@/@types'
+import { TableInteractButtons } from '@/components/utils'
 
 type Props = {
-  visitsData: PageViewsAPI[];
-};
+  visitsData: PageViewsAPI[]
+}
 
 export default function PageVisitsTable({ visitsData }: Props) {
-  const initialRows = Math.min(5, visitsData.length);
+  const initialRows = Math.min(5, visitsData.length)
 
-  const [rows, setRows] = React.useState(initialRows);
-  const slicedData = React.useMemo(() => visitsData.slice(0, rows), [visitsData, rows]);
+  const [rows, setRows] = React.useState(initialRows)
+  const slicedData = React.useMemo(() => visitsData.slice(0, rows), [visitsData, rows])
 
   return (
     <div>
@@ -31,8 +31,8 @@ export default function PageVisitsTable({ visitsData }: Props) {
               <th title="Device Type">Device</th>
             </tr>
             {slicedData.map((item, itemIdx) => {
-              const dateString = new Date(item.startTime).toLocaleDateString('pt-PT');
-              const timeString = new Date(item.startTime).toLocaleTimeString('pt-PT');
+              const dateString = new Date(item.startTime).toLocaleDateString('pt-PT')
+              const timeString = new Date(item.startTime).toLocaleTimeString('pt-PT')
 
               return (
                 <tr
@@ -69,12 +69,12 @@ export default function PageVisitsTable({ visitsData }: Props) {
                   </td>
                   <td>{item.deviceType}</td>
                 </tr>
-              );
+              )
             })}
           </tbody>
         </table>
       </div>
       <TableInteractButtons data={visitsData} initialRows={initialRows} rowsHook={[rows, setRows]} />
     </div>
-  );
+  )
 }

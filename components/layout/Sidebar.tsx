@@ -1,11 +1,11 @@
-import React from 'react';
-import Link from 'next/link';
-import classNames from 'classnames';
-import { Disclosure } from '@headlessui/react';
+import React from 'react'
+import Link from 'next/link'
+import classNames from 'classnames'
+import { Disclosure } from '@headlessui/react'
 
-import { DarkModeSwitch } from './';
-import GithubIcon from '@/components/utils/GithubIcon';
-import MatomoIcon from '@/components/utils/MatomoIcon';
+import { DarkModeSwitch } from './'
+import GithubIcon from '@/components/utils/GithubIcon'
+import MatomoIcon from '@/components/utils/MatomoIcon'
 
 import {
   CursorArrowRippleIcon,
@@ -17,7 +17,7 @@ import {
   FingerPrintIcon,
   RectangleGroupIcon,
   InformationCircleIcon,
-} from '@heroicons/react/24/outline';
+} from '@heroicons/react/24/outline'
 
 const navigations = [
   {
@@ -56,11 +56,11 @@ const navigations = [
     href: '/about',
     icon: InformationCircleIcon,
   },
-];
+]
 
 type SidebarProps = {
-  location: string;
-};
+  location: string
+}
 
 export function Sidebar({ location }: SidebarProps) {
   return (
@@ -74,7 +74,7 @@ export function Sidebar({ location }: SidebarProps) {
         {navigations
           .filter((item) => item.shown !== false)
           .map((item, itemIdx) => {
-            const isActive = location.toLowerCase() === item.name.toLowerCase();
+            const isActive = location.toLowerCase() === item.name.toLowerCase()
             return (
               <li key={`nav-${itemIdx}`}>
                 <Link
@@ -91,7 +91,7 @@ export function Sidebar({ location }: SidebarProps) {
                   <span className="hidden xl:block">{item.name}</span>
                 </Link>
               </li>
-            );
+            )
           })}
       </ul>
       <hr />
@@ -119,13 +119,13 @@ export function Sidebar({ location }: SidebarProps) {
         <DarkModeSwitch />
       </div>
     </aside>
-  );
+  )
 }
 
 type MobileNavProps = {
-  title: string;
-  location: string;
-};
+  title: string
+  location: string
+}
 
 export function MobileNav({ title, location }: MobileNavProps) {
   return (
@@ -211,8 +211,8 @@ export function MobileNav({ title, location }: MobileNavProps) {
               </div>
             </Disclosure.Panel>
           </header>
-        );
+        )
       }}
     </Disclosure>
-  );
+  )
 }

@@ -1,16 +1,16 @@
-import React, { Fragment } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import classNames from 'classnames';
-import { Dialog, Disclosure, Listbox, Transition } from '@headlessui/react';
-import type { Frequency, Visits } from '@/@types';
-import type { OverviewMatomoResponse, TransitionMatomo } from '@/@types/matomo';
+import React, { Fragment } from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
+import classNames from 'classnames'
+import { Dialog, Disclosure, Listbox, Transition } from '@headlessui/react'
+import type { Frequency, Visits } from '@/@types'
+import type { OverviewMatomoResponse, TransitionMatomo } from '@/@types/matomo'
 
-import { strIncludes } from '@/utils';
-import { mockVisitsData as mockData } from '@/utils/mock';
+import { strIncludes } from '@/utils'
+import { mockVisitsData as mockData } from '@/utils/mock'
 
-import { Layout } from '@/components/layout';
-import { Loading, NotFound } from '@/components/utils';
+import { Layout } from '@/components/layout'
+import { Loading, NotFound } from '@/components/utils'
 
 import {
   ArrowLongDownIcon,
@@ -26,43 +26,43 @@ import {
   CodeBracketIcon,
   MagnifyingGlassIcon,
   RectangleStackIcon,
-} from '@heroicons/react/24/outline';
-import { ArrowTopRightOnSquareIcon, CheckCircleIcon as CheckCircleSolidIcon } from '@heroicons/react/24/solid';
+} from '@heroicons/react/24/outline'
+import { ArrowTopRightOnSquareIcon, CheckCircleIcon as CheckCircleSolidIcon } from '@heroicons/react/24/solid'
 
 export default function Visits() {
-  const [data, setData] = React.useState<Visits | null>(null);
-  const [error, setError] = React.useState<boolean>(false);
-  const [loading, setLoading] = React.useState<boolean>(true);
-  const [willFetch, setWillFetch] = React.useState<boolean>(true);
+  const [data, setData] = React.useState<Visits | null>(null)
+  const [error, setError] = React.useState<boolean>(false)
+  const [loading, setLoading] = React.useState<boolean>(true)
+  const [willFetch, setWillFetch] = React.useState<boolean>(true)
 
   const fetchData = () => {
-    setError(false);
-    setLoading(true);
+    setError(false)
+    setLoading(true)
 
     // change to '/api/matomo/visits/transitions' to include transitions
     fetch('/api/matomo/visits')
       .then((res) => {
         if (!res.ok) {
-          setData(null);
-          setError(true);
-          setLoading(false);
-          setWillFetch(false);
-          return null;
+          setData(null)
+          setError(true)
+          setLoading(false)
+          setWillFetch(false)
+          return null
         } else {
-          return res.json();
+          return res.json()
         }
       })
       .then((data: Visits) => {
-        setLoading(false);
-        setWillFetch(false);
-        if (data !== null) setData(data);
-      });
-  };
+        setLoading(false)
+        setWillFetch(false)
+        if (data !== null) setData(data)
+      })
+  }
 
   React.useEffect(() => {
-    if (!willFetch) return;
-    fetchData();
-  }, [willFetch]);
+    if (!willFetch) return
+    fetchData()
+  }, [willFetch])
 
   return (
     <Layout location="Visits">
@@ -80,8 +80,8 @@ export default function Visits() {
                 title="Use mock data"
                 className="hover:opacity-80"
                 onClick={() => {
-                  setError(false);
-                  setData(mockData);
+                  setError(false)
+                  setData(mockData)
                 }}
               >
                 <CircleStackIcon className="h-6 w-6" />
@@ -97,9 +97,9 @@ export default function Visits() {
               title="View JSON data"
               className="hover:opacity-80"
               onClick={() => {
-                const jsonString = JSON.stringify(data);
-                const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(jsonString)}`;
-                window.open(dataUri, '_blank');
+                const jsonString = JSON.stringify(data)
+                const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(jsonString)}`
+                window.open(dataUri, '_blank')
               }}
             >
               <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="h-6 w-6">
@@ -132,11 +132,11 @@ export default function Visits() {
         )}
       </article>
     </Layout>
-  );
+  )
 }
 
 function FrequencyTable({ twClasses, title, freq }: { twClasses?: string; title: string; freq: Frequency[] }) {
-  const total = freq.reduce((acc, curr) => acc + curr.value, 0);
+  const total = freq.reduce((acc, curr) => acc + curr.value, 0)
 
   return (
     <div className={classNames(twClasses, 'flex-1 self-stretch rounded bg-white p-4 dark:bg-darker')}>
@@ -145,7 +145,7 @@ function FrequencyTable({ twClasses, title, freq }: { twClasses?: string; title:
         {freq
           .filter((item) => item.value > 0)
           .map((item, itemIdx) => {
-            const percentage = ((item.value / total) * 100).toFixed(1);
+            const percentage = ((item.value / total) * 100).toFixed(1)
             return (
               <li
                 key={`frequency-${item.name}-${itemIdx}`}
@@ -156,36 +156,36 @@ function FrequencyTable({ twClasses, title, freq }: { twClasses?: string; title:
                   ({percentage}%) <span className="font-bold">{item.value}</span>
                 </span>
               </li>
-            );
+            )
           })}
       </ul>
     </div>
-  );
+  )
 }
 
 function PagesFrequencies({ twClasses, data }: { twClasses?: string; data: Visits }) {
-  const [isFlat, setIsFlat] = React.useState<boolean>(true);
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [searchQuery, setSearchQuery] = React.useState<string>('');
-  const pages = React.useMemo(() => (isFlat ? data.pagesFlat : data.pagesExpanded), [data, isFlat]);
+  const [isFlat, setIsFlat] = React.useState<boolean>(true)
+  const [isModalOpen, setIsModalOpen] = React.useState(false)
+  const [searchQuery, setSearchQuery] = React.useState<string>('')
+  const pages = React.useMemo(() => (isFlat ? data.pagesFlat : data.pagesExpanded), [data, isFlat])
 
   const pagesFiltered = React.useMemo(
     () => (pages ? pages.filter((item) => strIncludes(item.name, searchQuery)) : []),
     [pages, searchQuery]
-  );
+  )
 
-  const total = React.useMemo(() => pagesFiltered.reduce((acc, curr) => acc + curr.value, 0), [pagesFiltered]);
+  const total = React.useMemo(() => pagesFiltered.reduce((acc, curr) => acc + curr.value, 0), [pagesFiltered])
 
   function closeModal() {
-    setIsModalOpen(false);
+    setIsModalOpen(false)
   }
 
   function openModal() {
-    setIsModalOpen(true);
+    setIsModalOpen(true)
   }
 
   function toggleIsFlat() {
-    setIsFlat((prev) => !prev);
+    setIsFlat((prev) => !prev)
   }
 
   return (
@@ -240,7 +240,7 @@ function PagesFrequencies({ twClasses, data }: { twClasses?: string; data: Visit
           pagesFiltered
             .filter((item) => item.value > 0)
             .map((item, itemIdx) => {
-              const percentage = ((item.value / total) * 100).toFixed(1);
+              const percentage = ((item.value / total) * 100).toFixed(1)
               return (
                 <li
                   key={`frequency-${item.name}-${itemIdx}`}
@@ -253,7 +253,7 @@ function PagesFrequencies({ twClasses, data }: { twClasses?: string; data: Visit
                     ({percentage}%) <span className="font-bold">{item.value}</span>
                   </span>
                 </li>
-              );
+              )
             })
         )}
       </ul>
@@ -334,7 +334,7 @@ function PagesFrequencies({ twClasses, data }: { twClasses?: string; data: Visit
                         {pagesFiltered
                           .filter((item) => item.value > 0)
                           .map((item, itemIdx) => {
-                            const percentage = ((item.value / total) * 100).toFixed(1);
+                            const percentage = ((item.value / total) * 100).toFixed(1)
                             return (
                               <Disclosure key={`frequency-disclosure-${item.name}-${itemIdx}`}>
                                 {({ open }) => (
@@ -351,7 +351,7 @@ function PagesFrequencies({ twClasses, data }: { twClasses?: string; data: Visit
                                   </>
                                 )}
                               </Disclosure>
-                            );
+                            )
                           })}
                       </div>
                     </div>
@@ -374,7 +374,7 @@ function PagesFrequencies({ twClasses, data }: { twClasses?: string; data: Visit
         </Dialog>
       </Transition>
     </div>
-  );
+  )
 }
 
 function VisitsSummary({ twClasses, overview }: { twClasses?: string; overview: OverviewMatomoResponse }) {
@@ -386,7 +386,7 @@ function VisitsSummary({ twClasses, overview }: { twClasses?: string; overview: 
     nb_pageviews: pageviewsCount,
     max_actions: maxActions,
     bounce_rate: bounceRate,
-  } = overview;
+  } = overview
 
   const summary = [
     { text: 'Total Visits', value: visitCount },
@@ -397,7 +397,7 @@ function VisitsSummary({ twClasses, overview }: { twClasses?: string; overview: 
     { text: 'Avg Actions Per Visit', value: actionsPerVisit },
     { text: 'Max Actions Per Visit', value: maxActions },
     { text: 'Total Pageviews', value: pageviewsCount },
-  ];
+  ]
 
   return (
     <div
@@ -427,7 +427,7 @@ function VisitsSummary({ twClasses, overview }: { twClasses?: string; overview: 
         ))}
       </ul>
     </div>
-  );
+  )
 }
 
 function PageTransitionsMatomoLink() {
@@ -454,12 +454,12 @@ function PageTransitionsMatomoLink() {
         <ArrowTopRightOnSquareIcon className="h-8 w-8 transition group-hover:scale-125" />
       </div>
     </Link>
-  );
+  )
 }
 
 function PageTransitionSummary({ twClasses, transitions }: { twClasses?: string; transitions: TransitionMatomo[] }) {
-  const options = transitions.map((item) => item);
-  const [picked, setPicked] = React.useState(options[0]);
+  const options = transitions.map((item) => item)
+  const [picked, setPicked] = React.useState(options[0])
 
   return (
     <div
@@ -513,7 +513,7 @@ function PageTransitionSummary({ twClasses, transitions }: { twClasses?: string;
                           </span>
                         ) : null}
                       </Listbox.Option>
-                    );
+                    )
                   })}
                 </Listbox.Options>
               </Transition>
@@ -566,5 +566,5 @@ function PageTransitionSummary({ twClasses, transitions }: { twClasses?: string;
         </div>
       </div>
     </div>
-  );
+  )
 }

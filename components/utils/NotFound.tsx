@@ -1,9 +1,9 @@
-import React from 'react';
-import ServiceNotice from '@/components/ServiceNotice';
+import React from 'react'
+import ServiceNotice from '@/components/ServiceNotice'
 
 type Props = {
-  message?: string;
-};
+  message?: string
+}
 
 export default function NotFound({ message }: Props) {
   return (
@@ -17,5 +17,5 @@ export default function NotFound({ message }: Props) {
       </div>
       <ServiceNotice />
     </div>
-  );
+  )
 }

@@ -1,9 +1,9 @@
-import React from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
+import React from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
+import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline'
 
-type Props = {};
+type Props = {}
 
 export default function MatomoDashboardCard({}: Props) {
   return (
@@ -38,5 +38,5 @@ export default function MatomoDashboardCard({}: Props) {
         <ArrowTopRightOnSquareIcon className="hidden h-8 w-8 text-gray-300 transition group-hover:scale-125 group-hover:text-white dark:text-gray-300 dark:group-hover:text-white lg:flex" />
       </div>
     </Link>
-  );
+  )
 }

@@ -1,15 +1,15 @@
-import React from 'react';
-import type { MouseClicksAPI, MouseClickVizTypeFilter } from '@/@types';
-import { ArrowPathIcon } from '@heroicons/react/24/outline';
-import { Layout } from '@/components/layout';
-import { Loading, NotFound } from '@/components/utils';
+import React from 'react'
+import type { MouseClicksAPI, MouseClickVizTypeFilter } from '@/@types'
+import { ArrowPathIcon } from '@heroicons/react/24/outline'
+import { Layout } from '@/components/layout'
+import { Loading, NotFound } from '@/components/utils'
 import {
   MouseClicksChart,
   MouseClickStats,
   MouseClicksHeatmap,
   MouseClicksTable,
   SelectMouseClicksType,
-} from '@/components/dashboard';
+} from '@/components/dashboard'
 
 export default function Mouse() {
   return (
@@ -22,50 +22,50 @@ export default function Mouse() {
         <MouseClicksViz />
       </article>
     </Layout>
-  );
+  )
 }
 
 function MouseClicksViz() {
-  const [data, setData] = React.useState<MouseClicksAPI[]>([]);
-  const [error, setError] = React.useState<boolean>(false);
-  const [loading, setLoading] = React.useState<boolean>(true);
-  const [willFetch, setWillFetch] = React.useState<boolean>(true);
+  const [data, setData] = React.useState<MouseClicksAPI[]>([])
+  const [error, setError] = React.useState<boolean>(false)
+  const [loading, setLoading] = React.useState<boolean>(true)
+  const [willFetch, setWillFetch] = React.useState<boolean>(true)
 
-  const [vizType, setVizType] = React.useState<MouseClickVizTypeFilter>({ name: 'All', value: 'all' });
+  const [vizType, setVizType] = React.useState<MouseClickVizTypeFilter>({ name: 'All', value: 'all' })
 
-  const seeAll = React.useMemo<boolean>(() => vizType.value === 'all', [vizType]);
+  const seeAll = React.useMemo<boolean>(() => vizType.value === 'all', [vizType])
   const stats = React.useMemo(() => {
-    const avgX = data.reduce((acc, curr) => acc + curr.x, 0) / data.length;
-    const avgY = data.reduce((acc, curr) => acc + curr.y, 0) / data.length;
+    const avgX = data.reduce((acc, curr) => acc + curr.x, 0) / data.length
+    const avgY = data.reduce((acc, curr) => acc + curr.y, 0) / data.length
 
     return {
       'Average X': avgX.toFixed(2),
       'Average Y': avgY.toFixed(2),
       'Total Clicks': data.length,
-    };
-  }, [data]);
+    }
+  }, [data])
 
   React.useEffect(() => {
-    if (!willFetch) return;
+    if (!willFetch) return
 
     fetch('/api/matomo/sql/mouse')
       .then((res) => (res.ok ? res.json() : null))
       .then((data: MouseClicksAPI[]) => {
         if (data === null) {
-          setData([]);
-          setError(true);
-          setLoading(false);
-          setWillFetch(false);
+          setData([])
+          setError(true)
+          setLoading(false)
+          setWillFetch(false)
         } else {
-          setData(data);
-          setError(false);
-          setLoading(false);
-          setWillFetch(false);
+          setData(data)
+          setError(false)
+          setLoading(false)
+          setWillFetch(false)
         }
-      });
-  }, [willFetch]);
+      })
+  }, [willFetch])
 
-  if (loading) return <Loading />;
+  if (loading) return <Loading />
 
   if (error)
     return (
@@ -74,9 +74,9 @@ function MouseClicksViz() {
         <div className="flex gap-3">
           <button
             onClick={() => {
-              setError(false);
-              setLoading(true);
-              setWillFetch(true);
+              setError(false)
+              setLoading(true)
+              setWillFetch(true)
             }}
             className="flex items-center gap-1 rounded bg-blue-600 px-3 py-2 text-white transition hover:opacity-80"
           >
@@ -85,7 +85,7 @@ function MouseClicksViz() {
           </button>
         </div>
       </div>
-    );
+    )
 
   return data.length === 0 ? (
     <div className="mt-2 rounded border bg-black/20 p-4 dark:bg-white/20">No Mouse Data Found.</div>
@@ -102,5 +102,5 @@ function MouseClicksViz() {
         {vizType.value === 'table' || seeAll ? <MouseClicksTable mouseData={data} /> : null}
       </div>
     </section>
-  );
+  )
 }

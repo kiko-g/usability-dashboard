@@ -1,10 +1,10 @@
-import React from 'react';
-import Link from 'next/link';
-import classNames from 'classnames';
+import React from 'react'
+import Link from 'next/link'
+import classNames from 'classnames'
 
-import { Layout } from '@/components/layout';
-import ServiceNotice from '@/components/ServiceNotice';
-import MatomoDashboardCard from '@/components/MatomoDashboardCard';
+import { Layout } from '@/components/layout'
+import ServiceNotice from '@/components/ServiceNotice'
+import MatomoDashboardCard from '@/components/MatomoDashboardCard'
 
 import {
   ArrowLongRightIcon,
@@ -12,20 +12,20 @@ import {
   MapIcon,
   ViewColumnsIcon,
   ViewfinderCircleIcon,
-} from '@heroicons/react/24/outline';
+} from '@heroicons/react/24/outline'
 
 type NavAction = {
-  title: string;
-  text: string;
-  href: string;
+  title: string
+  text: string
+  href: string
   icon: React.ForwardRefExoticComponent<
     Omit<React.SVGProps<SVGSVGElement>, 'ref'> & {
-      title?: string | undefined;
-      titleId?: string | undefined;
+      title?: string | undefined
+      titleId?: string | undefined
     } & React.RefAttributes<SVGSVGElement>
-  >;
-  iconClasses: string;
-};
+  >
+  iconClasses: string
+}
 
 export default function Hub() {
   return (
@@ -43,7 +43,7 @@ export default function Hub() {
         <ServiceNotice />
       </article>
     </Layout>
-  );
+  )
 }
 
 function NavigationGridHero() {
@@ -76,7 +76,7 @@ function NavigationGridHero() {
       icon: CursorArrowRaysIcon,
       iconClasses: 'bg-rose-50 group-hover:bg-rose-600 group-hover:text-white text-rose-600',
     },
-  ];
+  ]
 
   return (
     <div className="flex flex-col divide-y divide-gray-200 overflow-hidden rounded-lg border border-transparent bg-gray-200 dark:bg-gray-500 md:grid md:grid-cols-2 md:gap-px md:divide-y-0">
@@ -108,5 +108,5 @@ function NavigationGridHero() {
         </Link>
       ))}
     </div>
-  );
+  )
 }

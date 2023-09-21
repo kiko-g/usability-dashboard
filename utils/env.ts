@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod'
 
 const envVariables = z.object({
   MATOMO_TRUSTED_HOSTS: z.string(),
@@ -23,7 +23,7 @@ const envVariables = z.object({
   NEXT_PUBLIC_MATOMO_SITE_ID: z.number(),
   NEXT_PUBLIC_MATOMO_SITE_URL: z.string(),
   NEXT_PUBLIC_MATOMO_DASHBOARD_URL: z.string(),
-});
+})
 
 declare global {
   namespace NodeJS {
@@ -31,6 +31,6 @@ declare global {
   }
 }
 
-const env = envVariables.parse(process.env);
+const env = envVariables.parse(process.env)
 
-export { env };
+export { env }

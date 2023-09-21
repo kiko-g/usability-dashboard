@@ -1,4 +1,4 @@
-import type { ButtonType, IExecutionViewGroup, ITrackerEventGroup, IWizardGroup, Visits } from '@/@types';
+import type { ButtonType, IExecutionViewGroup, ITrackerEventGroup, IWizardGroup, Visits } from '@/@types'
 
 export const mockVisitsData: Visits = {
   os: [{ name: 'Windows', value: 8 }],
@@ -915,7 +915,7 @@ export const mockVisitsData: Visits = {
     nb_actions_per_visit: 51.9,
     avg_time_on_site: '13 min 32s',
   },
-};
+}
 
 export const mockButtonData: ButtonType[] = [
   {
@@ -1160,7 +1160,7 @@ export const mockButtonData: ButtonType[] = [
       },
     ],
   },
-];
+]
 
 export const mockWizardData: ITrackerEventGroup[] = [
   {
@@ -2216,7 +2216,7 @@ export const mockWizardData: ITrackerEventGroup[] = [
       },
     ],
   },
-];
+]
 
 export const mockExecutionViewData: ITrackerEventGroup[] = [
   {
@@ -2242,7 +2242,7 @@ export const mockExecutionViewData: ITrackerEventGroup[] = [
       { time: '2023-06-13T14:00:54.420Z', path: '/Entity/Material/2306130033290000256/View/Details', action: 'Cancel' },
     ],
   },
-];
+]
 
 export const mockEventsData: ITrackerEventGroup[] = [
   {
@@ -2871,4 +2871,4 @@ export const mockEventsData: ITrackerEventGroup[] = [
       },
     ],
   },
-];
+]

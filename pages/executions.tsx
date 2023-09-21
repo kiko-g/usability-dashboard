@@ -1,17 +1,17 @@
-import React, { Fragment } from 'react';
-import Link from 'next/link';
-import classNames from 'classnames';
-import { Dialog, Listbox, Transition } from '@headlessui/react';
-import type { IExecutionViewGroup, ITrackerEventGroup, ScoringApproach } from '@/@types';
+import React, { Fragment } from 'react'
+import Link from 'next/link'
+import classNames from 'classnames'
+import { Dialog, Listbox, Transition } from '@headlessui/react'
+import type { IExecutionViewGroup, ITrackerEventGroup, ScoringApproach } from '@/@types'
 
-import { standardDeviation } from '@/utils';
-import { ExecutionViewAction, evaluateAndGroupExecutionViews } from '@/utils/matomo';
-import { mockExecutionViewData as mockData } from '@/utils/mock';
+import { standardDeviation } from '@/utils'
+import { ExecutionViewAction, evaluateAndGroupExecutionViews } from '@/utils/matomo'
+import { mockExecutionViewData as mockData } from '@/utils/mock'
 
-import { Layout } from '@/components/layout';
-import { CircularProgressBadge, Loading, NotFound } from '@/components/utils';
+import { Layout } from '@/components/layout'
+import { CircularProgressBadge, Loading, NotFound } from '@/components/utils'
 
-import { CheckCircleIcon as CheckCircleSolidIcon } from '@heroicons/react/24/solid';
+import { CheckCircleIcon as CheckCircleSolidIcon } from '@heroicons/react/24/solid'
 import {
   ArrowPathIcon,
   ChartPieIcon,
@@ -28,50 +28,50 @@ import {
   MagnifyingGlassPlusIcon,
   ScaleIcon,
   XCircleIcon,
-} from '@heroicons/react/24/outline';
-import { ExecutionViewErrorStatsType, ExecutionViewStats, ExecutionViewTabCompletionStats } from '@/@types/frontend';
-import { SelectFormula } from '@/components/SelectFormula';
-import { ExecutionViewFormula } from '@/components/ExecutionViewFormula';
+} from '@heroicons/react/24/outline'
+import { ExecutionViewErrorStatsType, ExecutionViewStats, ExecutionViewTabCompletionStats } from '@/@types/frontend'
+import { SelectFormula } from '@/components/SelectFormula'
+import { ExecutionViewFormula } from '@/components/ExecutionViewFormula'
 
 export default function Executions() {
-  const [error, setError] = React.useState<boolean>(false);
-  const [loading, setLoading] = React.useState<boolean>(true);
-  const [willFetch, setWillFetch] = React.useState<boolean>(true);
+  const [error, setError] = React.useState<boolean>(false)
+  const [loading, setLoading] = React.useState<boolean>(true)
+  const [willFetch, setWillFetch] = React.useState<boolean>(true)
 
-  const [rawData, setRawData] = React.useState<ITrackerEventGroup[]>([]);
-  const [processedData, setProcessedData] = React.useState<IExecutionViewGroup[]>([]);
+  const [rawData, setRawData] = React.useState<ITrackerEventGroup[]>([])
+  const [processedData, setProcessedData] = React.useState<IExecutionViewGroup[]>([])
 
-  const scoringApproaches = ['A'] as ScoringApproach[];
-  const [scoringApproach, setScoringApproach] = React.useState<ScoringApproach>('A');
+  const scoringApproaches = ['A'] as ScoringApproach[]
+  const [scoringApproach, setScoringApproach] = React.useState<ScoringApproach>('A')
 
   React.useEffect(() => {
-    if (!willFetch) return;
+    if (!willFetch) return
 
-    setError(false);
-    setLoading(true);
+    setError(false)
+    setLoading(true)
 
     fetch('/api/matomo/events/execution-view')
       .then((res) => {
         if (!res.ok) {
-          setError(true);
-          setLoading(false);
-          setWillFetch(false);
-          return null;
+          setError(true)
+          setLoading(false)
+          setWillFetch(false)
+          return null
         } else {
-          return res.json();
+          return res.json()
         }
       })
       .then((data: ITrackerEventGroup[]) => {
-        setLoading(false);
-        setWillFetch(false);
-        if (data === null) setProcessedData([]);
+        setLoading(false)
+        setWillFetch(false)
+        if (data === null) setProcessedData([])
         else {
-          setRawData(data);
-          const processedExecutionViewData = evaluateAndGroupExecutionViews(data);
-          setProcessedData(processedExecutionViewData);
+          setRawData(data)
+          const processedExecutionViewData = evaluateAndGroupExecutionViews(data)
+          setProcessedData(processedExecutionViewData)
         }
-      });
-  }, [willFetch]);
+      })
+  }, [willFetch])
 
   return (
     <Layout location="Execution Views">
@@ -91,10 +91,10 @@ export default function Executions() {
                 title="Use mock data"
                 className="hover:opacity-80"
                 onClick={() => {
-                  setError(false);
-                  setRawData(mockData);
-                  const processedDataResult = evaluateAndGroupExecutionViews(mockData);
-                  setProcessedData(processedDataResult);
+                  setError(false)
+                  setRawData(mockData)
+                  const processedDataResult = evaluateAndGroupExecutionViews(mockData)
+                  setProcessedData(processedDataResult)
                 }}
               >
                 <CircleStackIcon className="h-6 w-6" />
@@ -125,9 +125,9 @@ export default function Executions() {
               title="View Raw JSON data"
               className="hover:opacity-80"
               onClick={() => {
-                const jsonString = JSON.stringify(rawData);
-                const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(jsonString)}`;
-                window.open(dataUri, '_blank');
+                const jsonString = JSON.stringify(rawData)
+                const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(jsonString)}`
+                window.open(dataUri, '_blank')
               }}
             >
               <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="h-6 w-6">
@@ -140,9 +140,9 @@ export default function Executions() {
               title="View Processed JSON data"
               className="hover:opacity-80"
               onClick={() => {
-                const jsonString = JSON.stringify(processedData);
-                const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(jsonString)}`;
-                window.open(dataUri, '_blank');
+                const jsonString = JSON.stringify(processedData)
+                const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(jsonString)}`
+                window.open(dataUri, '_blank')
               }}
             >
               <ScaleIcon className="h-6 w-6" />
@@ -153,8 +153,8 @@ export default function Executions() {
               title="Retry fetching data"
               className="hover:opacity-80"
               onClick={() => {
-                setError(false);
-                setWillFetch(true);
+                setError(false)
+                setWillFetch(true)
               }}
             >
               <ArrowPathIcon className="h-6 w-6" />
@@ -167,7 +167,7 @@ export default function Executions() {
         {error && <NotFound />}
       </article>
     </Layout>
-  );
+  )
 }
 
 function KPIs({ data, scoringApproach }: { data: IExecutionViewGroup[]; scoringApproach?: ScoringApproach }) {
@@ -185,29 +185,29 @@ function KPIs({ data, scoringApproach }: { data: IExecutionViewGroup[]; scoringA
         discarded: 0,
         notCompleted: 0,
         completedRatio: 0,
-      };
+      }
 
-    const completed = data.reduce((acc, item) => acc + item.stats.completed, 0);
-    const notCompleted = data.reduce((acc, item) => acc + item.stats.notCompleted, 0);
-    const total = completed + notCompleted;
+    const completed = data.reduce((acc, item) => acc + item.stats.completed, 0)
+    const notCompleted = data.reduce((acc, item) => acc + item.stats.notCompleted, 0)
+    const total = completed + notCompleted
 
-    const totalTime = data.reduce((acc, item) => acc + item.stats.avgTimespan * item.stats.total, 0);
-    const totalCount = data.reduce((acc, item) => acc + item.stats.total, 0);
+    const totalTime = data.reduce((acc, item) => acc + item.stats.avgTimespan * item.stats.total, 0)
+    const totalCount = data.reduce((acc, item) => acc + item.stats.total, 0)
 
-    const timespans = data.flatMap((item) => item.executionViews.map((ev) => ev.timespan));
-    const minTime = Math.min(...timespans);
-    const maxTime = Math.max(...timespans);
-    const avgTime = totalCount > 0 ? totalTime / totalCount : 0;
-    const stdDevTime = standardDeviation(timespans);
+    const timespans = data.flatMap((item) => item.executionViews.map((ev) => ev.timespan))
+    const minTime = Math.min(...timespans)
+    const maxTime = Math.max(...timespans)
+    const avgTime = totalCount > 0 ? totalTime / totalCount : 0
+    const stdDevTime = standardDeviation(timespans)
 
-    const allScores = data.map((group) => group.executionViews.map((ev) => ev.score)).flat();
-    const allScoreNumbers = allScores.filter((score) => score !== null) as number[];
+    const allScores = data.map((group) => group.executionViews.map((ev) => ev.score)).flat()
+    const allScoreNumbers = allScores.filter((score) => score !== null) as number[]
 
-    const discarded = allScores.length - allScoreNumbers.length;
-    const cancelled = notCompleted - discarded;
+    const discarded = allScores.length - allScoreNumbers.length
+    const cancelled = notCompleted - discarded
 
-    const allScoresSum = allScoreNumbers.reduce((acc, score) => acc + score, 0);
-    const avgScore = allScoresSum === 0 ? null : allScoresSum / allScoreNumbers.length;
+    const allScoresSum = allScoreNumbers.reduce((acc, score) => acc + score, 0)
+    const avgScore = allScoresSum === 0 ? null : allScoresSum / allScoreNumbers.length
 
     return {
       avgScore,
@@ -221,35 +221,35 @@ function KPIs({ data, scoringApproach }: { data: IExecutionViewGroup[]; scoringA
       discarded,
       notCompleted,
       completedRatio: total > 0 ? completed / total : 0,
-    };
-  }, [data]);
+    }
+  }, [data])
 
   const negativeStats = React.useMemo<ExecutionViewErrorStatsType>(() => {
-    let total = 0;
-    let errorCount = 0;
-    let failedTabCount = 0;
-    let tabChangeCount = 0;
+    let total = 0
+    let errorCount = 0
+    let failedTabCount = 0
+    let tabChangeCount = 0
 
-    let totalErrors = 0;
-    let totalTabChanges = 0;
-    let totalFailedTabs = 0;
+    let totalErrors = 0
+    let totalTabChanges = 0
+    let totalFailedTabs = 0
 
     data.forEach((item) => {
       item.executionViews.forEach((ev) => {
-        total++;
-        totalErrors += ev.errorCount;
-        totalFailedTabs += ev.failedTabCount;
-        totalTabChanges += ev.changeTabCount;
+        total++
+        totalErrors += ev.errorCount
+        totalFailedTabs += ev.failedTabCount
+        totalTabChanges += ev.changeTabCount
 
-        if (ev.errorCount > 0) errorCount++;
-        if (ev.changeTabCount > 0) tabChangeCount++;
-        if (ev.failedTabCount > 0) failedTabCount++;
-      });
-    });
+        if (ev.errorCount > 0) errorCount++
+        if (ev.changeTabCount > 0) tabChangeCount++
+        if (ev.failedTabCount > 0) failedTabCount++
+      })
+    })
 
-    const avgError = errorCount > 0 ? totalErrors / total : 0;
-    const avgTabChanges = tabChangeCount > 0 ? totalTabChanges / total : 0;
-    const avgFailedTabs = failedTabCount > 0 ? totalFailedTabs / total : 0;
+    const avgError = errorCount > 0 ? totalErrors / total : 0
+    const avgTabChanges = tabChangeCount > 0 ? totalTabChanges / total : 0
+    const avgFailedTabs = failedTabCount > 0 ? totalFailedTabs / total : 0
 
     return {
       totalErrors,
@@ -258,10 +258,10 @@ function KPIs({ data, scoringApproach }: { data: IExecutionViewGroup[]; scoringA
       avgError,
       avgFailedTabs,
       avgTabChanges,
-    };
-  }, [data]);
+    }
+  }, [data])
 
-  if (data.length === 0) return null;
+  if (data.length === 0) return null
 
   return (
     <div className="flex flex-col gap-4">
@@ -276,16 +276,16 @@ function KPIs({ data, scoringApproach }: { data: IExecutionViewGroup[]; scoringA
       </div>
       <ExecutionViewSortedList data={data} scoringApproach={scoringApproach} />
     </div>
-  );
+  )
 }
 
 function ExecutionViewCompletionRateCard({ stats }: { stats: ExecutionViewStats }) {
-  const progress = Math.min(Math.max(stats.completedRatio, 0), 1) * 100;
-  const diameter = 120; // Adjusted diameter value
-  const strokeWidth = 7; // Adjusted strokeWidth value
-  const radius = (diameter - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (progress / 100) * circumference;
+  const progress = Math.min(Math.max(stats.completedRatio, 0), 1) * 100
+  const diameter = 120 // Adjusted diameter value
+  const strokeWidth = 7 // Adjusted strokeWidth value
+  const radius = (diameter - strokeWidth) / 2
+  const circumference = 2 * Math.PI * radius
+  const offset = circumference - (progress / 100) * circumference
 
   return (
     <div className="relative max-w-full overflow-hidden rounded bg-white/80 p-4 dark:bg-white/10 lg:max-w-xs">
@@ -325,15 +325,15 @@ function ExecutionViewCompletionRateCard({ stats }: { stats: ExecutionViewStats 
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 function AverageUXScoreCard({ stats }: { stats: ExecutionViewStats }) {
-  const diameter = 120; // Adjusted diameter value
-  const strokeWidth = 7; // Adjusted strokeWidth value
-  const radius = (diameter - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const offset = stats.avgScore === null ? circumference : circumference - (stats.avgScore / 100) * circumference;
+  const diameter = 120 // Adjusted diameter value
+  const strokeWidth = 7 // Adjusted strokeWidth value
+  const radius = (diameter - strokeWidth) / 2
+  const circumference = 2 * Math.PI * radius
+  const offset = stats.avgScore === null ? circumference : circumference - (stats.avgScore / 100) * circumference
 
   return (
     <div className="relative max-w-full rounded bg-white/80 p-4 dark:bg-white/10 lg:max-w-xs">
@@ -376,14 +376,14 @@ function AverageUXScoreCard({ stats }: { stats: ExecutionViewStats }) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 function GeneralStatsCard({ stats }: { stats: ExecutionViewStats }) {
-  const { avgTime, minTime, maxTime, stdDevTime, cancelled, discarded, total, completed } = stats;
-  const completedRatio = ((100 * completed) / total).toFixed(1);
-  const discardedRatio = ((100 * discarded) / total).toFixed(1);
-  const cancelledRatio = ((100 * cancelled) / total).toFixed(1);
+  const { avgTime, minTime, maxTime, stdDevTime, cancelled, discarded, total, completed } = stats
+  const completedRatio = ((100 * completed) / total).toFixed(1)
+  const discardedRatio = ((100 * discarded) / total).toFixed(1)
+  const cancelledRatio = ((100 * cancelled) / total).toFixed(1)
 
   return (
     <div className="relative self-stretch rounded bg-white/80 p-4 dark:bg-white/10">
@@ -456,7 +456,7 @@ function GeneralStatsCard({ stats }: { stats: ExecutionViewStats }) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 function ErrorStatsCard({ stats }: { stats: ExecutionViewErrorStatsType }) {
@@ -507,15 +507,15 @@ function ErrorStatsCard({ stats }: { stats: ExecutionViewErrorStatsType }) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 function ExecutionViewSortedList({
   data,
   scoringApproach,
 }: {
-  data: IExecutionViewGroup[];
-  scoringApproach?: ScoringApproach;
+  data: IExecutionViewGroup[]
+  scoringApproach?: ScoringApproach
 }) {
   const options = [
     'Alphabetic (A to Z)',
@@ -526,46 +526,46 @@ function ExecutionViewSortedList({
     'High Completion First',
     'Low Frequency First',
     'High Frequency First',
-  ];
+  ]
 
   const getSortFunction = (picked: any) => {
     switch (picked) {
       case 'Alphabetic (A to Z)':
-        return (a: IExecutionViewGroup, b: IExecutionViewGroup) => a.name.localeCompare(b.name);
+        return (a: IExecutionViewGroup, b: IExecutionViewGroup) => a.name.localeCompare(b.name)
       case 'Alphabetic (Z to A)':
-        return (a: IExecutionViewGroup, b: IExecutionViewGroup) => b.name.localeCompare(a.name);
+        return (a: IExecutionViewGroup, b: IExecutionViewGroup) => b.name.localeCompare(a.name)
       case 'Low Score First':
         return (a: IExecutionViewGroup, b: IExecutionViewGroup) => {
-          if (a.stats.avgScore === null && b.stats.avgScore === null) return 0;
-          if (a.stats.avgScore === null) return 1;
-          if (b.stats.avgScore === null) return -1;
-          return a.stats.avgScore < b.stats.avgScore ? -1 : 1;
-        };
+          if (a.stats.avgScore === null && b.stats.avgScore === null) return 0
+          if (a.stats.avgScore === null) return 1
+          if (b.stats.avgScore === null) return -1
+          return a.stats.avgScore < b.stats.avgScore ? -1 : 1
+        }
       case 'High Score First':
         return (a: IExecutionViewGroup, b: IExecutionViewGroup) => {
-          if (a.stats.avgScore === null && b.stats.avgScore === null) return 0;
-          if (a.stats.avgScore === null) return 1;
-          if (b.stats.avgScore === null) return -1;
-          return a.stats.avgScore > b.stats.avgScore ? -1 : 1;
-        };
+          if (a.stats.avgScore === null && b.stats.avgScore === null) return 0
+          if (a.stats.avgScore === null) return 1
+          if (b.stats.avgScore === null) return -1
+          return a.stats.avgScore > b.stats.avgScore ? -1 : 1
+        }
       case 'Low Completion First':
-        return (a: IExecutionViewGroup, b: IExecutionViewGroup) => a.stats.completedRatio - b.stats.completedRatio;
+        return (a: IExecutionViewGroup, b: IExecutionViewGroup) => a.stats.completedRatio - b.stats.completedRatio
       case 'High Completion First':
-        return (a: IExecutionViewGroup, b: IExecutionViewGroup) => b.stats.completedRatio - a.stats.completedRatio;
+        return (a: IExecutionViewGroup, b: IExecutionViewGroup) => b.stats.completedRatio - a.stats.completedRatio
       case 'Low Frequency First':
-        return (a: IExecutionViewGroup, b: IExecutionViewGroup) => a.stats.total - b.stats.total;
+        return (a: IExecutionViewGroup, b: IExecutionViewGroup) => a.stats.total - b.stats.total
       case 'High Frequency First':
-        return (a: IExecutionViewGroup, b: IExecutionViewGroup) => b.stats.total - a.stats.total;
+        return (a: IExecutionViewGroup, b: IExecutionViewGroup) => b.stats.total - a.stats.total
       default:
-        return (a: IExecutionViewGroup, b: IExecutionViewGroup) => a.name.localeCompare(b.name);
+        return (a: IExecutionViewGroup, b: IExecutionViewGroup) => a.name.localeCompare(b.name)
     }
-  };
+  }
 
-  const [picked, setPicked] = React.useState(options[0]);
+  const [picked, setPicked] = React.useState(options[0])
   const sortedData = React.useMemo(() => {
-    const sortFunction = getSortFunction(picked);
-    return [...data].sort(sortFunction);
-  }, [data, picked]);
+    const sortFunction = getSortFunction(picked)
+    return [...data].sort(sortFunction)
+  }, [data, picked])
 
   return (
     <div className="relative w-full rounded bg-white/80 p-4 dark:bg-white/10">
@@ -665,42 +665,42 @@ function ExecutionViewSortedList({
         ))}
       </ul>
     </div>
-  );
+  )
 }
 
 function ExecutionViewGroupFocus({
   executionViewGroup,
   scoringApproach,
 }: {
-  executionViewGroup: IExecutionViewGroup;
-  scoringApproach?: ScoringApproach;
+  executionViewGroup: IExecutionViewGroup
+  scoringApproach?: ScoringApproach
 }) {
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [inspect, setInspect] = React.useState(false);
-  const [textView, setTextView] = React.useState(false);
-  const [inspectIndex, setInspectIndex] = React.useState(0);
+  const [isOpen, setIsOpen] = React.useState(false)
+  const [inspect, setInspect] = React.useState(false)
+  const [textView, setTextView] = React.useState(false)
+  const [inspectIndex, setInspectIndex] = React.useState(0)
   const selectedExecutionView = React.useMemo(
     () => executionViewGroup.executionViews[inspectIndex],
     [executionViewGroup, inspectIndex]
-  );
+  )
 
   const { avgError, avgTabChanges } = React.useMemo(() => {
-    const totalExecutionViews = executionViewGroup.executionViews.length;
-    const totalErrors = executionViewGroup.stats.totalErrors;
-    const totalTabChanges = executionViewGroup.stats.totalTabChanges;
+    const totalExecutionViews = executionViewGroup.executionViews.length
+    const totalErrors = executionViewGroup.stats.totalErrors
+    const totalTabChanges = executionViewGroup.stats.totalTabChanges
 
-    const avgError = totalErrors > 0 ? totalErrors / totalExecutionViews : 0;
-    const avgTabChanges = totalTabChanges > 0 ? totalTabChanges / totalExecutionViews : 0;
+    const avgError = totalErrors > 0 ? totalErrors / totalExecutionViews : 0
+    const avgTabChanges = totalTabChanges > 0 ? totalTabChanges / totalExecutionViews : 0
 
-    return { avgError, avgTabChanges };
-  }, [executionViewGroup]);
+    return { avgError, avgTabChanges }
+  }, [executionViewGroup])
 
   function closeModal() {
-    setIsOpen(false);
+    setIsOpen(false)
   }
 
   function openModal() {
-    setIsOpen(true);
+    setIsOpen(true)
   }
 
   return (
@@ -1109,24 +1109,24 @@ function ExecutionViewGroupFocus({
         </Dialog>
       </Transition>
     </>
-  );
+  )
 }
 
 function ScoreCalculcationApproachDialog({
   content,
   scoringApproach,
 }: {
-  content?: any;
-  scoringApproach?: ScoringApproach;
+  content?: any
+  scoringApproach?: ScoringApproach
 }) {
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = React.useState(false)
 
   function closeModal() {
-    setIsOpen(false);
+    setIsOpen(false)
   }
 
   function openModal() {
-    setIsOpen(true);
+    setIsOpen(true)
   }
 
   return (
@@ -1195,5 +1195,5 @@ function ScoreCalculcationApproachDialog({
         </Dialog>
       </Transition>
     </>
-  );
+  )
 }

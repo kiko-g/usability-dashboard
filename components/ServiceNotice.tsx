@@ -1,41 +1,41 @@
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import axios from 'axios';
-import classNames from 'classnames';
+import React, { useState, useEffect } from 'react'
+import Link from 'next/link'
+import axios from 'axios'
+import classNames from 'classnames'
 
-import { ArrowPathIcon, CheckCircleIcon, ShieldExclamationIcon, XMarkIcon } from '@heroicons/react/24/solid';
-import { CodeBracketIcon } from '@heroicons/react/24/outline';
+import { ArrowPathIcon, CheckCircleIcon, ShieldExclamationIcon, XMarkIcon } from '@heroicons/react/24/solid'
+import { CodeBracketIcon } from '@heroicons/react/24/outline'
 
-type Props = {};
+type Props = {}
 
-type AvailabilityType = 'available' | 'unavailable' | null;
+type AvailabilityType = 'available' | 'unavailable' | null
 
 export default function ServiceNotice({}: Props) {
-  const [message, setMessage] = useState<string>('');
-  const [details, setDetails] = useState<boolean>(false);
-  const [dismissed, setDismissed] = useState<boolean>(false);
-  const [serviceStatus, setServiceStatus] = useState<AvailabilityType>(null);
+  const [message, setMessage] = useState<string>('')
+  const [details, setDetails] = useState<boolean>(false)
+  const [dismissed, setDismissed] = useState<boolean>(false)
+  const [serviceStatus, setServiceStatus] = useState<AvailabilityType>(null)
 
   useEffect(() => {
     const checkServiceStatus = async () => {
       try {
         // Update the URL to match your API route
-        const response = await axios.get('/api/matomo/ping');
+        const response = await axios.get('/api/matomo/ping')
 
         if (response.status === 200) {
-          setServiceStatus('available');
+          setServiceStatus('available')
         } else {
-          setMessage(response.data.message);
-          setServiceStatus('unavailable');
+          setMessage(response.data.message)
+          setServiceStatus('unavailable')
         }
       } catch (error: any) {
-        setMessage(error.message);
-        setServiceStatus('unavailable');
+        setMessage(error.message)
+        setServiceStatus('unavailable')
       }
-    };
+    }
 
-    checkServiceStatus();
-  }, []);
+    checkServiceStatus()
+  }, [])
 
   return (
     <div
@@ -123,5 +123,5 @@ export default function ServiceNotice({}: Props) {
         </div>
       )}
     </div>
-  );
+  )
 }

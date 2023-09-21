@@ -1,20 +1,20 @@
-import React from 'react';
-import Link from 'next/link';
-import { Layout } from '@/components/layout';
-import { ScoringApproach } from '@/@types';
-import { WizardFormula } from '@/components/WizardFormula';
-import { SelectFormula } from '@/components/SelectFormula';
-import { ExecutionViewFormula } from '@/components/ExecutionViewFormula';
-import { mockVisitsData, mockButtonData, mockWizardData, mockExecutionViewData, mockEventsData } from '@/utils/mock';
-import { BeakerIcon, CodeBracketIcon, ScaleIcon } from '@heroicons/react/24/outline';
-import { evaluateAndGroupExecutionViews, evaluateAndGroupWizards } from '@/utils/matomo';
+import React from 'react'
+import Link from 'next/link'
+import { Layout } from '@/components/layout'
+import { ScoringApproach } from '@/@types'
+import { WizardFormula } from '@/components/WizardFormula'
+import { SelectFormula } from '@/components/SelectFormula'
+import { ExecutionViewFormula } from '@/components/ExecutionViewFormula'
+import { mockVisitsData, mockButtonData, mockWizardData, mockExecutionViewData, mockEventsData } from '@/utils/mock'
+import { BeakerIcon, CodeBracketIcon, ScaleIcon } from '@heroicons/react/24/outline'
+import { evaluateAndGroupExecutionViews, evaluateAndGroupWizards } from '@/utils/matomo'
 
 export default function About() {
-  const wizardScoringApproaches = ['A', 'B', 'C'] as ScoringApproach[];
-  const [wizardScoringApproach, setWizardScoringApproach] = React.useState<ScoringApproach>('A');
+  const wizardScoringApproaches = ['A', 'B', 'C'] as ScoringApproach[]
+  const [wizardScoringApproach, setWizardScoringApproach] = React.useState<ScoringApproach>('A')
 
-  const executionViewScoringApproaches = ['A'] as ScoringApproach[];
-  const [executionViewScoringApproach, setExecutionViewScoringApproach] = React.useState<ScoringApproach>('A');
+  const executionViewScoringApproaches = ['A'] as ScoringApproach[]
+  const [executionViewScoringApproach, setExecutionViewScoringApproach] = React.useState<ScoringApproach>('A')
 
   return (
     <Layout location="About">
@@ -72,16 +72,16 @@ export default function About() {
         </div>
       </article>
     </Layout>
-  );
+  )
 }
 
 type DataAccessEntry = {
-  name: string;
-  api: string;
-  apiScored: string | null;
-  mock: any;
-  mockScored: any;
-};
+  name: string
+  api: string
+  apiScored: string | null
+  mock: any
+  mockScored: any
+}
 
 function DataAccessTable({ wizardFormula }: { wizardFormula: ScoringApproach }) {
   const events = {
@@ -90,7 +90,7 @@ function DataAccessTable({ wizardFormula }: { wizardFormula: ScoringApproach }) 
     apiScored: null,
     mock: mockEventsData,
     mockScored: null,
-  };
+  }
 
   const wizards = {
     name: 'Wizards',
@@ -98,7 +98,7 @@ function DataAccessTable({ wizardFormula }: { wizardFormula: ScoringApproach }) 
     apiScored: '/api/matomo/events/scored/wizard',
     mock: mockWizardData,
     mockScored: evaluateAndGroupExecutionViews(mockExecutionViewData),
-  };
+  }
 
   const executionsViews = {
     name: 'Execution Views',
@@ -106,7 +106,7 @@ function DataAccessTable({ wizardFormula }: { wizardFormula: ScoringApproach }) 
     apiScored: '/api/matomo/events/scored/execution-view',
     mock: mockWizardData,
     mockScored: evaluateAndGroupWizards(mockWizardData, wizardFormula),
-  };
+  }
 
   const buttons = {
     name: 'Buttons',
@@ -114,7 +114,7 @@ function DataAccessTable({ wizardFormula }: { wizardFormula: ScoringApproach }) 
     apiScored: null,
     mock: mockButtonData,
     mockScored: null,
-  };
+  }
 
   const visits = {
     name: 'Visits',
@@ -122,9 +122,9 @@ function DataAccessTable({ wizardFormula }: { wizardFormula: ScoringApproach }) 
     apiScored: null,
     mock: mockVisitsData,
     mockScored: null,
-  };
+  }
 
-  const dataAccessEntries: DataAccessEntry[] = [events, wizards, executionsViews, buttons, visits];
+  const dataAccessEntries: DataAccessEntry[] = [events, wizards, executionsViews, buttons, visits]
 
   return (
     <>
@@ -147,7 +147,7 @@ function DataAccessTable({ wizardFormula }: { wizardFormula: ScoringApproach }) 
         ))}
       </ul>
     </>
-  );
+  )
 }
 
 function ApiRouteButton({ apiRoute }: { apiRoute: string }) {
@@ -155,17 +155,17 @@ function ApiRouteButton({ apiRoute }: { apiRoute: string }) {
     <Link target="_blank" title="Inspect API route source" href={apiRoute} className="hover:opacity-80">
       <CodeBracketIcon className="h-6 w-6" />
     </Link>
-  );
+  )
 }
 
 function ApiRouteButtonScored({ apiRoute }: { apiRoute: string | null }) {
-  if (apiRoute === null) return <span className="h-6 w-6" />;
+  if (apiRoute === null) return <span className="h-6 w-6" />
 
   return (
     <Link target="_blank" title="Inspect API route source" href={apiRoute} className="hover:opacity-80">
       <BeakerIcon className="h-6 w-6" />
     </Link>
-  );
+  )
 }
 
 function RawJsonButton({ data }: { data: any }) {
@@ -174,32 +174,32 @@ function RawJsonButton({ data }: { data: any }) {
       title="View Raw JSON data"
       className="hover:opacity-80"
       onClick={() => {
-        const jsonString = JSON.stringify(data);
-        const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(jsonString)}`;
-        window.open(dataUri, '_blank');
+        const jsonString = JSON.stringify(data)
+        const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(jsonString)}`
+        window.open(dataUri, '_blank')
       }}
     >
       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="h-6 w-6">
         <path d="M5.759 3.975h1.783V5.76H5.759v4.458A1.783 1.783 0 0 1 3.975 12a1.783 1.783 0 0 1 1.784 1.783v4.459h1.783v1.783H5.759c-.954-.24-1.784-.803-1.784-1.783v-3.567a1.783 1.783 0 0 0-1.783-1.783H1.3v-1.783h.892a1.783 1.783 0 0 0 1.783-1.784V5.76A1.783 1.783 0 0 1 5.76 3.975m12.483 0a1.783 1.783 0 0 1 1.783 1.784v3.566a1.783 1.783 0 0 0 1.783 1.784h.892v1.783h-.892a1.783 1.783 0 0 0-1.783 1.783v3.567a1.783 1.783 0 0 1-1.783 1.783h-1.784v-1.783h1.784v-4.459A1.783 1.783 0 0 1 20.025 12a1.783 1.783 0 0 1-1.783-1.783V5.759h-1.784V3.975h1.784M12 14.675a.892.892 0 0 1 .892.892.892.892 0 0 1-.892.892.892.892 0 0 1-.891-.892.892.892 0 0 1 .891-.892m-3.566 0a.892.892 0 0 1 .891.892.892.892 0 0 1-.891.892.892.892 0 0 1-.892-.892.892.892 0 0 1 .892-.892m7.133 0a.892.892 0 0 1 .891.892.892.892 0 0 1-.891.892.892.892 0 0 1-.892-.892.892.892 0 0 1 .892-.892z"></path>
       </svg>
     </button>
-  );
+  )
 }
 
 function ProcessedJsonData({ data }: { data: any }) {
-  if (data === null) return <span className="h-6 w-6" />;
+  if (data === null) return <span className="h-6 w-6" />
 
   return (
     <button
       title="View Scored JSON mock data"
       className="hover:opacity-80"
       onClick={() => {
-        const jsonString = JSON.stringify(data);
-        const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(jsonString)}`;
-        window.open(dataUri, '_blank');
+        const jsonString = JSON.stringify(data)
+        const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(jsonString)}`
+        window.open(dataUri, '_blank')
       }}
     >
       <ScaleIcon className="h-6 w-6" />
     </button>
-  );
+  )
 }

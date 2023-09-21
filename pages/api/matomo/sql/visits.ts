@@ -1,19 +1,19 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import type { PageViewsAPI, PageViewsSQL } from '@/@types';
+import { NextApiRequest, NextApiResponse } from 'next'
+import type { PageViewsAPI, PageViewsSQL } from '@/@types'
 
-import { estabilishMySQLConnection, pageVisitsQuery as query } from '@/utils/sql';
+import { estabilishMySQLConnection, pageVisitsQuery as query } from '@/utils/sql'
 
 export default function getPageViewsSQL(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'GET') return res.status(405).json({ error: 'Method Not Allowed' });
+  if (req.method !== 'GET') return res.status(405).json({ error: 'Method Not Allowed' })
 
-  const connection = estabilishMySQLConnection();
-  if (!connection) return res.status(403).json({ error: 'MySQL connection failed' });
+  const connection = estabilishMySQLConnection()
+  if (!connection) return res.status(403).json({ error: 'MySQL connection failed' })
 
   connection.query(query, (error, results) => {
     if (error) {
-      return res.status(500).json({ error: 'An error occurred while querying the database', details: error });
+      return res.status(500).json({ error: 'An error occurred while querying the database', details: error })
     } else {
-      const sqlResults = results as PageViewsSQL[];
+      const sqlResults = results as PageViewsSQL[]
       const apiResults: PageViewsAPI[] = sqlResults.map((result) => ({
         id: result.id,
         visitor: result.visitor,
@@ -32,8 +32,8 @@ export default function getPageViewsSQL(req: NextApiRequest, res: NextApiRespons
         browserName: result.browserName,
         deviceBrand: result.deviceBrand,
         deviceType: result.deviceType,
-      }));
-      return res.status(200).json(apiResults);
+      }))
+      return res.status(200).json(apiResults)
     }
-  });
+  })
 }

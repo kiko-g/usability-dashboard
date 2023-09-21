@@ -1,16 +1,16 @@
-import React, { Fragment } from 'react';
-import { Listbox, Transition } from '@headlessui/react';
-import { ScoringApproach } from '@/@types';
-import { EllipsisHorizontalCircleIcon } from '@heroicons/react/24/outline';
-import { CheckCircleIcon as CheckCircleSolidIcon } from '@heroicons/react/24/solid';
+import React, { Fragment } from 'react'
+import { Listbox, Transition } from '@headlessui/react'
+import { ScoringApproach } from '@/@types'
+import { EllipsisHorizontalCircleIcon } from '@heroicons/react/24/outline'
+import { CheckCircleIcon as CheckCircleSolidIcon } from '@heroicons/react/24/solid'
 
 type Props = {
-  scoringApproaches: ScoringApproach[];
-  scoringApproachHook: [ScoringApproach, React.Dispatch<React.SetStateAction<ScoringApproach>>];
-};
+  scoringApproaches: ScoringApproach[]
+  scoringApproachHook: [ScoringApproach, React.Dispatch<React.SetStateAction<ScoringApproach>>]
+}
 
 export function SelectFormula({ scoringApproaches, scoringApproachHook }: Props) {
-  const [scoringApproach, setScoringApproach] = scoringApproachHook;
+  const [scoringApproach, setScoringApproach] = scoringApproachHook
 
   return (
     <Listbox value={scoringApproach} onChange={setScoringApproach}>
@@ -48,5 +48,5 @@ export function SelectFormula({ scoringApproaches, scoringApproachHook }: Props)
         </Transition>
       </div>
     </Listbox>
-  );
+  )
 }

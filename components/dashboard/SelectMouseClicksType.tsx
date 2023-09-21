@@ -1,12 +1,12 @@
-import React, { Dispatch, Fragment, SetStateAction } from 'react';
-import type { MouseClickVizTypeFilter } from '@/@types';
-import { Listbox, Transition } from '@headlessui/react';
-import { ChevronUpDownIcon } from '@heroicons/react/24/outline';
-import { CheckCircleIcon } from '@heroicons/react/24/solid';
+import React, { Dispatch, Fragment, SetStateAction } from 'react'
+import type { MouseClickVizTypeFilter } from '@/@types'
+import { Listbox, Transition } from '@headlessui/react'
+import { ChevronUpDownIcon } from '@heroicons/react/24/outline'
+import { CheckCircleIcon } from '@heroicons/react/24/solid'
 
 type Props = {
-  pickedHook: [MouseClickVizTypeFilter, Dispatch<SetStateAction<MouseClickVizTypeFilter>>];
-};
+  pickedHook: [MouseClickVizTypeFilter, Dispatch<SetStateAction<MouseClickVizTypeFilter>>]
+}
 
 export default function SelectMouseClicksType({ pickedHook }: Props) {
   const vizTypes: MouseClickVizTypeFilter[] = [
@@ -14,9 +14,9 @@ export default function SelectMouseClicksType({ pickedHook }: Props) {
     { name: 'Table', value: 'table' },
     { name: 'Chart', value: 'chart' },
     { name: 'Heatmap', value: 'heatmap' },
-  ];
+  ]
 
-  const [picked, setPicked] = pickedHook;
+  const [picked, setPicked] = pickedHook
 
   return (
     <Listbox value={picked} onChange={setPicked}>
@@ -54,5 +54,5 @@ export default function SelectMouseClicksType({ pickedHook }: Props) {
         </Transition>
       </div>
     </Listbox>
-  );
+  )
 }

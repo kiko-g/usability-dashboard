@@ -1,10 +1,10 @@
-import { ScoringApproach } from '@/@types';
-import { CodeBlock } from '@/components/utils';
-import { ShieldExclamationIcon } from '@heroicons/react/24/outline';
+import { ScoringApproach } from '@/@types'
+import { CodeBlock } from '@/components/utils'
+import { ShieldExclamationIcon } from '@heroicons/react/24/outline'
 
 type Props = {
-  formula?: ScoringApproach;
-};
+  formula?: ScoringApproach
+}
 
 export function ExecutionViewFormula({ formula = 'A' }: Props) {
   if (formula === 'A') {
@@ -46,7 +46,7 @@ export function ExecutionViewFormula({ formula = 'A' }: Props) {
           view, rewarding the completion.
         </p>
       </div>
-    );
+    )
   } else
     return (
       <div className="mb-1 mt-2 flex items-center gap-2 text-gray-700 dark:text-white">
@@ -55,5 +55,5 @@ export function ExecutionViewFormula({ formula = 'A' }: Props) {
           Formula <strong>{formula}</strong> is unavailable.
         </p>
       </div>
-    );
+    )
 }

@@ -1,13 +1,13 @@
-import React from 'react';
-import { MobileNav, Sidebar, Seo } from './';
+import React from 'react'
+import { MobileNav, Sidebar, Seo } from './'
 
 type Props = {
-  children?: JSX.Element | JSX.Element[];
-  location: string;
-};
+  children?: JSX.Element | JSX.Element[]
+  location: string
+}
 
 export default function Layout({ children, location }: Props) {
-  const title = 'CMF MES UX Dashboard';
+  const title = 'CMF MES UX Dashboard'
   return (
     <>
       <Seo location={location} />
@@ -19,5 +19,5 @@ export default function Layout({ children, location }: Props) {
         </main>
       </div>
     </>
-  );
+  )
 }
