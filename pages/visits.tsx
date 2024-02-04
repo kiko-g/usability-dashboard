@@ -45,6 +45,7 @@ export default function Visits() {
         if (!res.ok) {
           setData(null)
           setError(true)
+          setData(mockData)
           setLoading(false)
           setWillFetch(false)
           return null
@@ -75,7 +76,7 @@ export default function Visits() {
           </p>
 
           <div className="flex items-center gap-2">
-            {error === false ? null : (
+            {error === false || data !== null ? null : (
               <button
                 title="Use mock data"
                 className="hover:opacity-80"
@@ -114,7 +115,7 @@ export default function Visits() {
         </div>
 
         {loading && <Loading />}
-        {error && <NotFound />}
+        {error && data === null && <NotFound />}
         {data === null ? null : (
           <div className="flex flex-col gap-4">
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">

@@ -71,6 +71,7 @@ export default function Wizards() {
         .catch((error) => {
           setError(true)
           setLoading(false)
+          setRawData(mockData)
           setWillFetch(false)
           console.error(error)
         })
@@ -90,7 +91,7 @@ export default function Wizards() {
           {/* Header Buttons */}
           <div className="flex items-center gap-2">
             {/* Use mock data button */}
-            {error === false ? null : (
+            {error === false || rawData !== null ? null : (
               <button
                 title="Use mock data"
                 className="hover:opacity-80"
@@ -168,7 +169,7 @@ export default function Wizards() {
 
         <KPIs data={processedData} scoringApproach={scoringApproach} />
         {loading && <Loading />}
-        {error && <NotFound />}
+        {error && rawData === null && <NotFound />}
       </article>
     </Layout>
   )

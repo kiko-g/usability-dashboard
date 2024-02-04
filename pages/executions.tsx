@@ -56,7 +56,8 @@ export default function Executions() {
           setError(true)
           setLoading(false)
           setWillFetch(false)
-          return null
+          setRawData(mockData)
+          return mockData
         } else {
           return res.json()
         }
@@ -86,7 +87,7 @@ export default function Executions() {
           {/* Header Buttons */}
           <div className="flex items-center gap-2">
             {/* Use mock data button */}
-            {error === false ? null : (
+            {error === false || rawData !== null ? null : (
               <button
                 title="Use mock data"
                 className="hover:opacity-80"

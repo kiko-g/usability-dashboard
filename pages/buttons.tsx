@@ -9,10 +9,9 @@ import { Layout } from '@/components/layout'
 import { Loading, NotFound } from '@/components/utils'
 
 import { ArrowPathIcon, CircleStackIcon, CodeBracketIcon } from '@heroicons/react/24/outline'
-import { ChevronDownIcon } from '@heroicons/react/24/solid'
 
 export default function Buttons() {
-  const [data, setData] = React.useState<ButtonType[]>([]) // TODO: replace any with correct type
+  const [data, setData] = React.useState<ButtonType[]>([])
   const [error, setError] = React.useState<boolean>(false)
   const [loading, setLoading] = React.useState<boolean>(true)
   const [willFetch, setWillFetch] = React.useState<boolean>(true)
@@ -28,8 +27,9 @@ export default function Buttons() {
         if (!res.ok) {
           setError(true)
           setLoading(false)
+          setData(mockData)
           setWillFetch(false)
-          return null
+          return mockData
         } else {
           return res.json()
         }
@@ -53,7 +53,7 @@ export default function Buttons() {
           </p>
 
           <div className="flex items-center gap-2">
-            {error === false ? null : (
+            {error === false || data !== null ? null : (
               <button
                 title="Use mock data"
                 className="hover:opacity-80"
