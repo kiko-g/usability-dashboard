@@ -165,7 +165,7 @@ export default function Executions() {
 
         <KPIs data={processedData} scoringApproach={scoringApproach} />
         {loading && <Loading />}
-        {error && <NotFound />}
+        {error && rawData === null && <NotFound />}
       </article>
     </Layout>
   )

@@ -104,7 +104,7 @@ export default function Buttons() {
 
         <ButtonKPIs data={data} />
         {loading && <Loading />}
-        {error && <NotFound />}
+        {error && data === null && <NotFound />}
       </article>
     </Layout>
   )
